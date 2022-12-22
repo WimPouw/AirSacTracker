@@ -13,7 +13,7 @@ library(psych)
 library(signal)
 
 butter.it <- function(x, samplingrate, order, lowpasscutoff)
-{bf <- butter(order,lowpasscutoff/samplingrate, type="low") #normalized frequency
+{bf <- butter(order,lowpasscutoff/(samplingrate/2), type="low") #normalized frequency
 x <<- as.numeric(signal::filtfilt(bf, x))} 
 
 # 01: loading data --------------------------
