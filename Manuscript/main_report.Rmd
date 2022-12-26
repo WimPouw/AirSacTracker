@@ -233,7 +233,8 @@ group_by(alpha, beta, thresh_div1, thresh_div2, dilation, medianblur) %>% summar
             min_cor = min(cor_radius_smoothed_euro), max_cor = max(cor_radius_smoothed_euro))
 
 best_combos_low_10 <- best_combos_low_10[order(best_combos_low_10$mean_cor, decreasing =TRUE),]
-best_combos_low_10 <-best_combos_low_10[1:10,] 
+best_combos_low_10 <-best_combos_low_10[1:10,]
+
 knitr::kable(best_combos_low_10)
 #
 #best_combos_low_euro <- df %>% 
