@@ -1,0 +1,13 @@
+7-keypoints:
+
+1. Upper lip
+2. Lower lip
+3. Nose (for normalization)
+4. Eye-bridge (for normalization)
+
+5. edge outer left
+6. edge outer right
+7. lowest point
+8. mid edge outer left - lowest point
+9. mid edge outer right - lowest point
+
