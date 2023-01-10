@@ -17,7 +17,7 @@
         <Int>298</Int>
     </pref>
     <pref key="SelectionEndTime">
-        <Long>1317810</Long>
+        <Long>0</Long>
     </pref>
     <pref key="ExportTabDialog.SelectTiersMode">
         <String>Tier</String>
@@ -93,7 +93,7 @@
         <Int>54</Int>
     </pref>
     <pref key="SelectionBeginTime">
-        <Long>1317130</Long>
+        <Long>0</Long>
     </pref>
     <prefGroup key="AAM-LR Phone level audio segmentation">
         <pref key="base_url">
@@ -104,10 +104,10 @@
         </pref>
     </prefGroup>
     <pref key="TimeScaleBeginTime">
-        <Long>1309660</Long>
+        <Long>998790</Long>
     </pref>
     <pref key="MediaTime">
-        <Long>1317810</Long>
+        <Long>1004460</Long>
     </pref>
     <prefGroup key="TierColors">
         <pref key="associated_bark">

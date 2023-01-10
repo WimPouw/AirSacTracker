@@ -2,7 +2,7 @@
 <preferences version="1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/Prefs_v1.1.xsd">
     <pref key="FrameSize">
-        <Object class="java.awt.Dimension">1536,824</Object>
+        <Object class="java.awt.Dimension">1550,838</Object>
     </pref>
     <pref key="LayoutManager.SelectedTabIndex">
         <Int>0</Int>
@@ -17,7 +17,7 @@
         <Int>199</Int>
     </pref>
     <pref key="SelectionEndTime">
-        <Long>311260</Long>
+        <Long>10500</Long>
     </pref>
     <pref key="ExportTabDialog.SelectTiersMode">
         <String>Tier</String>
@@ -90,7 +90,7 @@
         <String>inflation_cycle</String>
     </pref>
     <pref key="FrameLocation">
-        <Object class="java.awt.Point">0,89</Object>
+        <Object class="java.awt.Point">-7,-7</Object>
     </pref>
     <pref key="TimeLineViewer.ZoomLevel">
         <Float>100.0</Float>
@@ -99,7 +99,7 @@
         <Int>1</Int>
     </pref>
     <pref key="SelectionBeginTime">
-        <Long>310800</Long>
+        <Long>10460</Long>
     </pref>
     <prefGroup key="AAM-LR Phone level audio segmentation">
         <pref key="base_url">
@@ -110,10 +110,10 @@
         </pref>
     </prefGroup>
     <pref key="TimeScaleBeginTime">
-        <Long>304135</Long>
+        <Long>10150</Long>
     </pref>
     <pref key="MediaTime">
-        <Long>310800</Long>
+        <Long>10460</Long>
     </pref>
     <prefGroup key="TierColors">
         <pref key="default">

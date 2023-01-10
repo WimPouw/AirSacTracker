@@ -23,7 +23,7 @@
         <String>Tier</String>
     </pref>
     <pref key="SignalViewer.ZoomLevel">
-        <Float>200.0</Float>
+        <Float>50.0</Float>
     </pref>
     <prefList key="ExportTabDialog.TierOrder">
         <String>default</String>
@@ -93,10 +93,10 @@
         <Object class="java.awt.Point">-7,-7</Object>
     </pref>
     <pref key="TimeLineViewer.ZoomLevel">
-        <Float>200.0</Float>
+        <Float>50.0</Float>
     </pref>
     <pref key="LayoutManager.AudioSplitPaneDividerLocation">
-        <Int>88</Int>
+        <Int>120</Int>
     </pref>
     <pref key="SelectionBeginTime">
         <Long>0</Long>
@@ -110,10 +110,10 @@
         </pref>
     </prefGroup>
     <pref key="TimeScaleBeginTime">
-        <Long>1310380</Long>
+        <Long>978740</Long>
     </pref>
     <pref key="MediaTime">
-        <Long>1312330</Long>
+        <Long>755600</Long>
     </pref>
     <prefGroup key="TierColors">
         <pref key="default">
@@ -144,7 +144,7 @@
         </pref>
     </prefGroup>
     <pref key="LayoutManager.SplitPaneDividerLocation">
-        <Int>193</Int>
+        <Int>264</Int>
     </pref>
     <prefList key="CommentViewer.Columns.Hidden">
         <String>Sender</String>

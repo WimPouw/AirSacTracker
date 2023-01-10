@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ANNOTATION_DOCUMENT AUTHOR="" DATE="2023-01-10T12:41:38+01:00"
+    FORMAT="3.0" VERSION="3.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/EAFv3.0.xsd">
+    <HEADER MEDIA_FILE="" TIME_UNITS="milliseconds">
+        <MEDIA_DESCRIPTOR
+            MEDIA_URL="file:///H:/SiamangJaderpark_Processed/OpportunisticSampling_Song/14_August_processed/Session1/zoom_cam/Opp_August_14_Session_1_zoom_syncedboom.mxf" MIME_TYPE="unknown"/>
+        <MEDIA_DESCRIPTOR
+            MEDIA_URL="file:///H:/SiamangJaderpark_Processed/OpportunisticSampling_Song/14_August_processed/Session1/boom_mic/opp_14_august_session1_boom_audio.wav" MIME_TYPE="audio/x-wav"/>
+        <PROPERTY NAME="URN">urn:nl-mpi-tools-elan-eaf:3b58d79c-367b-4c3f-a28e-64948cd2d222</PROPERTY>
+        <PROPERTY NAME="lastUsedAnnotationId">5</PROPERTY>
+    </HEADER>
+    <TIME_ORDER>
+        <TIME_SLOT TIME_SLOT_ID="ts1" TIME_VALUE="565543"/>
+        <TIME_SLOT TIME_SLOT_ID="ts2" TIME_VALUE="565549"/>
+        <TIME_SLOT TIME_SLOT_ID="ts3" TIME_VALUE="565989"/>
+        <TIME_SLOT TIME_SLOT_ID="ts4" TIME_VALUE="566013"/>
+        <TIME_SLOT TIME_SLOT_ID="ts5" TIME_VALUE="566230"/>
+        <TIME_SLOT TIME_SLOT_ID="ts6" TIME_VALUE="566313"/>
+        <TIME_SLOT TIME_SLOT_ID="ts7" TIME_VALUE="566706"/>
+        <TIME_SLOT TIME_SLOT_ID="ts8" TIME_VALUE="566716"/>
+        <TIME_SLOT TIME_SLOT_ID="ts9" TIME_VALUE="567000"/>
+        <TIME_SLOT TIME_SLOT_ID="ts10" TIME_VALUE="567060"/>
+    </TIME_ORDER>
+    <TIER LINGUISTIC_TYPE_REF="default-lt" TIER_ID="default"/>
+    <TIER LINGUISTIC_TYPE_REF="default-lt" TIER_ID="boom_sequence">
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a1"
+                TIME_SLOT_REF1="ts1" TIME_SLOT_REF2="ts10">
+                <ANNOTATION_VALUE>1</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+    </TIER>
+    <TIER LINGUISTIC_TYPE_REF="default-lt" TIER_ID="intervals">
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a2"
+                TIME_SLOT_REF1="ts2" TIME_SLOT_REF2="ts3">
+                <ANNOTATION_VALUE>1_boom</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3"
+                TIME_SLOT_REF1="ts4" TIME_SLOT_REF2="ts5">
+                <ANNOTATION_VALUE>1_bark</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a4"
+                TIME_SLOT_REF1="ts6" TIME_SLOT_REF2="ts7">
+                <ANNOTATION_VALUE>2_boom</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a5"
+                TIME_SLOT_REF1="ts8" TIME_SLOT_REF2="ts9">
+                <ANNOTATION_VALUE>2_bark</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+    </TIER>
+    <LINGUISTIC_TYPE GRAPHIC_REFERENCES="false"
+        LINGUISTIC_TYPE_ID="default-lt" TIME_ALIGNABLE="true"/>
+    <CONSTRAINT
+        DESCRIPTION="Time subdivision of parent annotation's time interval, no time gaps allowed within this interval" STEREOTYPE="Time_Subdivision"/>
+    <CONSTRAINT
+        DESCRIPTION="Symbolic subdivision of a parent annotation. Annotations refering to the same parent are ordered" STEREOTYPE="Symbolic_Subdivision"/>
+    <CONSTRAINT DESCRIPTION="1-1 association with a parent annotation" STEREOTYPE="Symbolic_Association"/>
+    <CONSTRAINT
+        DESCRIPTION="Time alignable annotations within the parent annotation's time interval, gaps are allowed" STEREOTYPE="Included_In"/>
+</ANNOTATION_DOCUMENT>

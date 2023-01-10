@@ -17,7 +17,7 @@
         <Int>2</Int>
     </pref>
     <pref key="SelectionEndTime">
-        <Long>1500920</Long>
+        <Long>0</Long>
     </pref>
     <pref key="LayoutManager.MediaAreaHeight">
         <Int>309</Int>
@@ -93,7 +93,7 @@
         <Int>113</Int>
     </pref>
     <pref key="SelectionBeginTime">
-        <Long>1498650</Long>
+        <Long>0</Long>
     </pref>
     <prefGroup key="AAM-LR Phone level audio segmentation">
         <pref key="base_url">
@@ -104,30 +104,18 @@
         </pref>
     </prefGroup>
     <pref key="TimeScaleBeginTime">
-        <Long>1536540</Long>
+        <Long>1357600</Long>
     </pref>
     <pref key="MediaTime">
-        <Long>1500920</Long>
+        <Long>1361503</Long>
     </pref>
     <prefGroup key="TierColors">
         <pref key="default">
             <Object class="java.awt.Color">90,160,90</Object>
         </pref>
-        <pref key="individual">
-            <Object class="java.awt.Color">0,160,0</Object>
-        </pref>
-        <pref key="inflation_cycle">
-            <Object class="java.awt.Color">160,90,0</Object>
-        </pref>
-        <pref key="scene">
-            <Object class="java.awt.Color">90,0,0</Object>
-        </pref>
     </prefGroup>
     <prefList key="MultiTierViewer.TierOrder">
         <String>default</String>
-        <String>inflation_cycle</String>
-        <String>scene</String>
-        <String>individual</String>
     </prefList>
     <prefGroup key="IndividualPlayerVolumes">
         <pref key="opp_13_June_session1_gopros_combined_audio_syncedboom.wav">

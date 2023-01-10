@@ -2,7 +2,10 @@
 <preferences version="1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/Prefs_v1.1.xsd">
     <pref key="FrameSize">
-        <Object class="java.awt.Dimension">781,824</Object>
+        <Object class="java.awt.Dimension">1536,824</Object>
+    </pref>
+    <pref key="SignalViewer.TimeRulerVisible">
+        <Boolean>false</Boolean>
     </pref>
     <pref key="LayoutManager.SelectedTabIndex">
         <Int>0</Int>
@@ -20,13 +23,13 @@
         <Int>351</Int>
     </pref>
     <pref key="SelectionEndTime">
-        <Long>324500</Long>
+        <Long>0</Long>
     </pref>
     <pref key="ExportTabDialog.SelectTiersMode">
         <String>Tier</String>
     </pref>
     <pref key="SignalViewer.ZoomLevel">
-        <Float>200.0</Float>
+        <Float>50.0</Float>
     </pref>
     <prefList key="ExportTabDialog.TierOrder">
         <String>default</String>
@@ -94,16 +97,16 @@
         <String>AAM-LR Phone level audio segmentation</String>
     </pref>
     <pref key="FrameLocation">
-        <Object class="java.awt.Point">265,110</Object>
+        <Object class="java.awt.Point">0,0</Object>
     </pref>
     <pref key="TimeLineViewer.ZoomLevel">
-        <Float>200.0</Float>
+        <Float>50.0</Float>
     </pref>
     <pref key="LayoutManager.AudioSplitPaneDividerLocation">
-        <Int>60</Int>
+        <Int>58</Int>
     </pref>
     <pref key="SelectionBeginTime">
-        <Long>324010</Long>
+        <Long>0</Long>
     </pref>
     <prefGroup key="AAM-LR Phone level audio segmentation">
         <pref key="base_url">
@@ -114,10 +117,10 @@
         </pref>
     </prefGroup>
     <pref key="TimeScaleBeginTime">
-        <Long>0</Long>
+        <Long>754560</Long>
     </pref>
     <pref key="MediaTime">
-        <Long>324010</Long>
+        <Long>767220</Long>
     </pref>
     <prefGroup key="TierColors">
         <pref key="associated_bark">
@@ -152,7 +155,7 @@
         </pref>
     </prefGroup>
     <pref key="LayoutManager.SplitPaneDividerLocation">
-        <Int>149</Int>
+        <Int>137</Int>
     </pref>
     <prefList key="ExportTabDialog.HiddenTiers">
         <String>default</String>

@@ -2,13 +2,16 @@
 <preferences version="1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/Prefs_v1.1.xsd">
     <pref key="FrameSize">
-        <Object class="java.awt.Dimension">1550,838</Object>
+        <Object class="java.awt.Dimension">1536,824</Object>
     </pref>
     <pref key="LayoutManager.SelectedTabIndex">
         <Int>0</Int>
     </pref>
     <pref key="LayoutManager.VisibleMultiTierViewer">
         <String>mpi.eudico.client.annotator.viewer.TimeLineViewer</String>
+    </pref>
+    <pref key="WaveFormViewer.ActiveURL">
+        <String>file:///H:/SiamangJaderpark_Processed/OpportunisticSampling_Song/20_August_processed/Session1/boom_mic/opp_20_August_session1_boom_audio.wav</String>
     </pref>
     <pref key="MultiTierViewer.ActiveTierName">
         <String>default</String>
@@ -23,7 +26,7 @@
         <String>Tier</String>
     </pref>
     <pref key="SignalViewer.ZoomLevel">
-        <Float>149.99998</Float>
+        <Float>25.0</Float>
     </pref>
     <prefList key="ExportTabDialog.TierOrder">
         <String>default</String>
@@ -87,19 +90,19 @@
         <String>Modification Date</String>
     </prefList>
     <pref key="GridViewer.TierName">
-        <String>associatedbark</String>
+        <String>great_call</String>
     </pref>
     <pref key="ActiveRecognizerName">
         <String>AAM-LR Phone level audio segmentation</String>
     </pref>
     <pref key="FrameLocation">
-        <Object class="java.awt.Point">-7,-7</Object>
+        <Object class="java.awt.Point">0,0</Object>
     </pref>
     <pref key="TimeLineViewer.ZoomLevel">
-        <Float>149.99998</Float>
+        <Float>25.0</Float>
     </pref>
     <pref key="LayoutManager.AudioSplitPaneDividerLocation">
-        <Int>212</Int>
+        <Int>76</Int>
     </pref>
     <pref key="SelectionBeginTime">
         <Long>0</Long>
@@ -113,20 +116,20 @@
         </pref>
     </prefGroup>
     <pref key="TimeScaleBeginTime">
-        <Long>0</Long>
+        <Long>374920</Long>
     </pref>
     <pref key="MediaTime">
-        <Long>998220</Long>
+        <Long>415198</Long>
     </pref>
     <prefGroup key="TierColors">
         <pref key="default">
             <Object class="java.awt.Color">160,160,0</Object>
         </pref>
-        <pref key="individual">
-            <Object class="java.awt.Color">0,0,90</Object>
-        </pref>
         <pref key="great_call">
             <Object class="java.awt.Color">0,160,90</Object>
+        </pref>
+        <pref key="individual">
+            <Object class="java.awt.Color">0,0,90</Object>
         </pref>
         <pref key="inflation_scene">
             <Object class="java.awt.Color">0,160,0</Object>
@@ -155,7 +158,7 @@
         </pref>
     </prefGroup>
     <pref key="LayoutManager.SplitPaneDividerLocation">
-        <Int>314</Int>
+        <Int>240</Int>
     </pref>
     <prefList key="ExportTabDialog.HiddenTiers">
         <String>default</String>
