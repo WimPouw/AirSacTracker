@@ -13,7 +13,7 @@ library(psych)
 library(signal)
 
 butter.it <- function(x, samplingrate, order, lowpasscutoff)
-{bf <- butter(order,lowpasscutoff/(samplingrate/2), type="low") #normalized frequency
+{bf <- butter(order,lowpasscutoff/samplingrate, type="low") #normalized frequency
 x <<- as.numeric(signal::filtfilt(bf, x))} 
 
 # 01: loading data --------------------------
@@ -21,13 +21,14 @@ x <<- as.numeric(signal::filtfilt(bf, x))}
 #auto_data <- read_delim("sens_analysis_random_comb_tracked_06092022_final.csv", delim = ",")
 #auto_data <- read_delim("AirSacTracker/TestResults/c1_8_c2_13_al_2.5_b_35_dil_7_blur_5_vid_June09_01.mp4.csv", delim = ";")
 
-man_data <- read_delim("manual_results_circular_tracking_deleted_duplicate_second_version.csv", delim = ";")
+#man_data <- read_delim("manual_results_circular_tracking_deleted_duplicate_second_version.csv", delim = ";")
+man_data <- read_delim("manually_tracked_airsac_radii.csv", delim = ',')
 
 #add transformation from perimeter to radius in manual data
-man_data$...6 <- man_data$Perim./(2*pi)
-names(man_data)[names(man_data) == "...6"] <- "radius_man"
+#man_data$...6 <- man_data$Perim./(2*pi)
+#names(man_data)[names(man_data) == "...6"] <- "radius_man"
 #names(man_data)[names(man_data) == "Label"] <- "input_id"
-names(man_data)[names(man_data) == "Label"] <- "name"
+#names(man_data)[names(man_data) == "Label"] <- "name"
 
 
 # set path for comparison
@@ -48,7 +49,7 @@ auto_data <- read_delim(paste(path, list_of_files[a], sep = "\\"), delim = "," )
 
 #getting videoname
 videoname <- list_of_files[a]
-videoname <- substring(videoname, 1, nchar(videoname)-8)
+videoname <- substring(videoname, 1, nchar(videoname)-4)
 videoname <- str_split(videoname, pattern = "_")
 videoname <- videoname[[1]]
 videoname <- paste(videoname[14], videoname[15], sep = "_")
@@ -58,26 +59,30 @@ videoname <- paste(videoname[14], videoname[15], sep = "_")
 
 # this needs to be in loop, because we also need the frame
 # also substring should not be used with character index but again with seperator, because number format changess
-correct_name <- data.frame()
-for (b in 1:nrow(auto_data)){
+#correct_name <- data.frame()
+#for (b in 1:nrow(auto_data)){
   
-match_name <- auto_data$name[b]
-match_name <- str_split(match_name, pattern = "_")
-match_name <- match_name[[1]]
-match_name <- paste(match_name[1],match_name[2], match_name[3], videoname, sep = "_")
+#match_name <- auto_data$name[b]
+#match_name <- str_split(match_name, pattern = "_")
+#match_name <- match_name[[1]]
+#match_name <- paste(match_name[1],match_name[2], match_name[3], videoname, sep = "_")
 #match_name <- paste(substring(match_name, 1, 19), videoname, sep = "")
 
-correct_name[b,1] <- match_name
-}
+#correct_name[b,1] <- match_name
+#}
 
-auto_data <- auto_data %>% 
-  mutate(name = correct_name$V1)
+#auto_data <- auto_data %>% 
+#  mutate(name = correct_name$V1)
 
 #smoothing of auto tracked radius, adding to auto_data
 # smoothing: butterworth filter, function defined in 00
 
+#smooth <- c(5,10,15)
+
+#for(b in 1:length(smooth)){
+
 smoothed_auto <- as.data.frame(
-                  butter.it(auto_data$r, samplingrate =  25, order = 2, lowpasscutoff = 15))
+                  butter.it(auto_data$r, samplingrate =  25, order = 2, lowpasscutoff = 10))
 
 auto_data <- auto_data %>% 
   mutate(smoothed_r = smoothed_auto[1:nrow(smoothed_auto), 1])
@@ -88,8 +93,8 @@ joined_data <- left_join(auto_data, man_data, by = "name")
 # removing all lines, where no circle was tracked manually
 
 joined_data <- joined_data %>% 
-  filter(radius_man > 100 | !is.na(radius_man)) %>% 
-  filter(r < 250)
+  dplyr::filter(radius_man > 100 | !is.na(radius_man)) %>% 
+  dplyr::filter(r < 250)
 
 # run correlation
 
@@ -134,7 +139,7 @@ df[a,9] <- joined_data$beta[1]
 df[a,10] <- joined_data$threh_div1[1]
 df[a,11] <- joined_data$threh_div2[1]
 df[a,12] <- joined_data$dilation[1]
-df[a,13] <- joined_data$phase1_medianblur[1]
+df[a,13] <- joined_data$medianblur[1]
 df[a,14] <- diff_min 
 df[a,15] <- diff_max
 df[a,16] <- diff_avg 
@@ -186,12 +191,12 @@ best_combos_low_15_video <- df_low_15 %>%
 # aggregate per parameter setting
 
 best_combos_low_5 <- df_low_5 %>% 
-  group_by(alpha, beat, thresh_div1, thresh_div2, dilation, medianblur) %>%                            # multiple group columns
+  group_by(alpha, beta, thresh_div1, thresh_div2, dilation, medianblur) %>%                            # multiple group columns
   summarise(mean_cor = mean(cor_radius_smoothed), median_cor = median(cor_radius_smoothed),
             min_cor = min(cor_radius_smoothed), max_cor = max(cor_radius_smoothed)) 
 
 best_combos_low_10 <- df_low_10 %>% 
-  group_by(alpha, beat, thresh_div1, thresh_div2, dilation, medianblur) %>%                            # multiple group columns
+  group_by(alpha, beta, thresh_div1, thresh_div2, dilation, medianblur) %>%                            # multiple group columns
   summarise(mean_cor = mean(cor_radius_smoothed), median_cor = median(cor_radius_smoothed),
             min_cor = min(cor_radius_smoothed), max_cor = max(cor_radius_smoothed)) 
 
@@ -266,3 +271,17 @@ summary(model)
 
 na_radius <- auto_data %>% 
   filter(is.na(r))
+
+
+# combine tracking of r,x,y all videos---------------------
+# for all videos for "best"setting to have same format as for DLC data
+
+#version 1: combine trackings before parameter setting
+# version 2: decide on best setting and then combine videos only for those settings
+# "best" settings look very weird, i.e. thresh_div 1 and 2 the same? or 2 lower than 1? wasn't that even excluded
+# because it doesn't make sense? 
+# check Python code again, maybe ask Wim and then to be sure, run version 1? 
+
+
+# chosen setting: alpha = 
+# a
