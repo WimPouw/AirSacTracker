@@ -23,14 +23,16 @@ library(cowplot)
 
 # 01: load data ----
 
-comparison_data <- readRDS('radius_acoustic_param_comparison_2.rds')
+#comparison_data <- readRDS('radius_acoustic_param_comparison_2.rds')
+
+comparison_data <- readRDS('radius_acoustic_param_comparison_scaled.rds')
 
 # 02: data preparations ----
 
 ## radii > 400 are unlikely to be correct and are therefore deleted
 
 comparison_data_filtered <- comparison_data %>% 
-  filter(radius < 400)
+  dplyr::filter(radius < 400)
 
 ## for correlation matrix we need a matrix only containing numeric variables
 
@@ -103,46 +105,50 @@ corrplot(cor_all_2$r, type="upper", order="original",
 ## amplitude mean - sex
 
 scatter_ampl_mean <- comparison_data_filtered %>%
-  ggplot(aes(x = ampl_mean, y = radius, fill = sex, color = sex))+
+  ggplot(aes(y = ampl_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Mean Amplitude')+
-  ylab('Airsac Radius [px]')+
+  ylab('Mean Amplitude')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(legend.position = 'none')
+  theme(legend.position = 'none',
+        axis.title.x = element_blank())
 
 ## amplitude mean - ID
 
 scatter_ampl_mean_ID <- comparison_data_filtered %>%
-  ggplot(aes(x = ampl_mean, y = radius, fill = ID, color = ID))+
+  #ggplot(aes(y = ampl_mean, x = radius, fill = ID, color = ID))+
+  ggplot(aes(y = ampl_mean, x = radius_scaled, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Mean Amplitude')+
-  ylab('Airsac Radius [px]')+
+  ylab('Mean Amplitude')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(legend.position = 'none')
+  theme(legend.position = 'none',
+        axis.title.x = element_blank())
 
 ## entropy mean -sex
 
 scatter_entropy_mean <- comparison_data_filtered %>%
-  ggplot(aes(x = entropy_mean, y = radius, fill = sex, color = sex))+
+  ggplot(aes(y = entropy_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Mean Entropy')+
-  ylab('Airsac Radius [px]')+
+  ylab('Mean Entropy')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
   theme(legend.position = 'none')
 
 ## entropy mean - ID
 scatter_entropy_mean_ID <- comparison_data_filtered %>%
-  ggplot(aes(x = entropy_mean, y = radius, fill = ID, color = ID))+
+  #ggplot(aes(y = entropy_mean, x = radius, fill = ID, color = ID))+
+  ggplot(aes(y = entropy_mean, x = radius_scaled, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Mean Entropy')+
-  ylab('Airsac Radius [px]')+
+  ylab('Mean Entropy')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
   theme(legend.position = 'none')
@@ -150,59 +156,57 @@ scatter_entropy_mean_ID <- comparison_data_filtered %>%
 ## dominant frequency mean - sex
 
 scatter_dom_mean <- comparison_data_filtered %>%
-  ggplot(aes(x = dom_mean, y = radius, fill = sex, color = sex))+
+  ggplot(aes(y = dom_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Dominant Frequency mean [Hz]')+
-  ylab('Airsac Radius [px]')+
+  ylab('Dominant Frequency mean [Hz]')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20),
-        axis.title.y = element_blank())
+        axis.title.x = element_blank())
 
 ## dominant frequency mean - ID
 
 scatter_dom_mean_ID <- comparison_data_filtered %>%
-  ggplot(aes(x = dom_mean, y = radius, fill = ID, color = ID))+
+  ggplot(aes(y = dom_mean, x = radius, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Dominant Frequency mean [Hz]')+
-  ylab('Airsac Radius [px]')+
+  ylab('Dominant Frequency mean [Hz]')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20),
-        axis.title.y = element_blank())
+        axis.title.x = element_blank())
 
 ## spectral Centroid mean - sex
 
 scatter_spec_Centroid <- comparison_data_filtered %>%
-  ggplot(aes(x = specCentroid_mean, y = radius, fill = sex, color = sex))+
+  ggplot(aes(y = specCentroid_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Spectral Centroid Mean')+
-  ylab('Airsac Radius [px]')+
+  ylab('Spectral Centroid Mean')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20),
-        axis.title.y = element_blank())
+  theme(text = element_text(size = 20))
 
 ## spectral Centroid mean - ID
 
 scatter_spec_Centroid_ID <- comparison_data_filtered %>%
-  ggplot(aes(x = specCentroid_mean, y = radius, fill = ID, color = ID))+
+  ggplot(aes(y = specCentroid_mean, x = radius, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Spectral Centroid Mean')+
-  ylab('Airsac Radius [px]')+
+  ylab('Spectral Centroid Mean')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20),
-        axis.title.y = element_blank())
+  theme(text = element_text(size = 20))
 
 ## fundamental frequcny mean - sex
 
 scatter_f0 <- comparison_data_filtered %>%
-  ggplot(aes(x = fundamental_mean, y = radius, fill = sex, color = sex))+
+  ggplot(aes(y = fundamental_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Fundamental [Hz]')+
-  ylab('Airsac Radius [px]')+
+  ylab('Fundamental [Hz]')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))#,
         #axis.title.y = element_blank())
@@ -210,16 +214,14 @@ scatter_f0 <- comparison_data_filtered %>%
 ## fundamental frequcny mean - ID
 
 scatter_f0_ID <- comparison_data_filtered %>%
-  ggplot(aes(x = fundamental_mean, y = radius, fill = ID, color = ID))+
+  ggplot(aes(y = fundamental_mean, x = radius, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  xlab('Fundamental [Hz]')+
-  ylab('Airsac Radius [px]')+
+  ylab('Fundamental [Hz]')+
+  xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))#,
 #axis.title.y = element_blank())
-
-
 
 
 ## cowplot
@@ -232,7 +234,69 @@ cowplot::plot_grid(scatter_ampl_mean_ID, scatter_dom_mean_ID, scatter_entropy_me
                    rel_widths = c(0.45,0.55), ncol = 2)
 #labels = c("A", "B", "C", "D"), ncol = 2)
 
-ggsave("acoustic_parameter_radius_ID.jpg", 
+cowplot::plot_grid(scatter_ampl_mean_ID, scatter_entropy_mean_ID, nrow = 2)
+
+ggsave("scaled_radius_01_acousticparam_per_ID.jpg", 
        dpi = 300, 
-       width = 25,
-       height = 16)
+       width = 15,
+       height = 10)
+# 05: timeseries plot of inflation ----
+
+# timeseries plots Fajar
+plot_fajar <- comparison_data_filtered %>%
+  mutate(frame = as.numeric(frame)) %>%
+  filter(ID == 'Fajar') %>% 
+  ggplot(aes(x = frame, y = radius, group = audiofile, color = audiofile))+
+  geom_line(size = 1.4)+
+  xlab('Frame')+
+  ylab('Airsac Radius [px]')+
+  ggtitle('Fajar')+
+  theme_minimal()+
+  theme(legend.position = 'none',
+        text = element_text(size = 20))#,
+#axis.title.y = element_blank())
+
+#timeseries plots Pelangi
+plot_pelangi <- comparison_data_filtered %>%
+  mutate(frame = as.numeric(frame)) %>%
+  filter(ID == 'Pelangi') %>% 
+  ggplot(aes(x = frame, y = radius, group = audiofile, color = audiofile))+
+  geom_line(size = 1.4)+
+  xlab('Frame')+
+  ylab('Airsac Radius [px]')+
+  ggtitle('Pelangi')+
+  theme_minimal()+
+  theme(legend.position = 'none',
+        text = element_text(size = 20))#,
+#axis.title.y = element_blank())
+
+#timeseries plots Baju
+plot_baju <- comparison_data_filtered %>%
+  mutate(frame = as.numeric(frame)) %>%
+  filter(ID == 'Baju') %>% 
+  ggplot(aes(x = frame, y = radius, group = audiofile, color = audiofile))+
+  geom_line(size = 1.4)+
+  xlab('Frame')+
+  ylab('Airsac Radius [px]')+
+  ggtitle('Baju')+
+  theme_minimal()+
+  theme(legend.position = 'none',
+        text = element_text(size = 20))#,
+#axis.title.y = element_blank())
+
+#timeseries plots Roger
+plot_roger <- comparison_data_filtered %>%
+  mutate(frame = as.numeric(frame)) %>%
+  filter(ID == 'Roger') %>% 
+  ggplot(aes(x = frame, y = radius, group = audiofile, color = audiofile))+
+  geom_line(size = 1.4)+
+  xlab('Frame')+
+  ylab('Airsac Radius [px]')+
+  ggtitle('Roger')+
+  theme_minimal()+
+  theme(legend.position = 'none',
+        text = element_text(size = 20))#,
+#axis.title.y = element_blank())
+
+cowplot::plot_grid(plot_fajar, plot_pelangi, plot_baju, plot_roger,
+                   ncol = 2)
