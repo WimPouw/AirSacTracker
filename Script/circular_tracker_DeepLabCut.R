@@ -30,6 +30,7 @@ library(psych)
 library(signal)
 library(zoo)
 library(scales)
+library(foreach)
 
 # 01: load data -----------------------------------------
 
@@ -76,13 +77,15 @@ x <<- as.numeric(signal::filtfilt(bf, x))}
 
 # start main loop ------------------------------------------------
 
+##ATTENTION: SOMETHING IS CURRENTLY WRONG HERE!!
+
 comparison_all <- data.frame()
 
-for (i in 1:length(list_of_files)) {
+for (i in 1:length(list_normalization)) {
   
-auto_data <- read_delim(paste(path, list_of_files[i], sep = "\\"), delim = "," )
+auto_data <- read_delim(paste(path, list_normalization[i], sep = "\\"), delim = "," )
 
-videoname <- substring(list_of_files[i], 1, 9)
+videoname <- substring(list_of_files[i], 6, 14)
 
 # redefine column names to distinct names, delete first two rows with identifiers afterwards
 colnames <- c()
@@ -276,4 +279,41 @@ saveRDS(comparison_data_scaled, file = "radius_acoustic_param_comparison_scaled.
 
 ## 05b: standadrize by nose bridge ----
 
+path <- choose.dir()
+pattern <- "csv"
+list_normalization <- list.files(path = path, pattern = pattern)
 
+# taking a df_all example from running parts of the script
+# make sure this is implemented reproducibal
+
+# nose columns are: 8,9,10 (x, y, likelihood)
+# eye-bridge columns are: 11,12,13 (x,y,likelihood)
+
+# we want the euclidean distance between the two points per row (frame)
+# in the end we average the distances to get the normalization value per snippet
+
+# function to compute euclidean distance
+
+euc_dist <- function(x1, x2){
+return(sqrt(sum((x1 - x2)^2)))
+}
+
+
+df_sub_normalization_nose <- df_all %>%
+  dplyr::filter(Nose_likelihood >= threshold) %>% 
+  select(Nose_x,Nose_y) %>% 
+  transmute(Nose_x = as.numeric(Nose_x),
+            Nose_y = as.numeric(Nose_y))
+ 
+
+df_sub_normalization_eyebridge <- df_all %>% 
+  dplyr::filter(Nose_likelihood > threshold) %>% 
+  select(EyeBridge_x, EyeBridge_y) %>% 
+  transmute(EyeBridge_x = as.numeric(EyeBridge_x),
+            EyeBridge_y = as.numeric(EyeBridge_y))
+  
+
+distances <- foreach(i = 1:nrow(df_sub_normalization_nose), .combine = c) %do% 
+  euc_dist(df_sub_normalization_nose[i,], df_sub_normalization_eyebridge[i,]) 
+
+mean(distances)
