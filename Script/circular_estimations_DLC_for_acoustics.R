@@ -33,6 +33,10 @@ radius_all <- data.frame(matrix(ncol = 3, nrow = 0))
 z <- c("radius", "frame", "videofile")
 colnames(radius_all) <- z
 
+normalization_value <- data.frame(matrix(ncol = 2, nrow = 0))
+y <- c("normalization_value", "videofile")
+colnames(normalization_value) <- y
+
 ## starting main loop ----
 for (a in 1:length(list_of_files)) {
   
@@ -45,7 +49,51 @@ for (a in 1:length(list_of_files)) {
   data_circle_estimation <- data_prep_radius_estim_DLC(data = auto_data)
 
 # 03: circle estimation ----
+  
+## 03a: nose-eyebridge normalization ----
+  # to be run on the subset of data, suitable for nose-eyebridge normalization! 
+  # comment out for full run
+  
+  list_normalization_points <- c('Nose_x','Nose_y', 'Nose_likelihood',
+                                 'EyeBridge_x', 'EyeBridge_y', 'EyeBridge_likelihood')
+  
+  colnames <- c()
+  colnames[1] <- "frames"
+  for (x in 2: ncol(auto_data)){
+    colnames[x] <- paste(auto_data[1,x],auto_data[2,x], sep = '_')
+  }
+  
+  colnames(auto_data) <- colnames
+  df <- auto_data[-1:-2,]
+  
+  df_sub <- df %>%
+    select(all_of(list_normalization_points))
+  
+  df_sub <- as.data.frame(apply(df_sub,2,as.numeric))
+  
+  euc_dist <- function(x1, x2){
+    return(sqrt(sum((x1 - x2)^2)))
+  }
+  
+  df_sub_normalization_nose <- df_sub %>%
+    dplyr::filter(Nose_likelihood >= threshold) %>% 
+    select(Nose_x,Nose_y) %>% 
+    transmute(Nose_x = as.numeric(Nose_x),
+              Nose_y = as.numeric(Nose_y))
+  
+  df_sub_normalization_eyebridge <- df_all %>% 
+    dplyr::filter(EyeBridge_likelihood > threshold) %>% 
+    select(EyeBridge_x, EyeBridge_y) %>% 
+    transmute(EyeBridge_x = as.numeric(EyeBridge_x),
+              EyeBridge_y = as.numeric(EyeBridge_y))
+  
+  
+  distances <- foreach(i = 1:nrow(df_sub_normalization_nose), .combine = c) %do% 
+    euc_dist(df_sub_normalization_nose[i,], df_sub_normalization_eyebridge[i,])
+  
+  normalization_value[a,] <- c(mean(distances, na.rm = TRUE), list_of_files[a])  
 
+# 03b: circle estimations
 grouped_data_circle_estimation <- data_circle_estimation %>%
   dplyr::filter(likelihood > threshold) %>% 
   group_split(frame)
@@ -67,12 +115,14 @@ grouped_data_circle_estimation <- data_circle_estimation %>%
         colnames(radius) <- z
       }
       
+
+  
       radius_all <- rbind(radius_all, radius)
       
 }
 
 
-# 04a: post-processing I: adding meta-data, like sex and ID ----
+# 04a: post-processing I: adding meta-data, sex + ID + normalization value (if applicable) ----
 
 # adding column with information on sex
 index_female <- grep('Pelangi', radius_all$videofile)
@@ -116,6 +166,8 @@ for (b in 1:nrow(radius_all)){
   
 }
 
+radius_all <- left_join(radius_all, normalization_value, by = 'videofile')
+
 # 04b: post-processing II: smoothing ----
 
 radius_all <- radius_all %>%
@@ -134,6 +186,5 @@ radius_all <- radius_all %>%
 
 # 05: saving data ----
 
-saveRDS(comparison_data_scaled, file = "DLC_estimated_radii_meta_data.rds")
-  
-  
+saveRDS(radius_all, file = "DLC_estimated_radii_meta_data.rds")
+
