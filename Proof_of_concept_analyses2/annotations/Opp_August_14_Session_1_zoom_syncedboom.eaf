@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ANNOTATION_DOCUMENT AUTHOR="" DATE="2023-01-10T12:41:38+01:00"
+<ANNOTATION_DOCUMENT AUTHOR="" DATE="2023-03-10T13:15:53+01:00"
     FORMAT="3.0" VERSION="3.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/EAFv3.0.xsd">
     <HEADER MEDIA_FILE="" TIME_UNITS="milliseconds">
@@ -22,7 +22,6 @@
         <TIME_SLOT TIME_SLOT_ID="ts9" TIME_VALUE="567000"/>
         <TIME_SLOT TIME_SLOT_ID="ts10" TIME_VALUE="567060"/>
     </TIME_ORDER>
-    <TIER LINGUISTIC_TYPE_REF="default-lt" TIER_ID="default"/>
     <TIER LINGUISTIC_TYPE_REF="default-lt" TIER_ID="boom_sequence">
         <ANNOTATION>
             <ALIGNABLE_ANNOTATION ANNOTATION_ID="a1"
