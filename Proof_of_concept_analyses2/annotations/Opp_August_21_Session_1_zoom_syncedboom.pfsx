@@ -2,7 +2,7 @@
 <preferences version="1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/Prefs_v1.1.xsd">
     <pref key="FrameSize">
-        <Object class="java.awt.Dimension">1920,1040</Object>
+        <Object class="java.awt.Dimension">1067,760</Object>
     </pref>
     <pref key="LayoutManager.SelectedTabIndex">
         <Int>0</Int>
@@ -26,7 +26,6 @@
         <Float>100.0</Float>
     </pref>
     <prefList key="ExportTabDialog.TierOrder">
-        <String>default</String>
         <String>boom_sequence</String>
         <String>intervals</String>
     </prefList>
@@ -88,7 +87,7 @@
         <Float>0.9</Float>
     </pref>
     <pref key="GridViewer.TierName">
-        <String>intervals</String>
+        <String>boom_sequence</String>
     </pref>
     <pref key="FrameLocation">
         <Object class="java.awt.Point">0,0</Object>
@@ -97,7 +96,7 @@
         <Float>100.0</Float>
     </pref>
     <pref key="LayoutManager.AudioSplitPaneDividerLocation">
-        <Int>195</Int>
+        <Int>43</Int>
     </pref>
     <pref key="SelectionBeginTime">
         <Long>673880</Long>
@@ -118,7 +117,7 @@
         <Long>673720</Long>
     </pref>
     <pref key="MediaTime">
-        <Long>673880</Long>
+        <Long>680540</Long>
     </pref>
     <prefGroup key="TierColors">
         <pref key="intervals">
@@ -141,13 +140,11 @@
         </pref>
     </prefGroup>
     <pref key="LayoutManager.SplitPaneDividerLocation">
-        <Int>308</Int>
+        <Int>140</Int>
     </pref>
     <prefList key="CommentViewer.Columns.Hidden">
         <String>Sender</String>
         <String>Recipient</String>
     </prefList>
-    <prefList key="ExportTabDialog.HiddenTiers">
-        <String>default</String>
-    </prefList>
+    <prefList key="ExportTabDialog.HiddenTiers"/>
 </preferences>

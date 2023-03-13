@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ANNOTATION_DOCUMENT AUTHOR="" DATE="2023-03-07T13:48:32+01:00"
+<ANNOTATION_DOCUMENT AUTHOR="" DATE="2023-03-13T12:25:24+01:00"
     FORMAT="3.0" VERSION="3.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/EAFv3.0.xsd">
     <HEADER MEDIA_FILE="" TIME_UNITS="milliseconds">
@@ -10,60 +10,9 @@
         <PROPERTY NAME="URN">urn:nl-mpi-tools-elan-eaf:13a095ca-c38e-4e3c-926e-e0619a39f4cf</PROPERTY>
         <PROPERTY NAME="lastUsedAnnotationId">6</PROPERTY>
     </HEADER>
-    <TIME_ORDER>
-        <TIME_SLOT TIME_SLOT_ID="ts1" TIME_VALUE="268993"/>
-        <TIME_SLOT TIME_SLOT_ID="ts2" TIME_VALUE="269000"/>
-        <TIME_SLOT TIME_SLOT_ID="ts3" TIME_VALUE="269116"/>
-        <TIME_SLOT TIME_SLOT_ID="ts4" TIME_VALUE="269116"/>
-        <TIME_SLOT TIME_SLOT_ID="ts5" TIME_VALUE="269496"/>
-        <TIME_SLOT TIME_SLOT_ID="ts6" TIME_VALUE="269515"/>
-        <TIME_SLOT TIME_SLOT_ID="ts7" TIME_VALUE="277138"/>
-        <TIME_SLOT TIME_SLOT_ID="ts8" TIME_VALUE="277144"/>
-        <TIME_SLOT TIME_SLOT_ID="ts9" TIME_VALUE="277264"/>
-        <TIME_SLOT TIME_SLOT_ID="ts10" TIME_VALUE="277270"/>
-        <TIME_SLOT TIME_SLOT_ID="ts11" TIME_VALUE="277532"/>
-        <TIME_SLOT TIME_SLOT_ID="ts12" TIME_VALUE="277614"/>
-    </TIME_ORDER>
-    <TIER LINGUISTIC_TYPE_REF="default-lt" TIER_ID="boom_sequence">
-        <ANNOTATION>
-            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a1"
-                TIME_SLOT_REF1="ts1" TIME_SLOT_REF2="ts6">
-                <ANNOTATION_VALUE>1</ANNOTATION_VALUE>
-            </ALIGNABLE_ANNOTATION>
-        </ANNOTATION>
-        <ANNOTATION>
-            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a2"
-                TIME_SLOT_REF1="ts7" TIME_SLOT_REF2="ts12">
-                <ANNOTATION_VALUE>1</ANNOTATION_VALUE>
-            </ALIGNABLE_ANNOTATION>
-        </ANNOTATION>
-    </TIER>
-    <TIER LINGUISTIC_TYPE_REF="default-lt" TIER_ID="intervals">
-        <ANNOTATION>
-            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3"
-                TIME_SLOT_REF1="ts2" TIME_SLOT_REF2="ts3">
-                <ANNOTATION_VALUE>1_boom</ANNOTATION_VALUE>
-            </ALIGNABLE_ANNOTATION>
-        </ANNOTATION>
-        <ANNOTATION>
-            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a4"
-                TIME_SLOT_REF1="ts4" TIME_SLOT_REF2="ts5">
-                <ANNOTATION_VALUE>1_bark</ANNOTATION_VALUE>
-            </ALIGNABLE_ANNOTATION>
-        </ANNOTATION>
-        <ANNOTATION>
-            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a5"
-                TIME_SLOT_REF1="ts8" TIME_SLOT_REF2="ts9">
-                <ANNOTATION_VALUE>1_boom</ANNOTATION_VALUE>
-            </ALIGNABLE_ANNOTATION>
-        </ANNOTATION>
-        <ANNOTATION>
-            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a6"
-                TIME_SLOT_REF1="ts10" TIME_SLOT_REF2="ts11">
-                <ANNOTATION_VALUE>1_bark</ANNOTATION_VALUE>
-            </ALIGNABLE_ANNOTATION>
-        </ANNOTATION>
-    </TIER>
+    <TIME_ORDER/>
+    <TIER LINGUISTIC_TYPE_REF="default-lt" TIER_ID="boom_sequence"/>
+    <TIER LINGUISTIC_TYPE_REF="default-lt" TIER_ID="intervals"/>
     <LINGUISTIC_TYPE GRAPHIC_REFERENCES="false"
         LINGUISTIC_TYPE_ID="default-lt" TIME_ALIGNABLE="true"/>
     <CONSTRAINT

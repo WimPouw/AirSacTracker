@@ -2,7 +2,7 @@
 <preferences version="1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/Prefs_v1.1.xsd">
     <pref key="FrameSize">
-        <Object class="java.awt.Dimension">1920,1040</Object>
+        <Object class="java.awt.Dimension">1067,760</Object>
     </pref>
     <pref key="LayoutManager.SelectedTabIndex">
         <Int>0</Int>
@@ -14,7 +14,7 @@
         <String>boom_sequence</String>
     </pref>
     <pref key="LayoutManager.MediaAreaHeight">
-        <Int>523</Int>
+        <Int>233</Int>
     </pref>
     <pref key="SelectionEndTime">
         <Long>242041</Long>
@@ -23,7 +23,7 @@
         <String>Tier</String>
     </pref>
     <pref key="SignalViewer.ZoomLevel">
-        <Float>750.0</Float>
+        <Float>74.99999</Float>
     </pref>
     <prefList key="ExportTabDialog.TierOrder">
         <String>boom_sequence</String>
@@ -84,16 +84,16 @@
         <String>AAM-LR Phone level audio segmentation</String>
     </pref>
     <pref key="GridViewer.TierName">
-        <String>Intervals</String>
+        <String>boom_sequence</String>
     </pref>
     <pref key="FrameLocation">
         <Object class="java.awt.Point">0,0</Object>
     </pref>
     <pref key="TimeLineViewer.ZoomLevel">
-        <Float>750.0</Float>
+        <Float>74.99999</Float>
     </pref>
     <pref key="LayoutManager.AudioSplitPaneDividerLocation">
-        <Int>55</Int>
+        <Int>121</Int>
     </pref>
     <pref key="VideoZoom(file:///H:/SiamangJaderpark_Processed/OpportunisticSampling_Song/15_June_processed/Session1/zoom_cam/Opp_June_15_Session_1_zoom_syncedboom.mxf)">
         <Float>1.5</Float>
@@ -114,7 +114,7 @@
         <Float>1.0</Float>
     </pref>
     <pref key="TimeScaleBeginTime">
-        <Long>240734</Long>
+        <Long>283933</Long>
     </pref>
     <pref key="MediaTime">
         <Long>241777</Long>
@@ -140,7 +140,7 @@
         </pref>
     </prefGroup>
     <pref key="LayoutManager.SplitPaneDividerLocation">
-        <Int>79</Int>
+        <Int>218</Int>
     </pref>
     <prefList key="CommentViewer.Columns.Hidden">
         <String>Sender</String>

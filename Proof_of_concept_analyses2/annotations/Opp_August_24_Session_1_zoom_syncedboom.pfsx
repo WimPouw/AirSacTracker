@@ -2,7 +2,7 @@
 <preferences version="1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/Prefs_v1.1.xsd">
     <pref key="FrameSize">
-        <Object class="java.awt.Dimension">1920,1040</Object>
+        <Object class="java.awt.Dimension">1081,775</Object>
     </pref>
     <pref key="LayoutManager.SelectedTabIndex">
         <Int>0</Int>
@@ -17,7 +17,7 @@
         <Long>0</Long>
     </pref>
     <pref key="LayoutManager.MediaAreaHeight">
-        <Int>602</Int>
+        <Int>276</Int>
     </pref>
     <pref key="SignalViewer.ZoomLevel">
         <Float>1000.0</Float>
@@ -73,16 +73,16 @@
         <String>AAM-LR Phone level audio segmentation</String>
     </pref>
     <pref key="GridViewer.TierName">
-        <String>boom_sequence</String>
+        <String>Intervals</String>
     </pref>
     <pref key="FrameLocation">
-        <Object class="java.awt.Point">0,0</Object>
+        <Object class="java.awt.Point">-7,-7</Object>
     </pref>
     <pref key="TimeLineViewer.ZoomLevel">
         <Float>1000.0</Float>
     </pref>
     <pref key="LayoutManager.AudioSplitPaneDividerLocation">
-        <Int>47</Int>
+        <Int>88</Int>
     </pref>
     <pref key="SelectionBeginTime">
         <Long>0</Long>
@@ -123,7 +123,7 @@
         </pref>
     </prefGroup>
     <pref key="LayoutManager.SplitPaneDividerLocation">
-        <Int>70</Int>
+        <Int>152</Int>
     </pref>
     <prefList key="CommentViewer.Columns.Hidden">
         <String>Sender</String>

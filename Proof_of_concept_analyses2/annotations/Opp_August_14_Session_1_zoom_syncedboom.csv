@@ -1,0 +1,7 @@
+"Begin Time - msec","End Time - msec","boom_sequence","intervals"
+565543,567060,"1",
+565549,565989,,"1_boom"
+566013,566230,,"1_bark"
+566313,566706,,"2_boom"
+566716,567000,,"2_bark"
+

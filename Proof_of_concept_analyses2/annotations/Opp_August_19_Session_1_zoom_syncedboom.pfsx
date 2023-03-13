@@ -2,7 +2,7 @@
 <preferences version="1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/Prefs_v1.1.xsd">
     <pref key="FrameSize">
-        <Object class="java.awt.Dimension">1920,1040</Object>
+        <Object class="java.awt.Dimension">1067,760</Object>
     </pref>
     <pref key="TimeLineViewer.ActiveAnnotationBold">
         <Boolean>true</Boolean>
@@ -26,14 +26,21 @@
         <String>boom_sequence</String>
     </pref>
     <pref key="SelectionEndTime">
-        <Long>1389946</Long>
+        <Long>439259</Long>
     </pref>
     <pref key="LayoutManager.MediaAreaHeight">
-        <Int>576</Int>
+        <Int>172</Int>
+    </pref>
+    <pref key="ExportTabDialog.SelectTiersMode">
+        <String>Tier</String>
     </pref>
     <pref key="SignalViewer.ZoomLevel">
-        <Float>1000.0</Float>
+        <Float>200.0</Float>
     </pref>
+    <prefList key="ExportTabDialog.TierOrder">
+        <String>boom_sequence</String>
+        <String>intervals</String>
+    </prefList>
     <pref key="LayoutManager.CurrentMode">
         <Int>1</Int>
     </pref>
@@ -69,6 +76,10 @@
             <Int>75</Int>
         </pref>
     </prefGroup>
+    <prefList key="ExportTabDialog.selectedTiers">
+        <String>boom_sequence</String>
+        <String>intervals</String>
+    </prefList>
     <prefList key="CommentViewer.Columns.Order">
         <String>Start Time</String>
         <String>End Time</String>
@@ -94,13 +105,13 @@
         <Boolean>true</Boolean>
     </pref>
     <pref key="TimeLineViewer.ZoomLevel">
-        <Float>1000.0</Float>
+        <Float>200.0</Float>
     </pref>
     <pref key="LayoutManager.AudioSplitPaneDividerLocation">
-        <Int>133</Int>
+        <Int>141</Int>
     </pref>
     <pref key="SelectionBeginTime">
-        <Long>1389821</Long>
+        <Long>439011</Long>
     </pref>
     <prefGroup key="AAM-LR Phone level audio segmentation">
         <pref key="base_url">
@@ -115,10 +126,10 @@
         <Float>1.0</Float>
     </pref>
     <pref key="TimeScaleBeginTime">
-        <Long>1389449</Long>
+        <Long>436860</Long>
     </pref>
     <pref key="MediaTime">
-        <Long>1389821</Long>
+        <Long>439011</Long>
     </pref>
     <prefGroup key="TierColors">
         <pref key="intervals">
@@ -141,10 +152,11 @@
         </pref>
     </prefGroup>
     <pref key="LayoutManager.SplitPaneDividerLocation">
-        <Int>145</Int>
+        <Int>243</Int>
     </pref>
     <prefList key="CommentViewer.Columns.Hidden">
         <String>Sender</String>
         <String>Recipient</String>
     </prefList>
+    <prefList key="ExportTabDialog.HiddenTiers"/>
 </preferences>
