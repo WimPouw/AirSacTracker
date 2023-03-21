@@ -41,4 +41,4 @@ for ch in range(0, andata.shape[0]): #now loop through each row of your annotion
     audiogo= os.listdir(audiof)
     myaudio = AudioSegment.from_file(audiof+audiogo[0])
     snipped = myaudio[begintime:endtime]
-    snipped.export(outputfol2+"_"+ID+ "_" + str(ch) +"_" +str(annotlabel)+".wav", format='wav')
+    snipped.export(outputfol2+"_multisource_"+ID+ "_" + str(ch) +"_" +str(annotlabel)+".wav", format='wav')
