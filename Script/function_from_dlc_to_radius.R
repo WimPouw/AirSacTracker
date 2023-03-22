@@ -139,14 +139,13 @@ nose_eye_normalization <- function(auto_data, a = a,  min_frames = 2, threshold_
   
   if(nrow(df_sub_normalization) >= min_frames){  
     
-    distance <- foreach(i= 1:nrow(df_sub_normalization), .combine = c) %do% 
+    distance <- foreach::foreach(i= 1:nrow(df_sub_normalization), .combine = c) %do% 
       euc_dist(df_sub_normalization$EyeBridge_x, df_sub_normalization$Nose_x,
                df_sub_normalization$EyeBridge_y, df_sub_normalization$Nose_y)
   } else {
     distance <- NA
   }
-  #normalization_value[a,] <- c(mean(distance, na.rm = TRUE), list_of_files[a]) 
-  #normalization_value <- c(mean(distance, na.rm = TRUE), list_of_files[a])
+
   norm_data <- mean(distance, na.rm = TRUE)
   return(norm_data)
 }
@@ -159,17 +158,13 @@ from_DLC_to_circle <- function(path, list_of_files){
   z <- c("radius", "frame", "videofile")
   colnames(radius_all) <- z
   
-  #normalization_value_all <- data.frame(matrix(ncol = 2, nrow = 0))
-  #y <- c("normalization_value", "videofile")
-  #colnames(normalization_value_all) <- y
-  
   normalization_value <- data.frame(matrix(ncol = 2, nrow = length(list_of_files)))
   y <- c("normalization_value", "videofile")
   colnames(normalization_value) <- y
   
   ## starting main loop ----
   for (a in 1:length(list_of_files)) {
-    #normalization_value <- data.frame()
+
     radius <- data.frame()
     
     auto_data <- read_delim(paste(path, list_of_files[a], sep = "\\"), delim = "," )
@@ -204,8 +199,6 @@ from_DLC_to_circle <- function(path, list_of_files){
     normalization_value$normalization_value[a] <- nose_eye_normalization(auto_data)
     normalization_value$videofile[a] <- list_of_files[a]
     
-    #normalization_value_all <- rbind(normalization_value_all, normalization_value)
-    
   }
   
   results_I <- list(radius_all, normalization_value)
@@ -213,7 +206,6 @@ from_DLC_to_circle <- function(path, list_of_files){
   
   results$norm_radius <- as.numeric(results$radius)/results$normalization_value
   
-  #results <- left_join(radius_all, normalization_value_all, by = "videofile", multiple = "all")
   return(results)
 }
 
