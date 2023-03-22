@@ -35,7 +35,7 @@ for ch in range(0, andata.shape[0]): #now loop through each row of your annotion
     audioboom = os.listdir(audioboomf)
     myaudio = AudioSegment.from_file(audioboomf+audioboom[0])
     snipped = myaudio[begintime:endtime]
-    snipped.export(outputfol2+"_"+ID+ "_" + str(ch) +"_" +str(annotlabel)+".wav", format='wav')
+    snipped.export(outputfol2+"_boommic_"+ID+ "_" + str(ch) +"_" +str(annotlabel)+".wav", format='wav')
     #exract gopros combined
     audiof = processed_data+'/'+date+'_processed/Session' + session + '/gopros_mics/' #get the video that has a matching code
     audiogo= os.listdir(audiof)
