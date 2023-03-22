@@ -16,7 +16,7 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit", "scales", "spiro", "signal")
+install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
 
 # 01a: load data ----
 
