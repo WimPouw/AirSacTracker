@@ -220,3 +220,7 @@ from_DLC_to_circle <- function(path, list_of_files){
 # 02: running analysis -----
 
 results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
+
+# 03: saving ----
+
+saveRDS(results, file = "DLC_estimated_radii_normalized.rds")
