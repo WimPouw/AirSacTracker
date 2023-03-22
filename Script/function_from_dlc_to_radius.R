@@ -16,7 +16,7 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit", "scales", "spiro", "signal")
+install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
 
 # 01a: load data ----
 
@@ -27,8 +27,8 @@ list_of_files <- list.files(path = path, pattern = pattern)
 # 01b: set parameters, dataframes ----
 
 # DLC tracking likelihood threshold
+
 threshold <- 0.6
-threshold_normalization <- 0.9 
 
 # 01c: functions ----------------
 ## sub function data preparation ----
@@ -107,19 +107,64 @@ data_prep_radius_estim_DLC <- function(data){
   return(circle_format_data)
 }
 
+
+## sub function normalization ----
+
+nose_eye_normalization <- function(auto_data, a = a,  min_frames = 2, threshold_normalization = 0.8){  
+  norm_data <- c()
+  list_normalization_points <- c('Nose_x','Nose_y', 'Nose_likelihood',
+                                 'EyeBridge_x', 'EyeBridge_y', 'EyeBridge_likelihood')
+  
+  colnames <- c()
+  colnames[1] <- "frames"
+  for (x in 2: ncol(auto_data)){
+    colnames[x] <- paste(auto_data[1,x],auto_data[2,x], sep = '_')
+  }
+  
+  colnames(auto_data) <- colnames
+  df <- auto_data[-1:-2,]
+  
+  df_sub <- df %>%
+    select(all_of(list_normalization_points))
+  
+  df_sub <- as.data.frame(apply(df_sub,2,as.numeric))
+  
+  euc_dist <- function(xbridge, xnose, ybridge, ynose){
+    return(sqrt(((xbridge-xnose)^2+((ybridge-ynose)^2))))
+  }
+  
+  df_sub_normalization <- df_sub %>% 
+    dplyr::filter(Nose_likelihood >= threshold_normalization && 
+                    EyeBridge_likelihood >= threshold_normalization)
+  
+  if(nrow(df_sub_normalization) >= min_frames){  
+    
+    distance <- foreach::foreach(i= 1:nrow(df_sub_normalization), .combine = c) %do% 
+      euc_dist(df_sub_normalization$EyeBridge_x, df_sub_normalization$Nose_x,
+               df_sub_normalization$EyeBridge_y, df_sub_normalization$Nose_y)
+  } else {
+    distance <- NA
+  }
+
+  norm_data <- mean(distance, na.rm = TRUE)
+  return(norm_data)
+}
+
 ## complete function ----
+
 from_DLC_to_circle <- function(path, list_of_files){
   
   radius_all <- data.frame(matrix(ncol = 3, nrow = 0))
   z <- c("radius", "frame", "videofile")
   colnames(radius_all) <- z
   
-  normalization_value <- data.frame(matrix(ncol = 2, nrow = 0))
+  normalization_value <- data.frame(matrix(ncol = 2, nrow = length(list_of_files)))
   y <- c("normalization_value", "videofile")
   colnames(normalization_value) <- y
+  
   ## starting main loop ----
   for (a in 1:length(list_of_files)) {
-    
+
     radius <- data.frame()
     
     auto_data <- read_delim(paste(path, list_of_files[a], sep = "\\"), delim = "," )
@@ -148,12 +193,26 @@ from_DLC_to_circle <- function(path, list_of_files){
       colnames(radius) <- z
     }
     
+    print(a)
     radius_all <- rbind(radius_all, radius)
     
+    normalization_value$normalization_value[a] <- nose_eye_normalization(auto_data)
+    normalization_value$videofile[a] <- list_of_files[a]
+    
   }
-  return(radius_all)
+  
+  results_I <- list(radius_all, normalization_value)
+  results <- left_join(results_I[[1]], results_I[[2]], by = "videofile")
+  
+  results$norm_radius <- as.numeric(results$radius)/results$normalization_value
+  
+  return(results)
 }
 
 # 02: running analysis -----
 
 results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
+
+# 03: saving ----
+
+saveRDS(results, file = "DLC_estimated_radii_normalized.rds")
