@@ -30,7 +30,7 @@ for ch in range(0, andata.shape[0]): #now loop through each row of your annotion
     endtime = andata[ch,2] #extract end time
     annotlabel = str(andata[ch,3]) + '_' + str(andata[ch,4])  + '_' + str(andata[ch,5])#extract your annotation
     #now take the video and select the relevant chunk and write to the outputfolder
-    ffmpeg_extract_subclip(videof+video[0], begintime/1000, (endtime/1000), targetname=outputfol+"_"+ID+ "_"+str(ch)+"_" +str(annotlabel)+vidformat)
+    ffmpeg_extract_subclip(videof+video[0], begintime/1000, (endtime/1000), targetname=outputfol+"_"+ID+"_" +str(annotlabel)+vidformat)
     #exract boom
     audioboomf = processed_data+'/'+date+'_processed/Session' + session + '/boom_mic/' #get the video that has a matching code
     audioboom = os.listdir(audioboomf)
