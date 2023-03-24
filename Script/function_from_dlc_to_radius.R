@@ -17,7 +17,7 @@ if (!require(install.load)) {
 library(install.load)
 
 install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
-
+library("foreach")
 # 01a: load data ----
 
 path <- choose.dir()
@@ -215,4 +215,4 @@ results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
 # 03: saving ----
 
-saveRDS(results, file = "DLC_estimated_radii_normalized.rds")
+saveRDS(results, file = "DLC_estimated_radii_normalized_new.rds")

@@ -45,7 +45,7 @@ list_of_files_audio <- list.files(path = path, pattern = pattern)
 
 # 02: setting parameters ------------
 
-fs_video <- 25 #sometimes 50, check how to make dynamic, I think it is noted in the tracking csv
+
 
 # 03: acoustic parameters --------------------
 
@@ -75,6 +75,19 @@ colnames(fund_freq_mean_all) <- z
 
 
 for (a in 1: length(list_of_files_audio)){
+  
+# include if condition for fs video, all August videos have 50, all June videos have 25  
+  if(grepl('June', list_of_files_audio[a], ignore.case = TRUE) == TRUE){
+    
+    fs_video = 25
+      
+  }  else if (grepl('August', list_of_files_audio[a], ignore.case = TRUE) == TRUE){
+    
+    fs_video = 50
+    
+  } 
+
+#      
 formants <- data.frame(matrix(ncol = 3, nrow = 0))
 spec_param <- data.frame(matrix(ncol = 8, nrow = 0))
 fund_freq_mean <- data.frame(matrix(ncol = 3, nrow = 0))
@@ -99,7 +112,7 @@ number_of_subwavs <- as.integer(duration_audio/duration_frame)
 # "splitting audio", to extract acoustic features per snippet matching a video frame
 for (wavsplit in 1:number_of_subwavs){
 
-subwave <- read_wav(wavfilelocation, time_exp = 1, from = audio_split_seq[wavsplit], to = (audio_split_seq[wavsplit]+(duration_frame*2)))
+subwave <- read_wav(wavfilelocation, time_exp = 1, from = audio_split_seq[wavsplit], to = (audio_split_seq[wavsplit]+(duration_frame*4))) # was *2 for video fs 25, changed to *4 for video fs 50, to have same duration?
 
 ## formant spacing ----------------
 
@@ -148,113 +161,52 @@ fund_freq_mean_all <- rbind(fund_freq_mean_all, fund_freq_mean)
 
 }
 
+#acoustic_param <- spec_param_all
 acoustic_param <- left_join(spec_param_all, formants_all, by = c('frame', 'audiofile'))
 acoustic_param <- left_join(acoustic_param, fund_freq_mean_all, by = c('frame', 'audiofile'))
 
+acoustic_param_backup <- acoustic_param
+# 03: combine radius and acoustic parameters-----------------
 
-# 03: radius extraction ------------------
+radius_results <- readRDS('DLC_estimated_radii_meta_data_norm_scaled_2.rds')
 
-# 01: load data II ----------------
-path <- choose.dir()
-pattern <- "csv"
-list_of_files_radius <- list.files(path = path, pattern = pattern)
-
-# maximum radius of video snippets to correlate to formant spacing
-radius_all <- data.frame(matrix(ncol = 3, nrow = 0))
-z <- c("radius", "frame", "videofile")
-colnames(radius_all) <- z
-
-
-for (b in 1: length(list_of_files_radius)){
-  
-  radius <- data.frame()
-  
-  auto_data <- read_delim(paste(path, list_of_files_radius[b], sep = "\\"), delim = "," )
-  
-  # redefine column names to distinct names, delete first two rows with identifiers afterwards
-  colnames <- c()
-  colnames[1] <- "frames"
-  for (x in 2: ncol(auto_data)){
-    colnames[x] <- paste(auto_data[1,x], auto_data[2,x], sep = '_')
-  }
-  
-  colnames(auto_data) <- colnames
-  df_all <- auto_data[-1:-2,]
-  
-  threshold <- 0.6 #threshold for likelihood for DLC tracking of points
-  df <- data.frame(matrix(ncol = 3, nrow = 0))
-  x <- c("x", "y", "likelihood")
-  colnames(df) <- x
-  
-  for (c in 1:nrow(df_all)){
-    
-    #subset DLC results to necessary columns  
-    
-    df_sub <- df_all %>% 
-      select(Start_outline_outer_left_x,Start_outline_outer_left_y, Start_outline_outer_left_likelihood,
-             Start_outline_outer_right_x, Start_outline_outer_right_y, Start_outline_outer_right_likelihood,
-             LowestPoint_outline_x, LowestPoint_outline_y, LowestPoint_outline_likelihood,
-             MidLowleft_outline_x, MidLowleft_outline_y, MidLowleft_outline_likelihood,
-             MidLowright_outline_x, MidLowright_outline_y, MidLowright_outline_likelihood)
-    
-    df_sub <- as.data.frame(apply(df_sub,2,as.numeric))
-    
-    # save DLC points in necessary format to estimate circles
-    
-    for (d in 1:5){
-      end_col <- d*3
-      start_col <- end_col - 2
-      
-      df[d, 1:3] <-  df_sub[c, start_col:end_col]
-    } 
-    
-    # check for likelihood
-    # do we need to make sure, to somehow save information, which points are used? 
-    
-    df_filter <- df %>% 
-      dplyr::filter(likelihood >= threshold)
-  
-  if(nrow(df_filter)>=3){
-  circles_LAN <- CircleFitByLandau(df_filter[,1:2], ParIni = NA, epsilon = 1e-06, IterMAX = 500)
-  } else {
-    circles_LAN <- c(NA, NA, NA)
-  }  
-  circles_res <- c(circles_LAN[3],c, list_of_files_radius[b])
-  
-  radius <- rbind(radius, circles_res)
-  colnames(radius) <- z
-}
-
-  radius_all <- rbind(radius_all, radius)
-  
-}
-
-# interpolate radii
-
-#radius_all_inter <- radius_all %>% 
-#  mutate (radius_inter <- na.approx(radius_all$radius, maxgap = 2))
-
-
-# 04: combine radius and acoustic parameters-----------------
-
-
-filename <- strsplit(radius_all$videofile, split  = "DLC")
+# prepare name for joining for radius results
+filename <- strsplit(radius_results$videofile, split  = "DLC")
 filename <- as.data.frame(matrix(unlist(filename),ncol=2,byrow=T))
 
-radius_all <- radius_all %>% 
-  mutate(audiofile = filename[,1],
-         radius = as.numeric(radius)) %>% 
-  select(radius, frame, audiofile)
+radius_results$audiofile <- filename[,1]
 
+# prepare name & micorphone ID column for joining for acoustic results
+
+for (b in 1:nrow(acoustic_param)){
+  
+  if(grepl('boommic', acoustic_param$audiofile[b], ignore.case = TRUE) == TRUE){
+    
+    acoustic_param$mic[b] = 'boommic'
+    
+  }  else if (grepl('multisource', acoustic_param$audiofile[b], ignore.case = TRUE) == TRUE){
+    
+    acoustic_param$mic[b] = 'multisource'
+    
+  }
+}
+
+
+filename_audio <- strsplit(acoustic_param$audiofile, split = "multisource")
+filename_audio <- as.data.frame(matrix(unlist(filename_audio),ncol=2,byrow=T))
+filename_audio <- strsplit(filename_audio$V2, split = "boommic")
+filename_audio <- as.data.frame(matrix(unlist(filename_audio),ncol=2,byrow=T))
+
+acoustic_param$audiofile <- filename_audio[,2]
 
 # only run the following 2 lines once per analysis!
 #acoustic_param <- acoustic_param %>% 
 #  mutate(audiofile = substring(audiofile, 1, nchar(audiofile)-4))
 
-comparison <- left_join(radius_all, acoustic_param, by = c('frame', 'audiofile'))
+comparison_fs <- plyr::join(radius_results, acoustic_param, by= c("audiofile", "frame"), type="left", match="first")
 
 # correlation matrix
-comparison_numeric_full <- comparison %>% 
+comparison_numeric_full_fs <- comparison_fs %>% 
 #comparison_numeric <- comparison %>% 
   #select(-audiofile, -frame) %>% 
   mutate(ampl_mean = as.numeric(ampl_mean),
@@ -263,14 +215,15 @@ comparison_numeric_full <- comparison %>%
          entropy_mean = as.numeric(entropy_mean),
          f1_freq_mean = as.numeric(f1_freq_mean),
          f2_freq_mean = as.numeric(f2_freq_mean),
-         formant_spacing = as.numeric(formant_spacing),
-         fundamental_mean = as.numeric(fundamental_mean)*1000,      #fundamental frequency is given in kHz, transform to Hertz
+         #formant_spacing = as.numeric(formant_spacing),
+         #fundamental_mean = as.numeric(fundamental_mean)*1000,      #fundamental frequency is given in kHz, transform to Hertz
          duration_noSilence = as.numeric(duration_noSilence),
-         ampl_mean_noSilence = as.numeric(ampl_mean_noSilence))
+         ampl_mean_noSilence = as.numeric(ampl_mean_noSilence),
+         radius = as.numeric(radius))
 
 #saving comparison for use in other scripts, etc.
 # full dataframe, including frame and videofile/audiofile name
-saveRDS(comparison_numeric_full,'radius_acoustic_param_comparison_2.rds')
+saveRDS(comparison_numeric_full,'radius_acoustic_param_comparison_proof_Concept_1_fs.rds')
 
 
 
