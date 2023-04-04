@@ -33,6 +33,13 @@ library(corrplot)
 library(Hmisc)
 library(seewave)  # fundamental frequency estimation
 
+# 00b: functions -----
+
+
+high_pass <- function(x, samplingrate, order, highpasscutoff)
+{bf <- butter(order,highpasscutoff/samplingrate, type="high") #normalized frequency
+x <<- as.numeric(signal::filtfilt(bf, x))} 
+
 # 01: load data I------------------------------
 
 # set path to wav file source location
@@ -80,11 +87,12 @@ for (a in 1: length(list_of_files_audio)){
   if(grepl('June', list_of_files_audio[a], ignore.case = TRUE) == TRUE){
     
     fs_video = 25
+    frame_factor = 2
       
   }  else if (grepl('August', list_of_files_audio[a], ignore.case = TRUE) == TRUE){
     
     fs_video = 50
-    
+    frame_factor = 4
   } 
 
 #      
@@ -100,6 +108,8 @@ fs_audio <- wav@samp.rate
 samples <- length(wav@left)
 duration_audio <- length(wav@left)/wav@samp.rate
 
+
+
 # audio smaples per video frame, to cut wav file into snipptes matching video frames
 audio_samples_per_frame <- fs_audio * (1/fs_video)
 duration_frame <- 1/fs_video
@@ -112,7 +122,11 @@ number_of_subwavs <- as.integer(duration_audio/duration_frame)
 # "splitting audio", to extract acoustic features per snippet matching a video frame
 for (wavsplit in 1:number_of_subwavs){
 
-subwave <- read_wav(wavfilelocation, time_exp = 1, from = audio_split_seq[wavsplit], to = (audio_split_seq[wavsplit]+(duration_frame*4))) # was *2 for video fs 25, changed to *4 for video fs 50, to have same duration?
+subwave <- read_wav(wavfilelocation, time_exp = 1, from = audio_split_seq[wavsplit], to = (audio_split_seq[wavsplit]+(duration_frame*frame_factor))) # was *2 for video fs 25, changed to *4 for video fs 50, to have same duration?
+
+# only use for bark analysis, comment out otherwise 
+subwave <- high_pass(subwave, samplingrate = fs_video, order = 2, highpasscutoff = 300)
+  
 
 ## formant spacing ----------------
 
@@ -215,15 +229,15 @@ comparison_numeric_full_fs <- comparison_fs %>%
          entropy_mean = as.numeric(entropy_mean),
          f1_freq_mean = as.numeric(f1_freq_mean),
          f2_freq_mean = as.numeric(f2_freq_mean),
-         #formant_spacing = as.numeric(formant_spacing),
-         #fundamental_mean = as.numeric(fundamental_mean)*1000,      #fundamental frequency is given in kHz, transform to Hertz
+         formant_spacing = as.numeric(formant_spacing),
+         fundamental_mean = as.numeric(fundamental_mean)*1000,      #fundamental frequency is given in kHz, transform to Hertz
          duration_noSilence = as.numeric(duration_noSilence),
          ampl_mean_noSilence = as.numeric(ampl_mean_noSilence),
          radius = as.numeric(radius))
 
 #saving comparison for use in other scripts, etc.
 # full dataframe, including frame and videofile/audiofile name
-saveRDS(comparison_numeric_full,'radius_acoustic_param_comparison_proof_Concept_1_fs.rds')
+saveRDS(comparison_numeric_full_fs,'radius_acoustic_param_comparison_proof_Concept_1_fs.rds')
 
 
 
