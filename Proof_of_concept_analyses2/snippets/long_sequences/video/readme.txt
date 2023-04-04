@@ -1,1 +1,1 @@
-The original video data is not included in this github as they exceed 100mb. 
+The original video data is not included in this github as they exceed 100mb. So we decompressed them to be a lower size.
