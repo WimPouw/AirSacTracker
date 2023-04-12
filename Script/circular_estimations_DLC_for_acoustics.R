@@ -17,6 +17,7 @@ if (!require(install.load)) {
 library(install.load)
 
 install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
+library("foreach")
 
 # 01a: load data ----
 
@@ -274,8 +275,6 @@ for (b in 1:nrow(results)){
   
 }
 
-
-# 04b: post-processing II: add re-scaled radius ---- 
 
 results <- results %>% 
   group_by(videofile) %>% 

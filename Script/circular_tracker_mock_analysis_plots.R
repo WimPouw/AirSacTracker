@@ -24,60 +24,51 @@ library(cowplot)
 # 01: load data ----
 # comparison datasheet including both microphone versions (boom & multisource)
 
-comparison <- readRDS('radius_acoustic_param_comparison_proof_Concept_1_corrected.rds')
-# sound source: 4 go pros microphone
-#comparison_data_new <- readRDS('radius_acoustic_param_comparison_proof_Concept_1.rds')
-
-#sound source: boom? 
-comparison_data_old <- readRDS('radius_acoustic_param_comparison_2.rds')
-#comparison_data <- readRDS('radius_acoustic_param_comparison_scaled.rds')
+comparison_proof_1_all <- readRDS('radius_acoustic_param_comparison_proof_Concept_1_fs_all_files_double_check.rds')
 
 # 02: data preparations ----
 
 ## radii > 400 are unlikely to be correct and are therefore deleted
-comparison_data_fs_filtered <- comparison_numeric_full_fs %>% 
+
+comparison_filtered <- comparison_proof_1_all %>%
+  #mutate(volume_kilopixel = ((4/3) * pi * comparison$radius^3)/1000) %>%
+  #dplyr::filter(radius < 350 & radius > 50)
   dplyr::filter(radius < 400)
 
+# split into mics
 
+comparison_boom <- comparison_filtered %>% 
+  dplyr::filter(mic == "boommic")
 
-comparison_filtered <- comparison %>% 
-  dplyr::filter(radius < 400)
-
-# split into two microphone groupes
-# grouped_mic_data <- comparison_boom_multisource_filtered %>%
-#   group_by(mic, .add = TRUE) %>% 
-#   group_split(mic)
-# 
-# 
-# boom_mic <- grouped_mic_data[[1]]
-# multisource <- grouped_mic_data[[2]]
-
+comparison_multi <- comparison_filtered %>% 
+  dplyr::filter(mic == "multisource")
 
 ## for correlation matrix we need a matrix only containing numeric variables
 
-comparison_data_old_filtered_numeric <- comparison_data_Old_filtered %>% 
-  ungroup() %>% 
-  select(-audiofile, -frame, -sex) 
+#data_fs_filtered_numeric <- comparison_filtered %>% 
+#  ungroup() %>% 
+#  select(-audiofile, -frame, -videofile, -sex, - ID, - index) 
 
 
-data_fs_filtered_numeric <- comparison_data_fs_filtered %>% 
+boom_filtered_numeric <- comparison_boom %>% 
   ungroup() %>% 
-  select(-audiofile, -frame, -videofile, -sex, - ID, - index) 
+  select(-audiofile, -frame, -videofile, -sex, - ID, - index, -mic, -match) 
+
+multi_filtered_numeric <- comparison_multi %>% 
+  ungroup() %>% 
+  select(-audiofile, -frame, -videofile, -sex, - ID, - index, -mic, -match)
 
 # 03: correlation matrix ----
 
-cor_all_old <- cor(comparison_data_old_filtered_numeric)
-cor_all_Old_2 <-rcorr(as.matrix(comparison_data_old_filtered_numeric))
-
-cor_all <- cor(data_fs_filtered_numeric)
-cor_all_2 <-rcorr(as.matrix(data_fs_filtered_numeric))
+cor_all <- cor(boom_filtered_numeric)
+cor_all_2 <-rcorr(as.matrix(boom_filtered_numeric))
 
 #correlation plot, show all
 corrplot(cor_all_2$r, type = "upper", order = "hclust", 
          tl.col = "black", tl.srt = 45)
 
 #correlation plot, only show significant correlations
-corrplot(cor_all_2$r, type="lower", order="hclust", 
+corrplot(cor_all_2$r, type="upper", order="hclust", 
          p.mat = cor_all_2$P, sig.level = 0.05, insig = "blank", diag = FALSE)
 
 # 04: individual plots ----
@@ -86,10 +77,9 @@ corrplot(cor_all_2$r, type="lower", order="hclust",
 
 ## amplitude mean - sex
 
-#scatter_ampl_mean <- comparison_data_filtered %>%
-scatter_ampl_mean <- comparison_data_fs_filtered %>% 
-  #dplyr::filter(sex == "m") %>% 
-  ggplot(aes(y = ampl_mean, x = norm_radius, fill = sex, color = sex))+
+scatter_ampl_mean <- comparison_boom %>% 
+  #ggplot(aes(y = ampl_mean, x = radius, fill = sex, color = sex))+
+  ggplot(aes(y = ampl_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean Amplitude')+
@@ -104,10 +94,8 @@ scatter_ampl_mean <- comparison_data_fs_filtered %>%
 
 ## amplitude mean - ID
 
-scatter_ampl_mean_ID <- comparison_data_fs_filtered %>%
-  #dplyr::filter(sex == "m") %>% 
-  #ggplot(aes(y = ampl_mean, x = radius, fill = ID, color = ID))+
-  ggplot(aes(y = ampl_mean, x = norm_radius, fill = ID, color = ID))+
+scatter_ampl_mean_ID <- comparison_filtered %>%
+  ggplot(aes(y = ampl_mean, x = radius, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean Amplitude')+
@@ -119,8 +107,8 @@ scatter_ampl_mean_ID <- comparison_data_fs_filtered %>%
 
 ## entropy mean -sex
 
-scatter_entropy_mean <- comparison_data_fs_filtered %>%
-  ggplot(aes(y = entropy_mean, x = norm_radius, fill = sex, color = sex))+
+scatter_entropy_mean <- comparison_filtered %>%
+  ggplot(aes(y = entropy_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean Entropy')+
@@ -130,9 +118,9 @@ scatter_entropy_mean <- comparison_data_fs_filtered %>%
   theme(legend.position = 'none')
 
 ## entropy mean - ID
-scatter_entropy_mean_ID <- comparison_data_fs_filtered %>%
+scatter_entropy_mean_ID <- comparison_filtered %>%
   #ggplot(aes(y = entropy_mean, x = radius, fill = ID, color = ID))+
-  ggplot(aes(y = entropy_mean, x = norm_radius, fill = ID, color = ID))+
+  ggplot(aes(y = entropy_mean, x = radius, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean Entropy')+
@@ -143,8 +131,8 @@ scatter_entropy_mean_ID <- comparison_data_fs_filtered %>%
 
 ## dominant frequency mean - sex
 
-scatter_dom_mean <- comparison_data_fs_filtered %>%
-  ggplot(aes(y = dom_mean, x = norm_radius, fill = sex, color = sex))+
+scatter_dom_mean <- comparison_filtered %>%
+  ggplot(aes(y = dom_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Dominant Frequency mean [Hz]')+
@@ -155,8 +143,8 @@ scatter_dom_mean <- comparison_data_fs_filtered %>%
 
 ## dominant frequency mean - ID
 
-scatter_dom_mean_ID <- comparison_data_fs_filtered %>%
-  ggplot(aes(y = dom_mean, x = norm_radius, fill = ID, color = ID))+
+scatter_dom_mean_ID <- comparison_filtered %>%
+  ggplot(aes(y = dom_mean, x = radius, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Dominant Frequency mean [Hz]')+
@@ -167,8 +155,8 @@ scatter_dom_mean_ID <- comparison_data_fs_filtered %>%
 
 ## spectral Centroid mean - sex
 
-scatter_spec_Centroid <- comparison_data_fs_filtered %>%
-  ggplot(aes(y = specCentroid_mean, x = norm_radius, fill = sex, color = sex))+
+scatter_spec_Centroid <- comparison_filtered %>%
+  ggplot(aes(y = specCentroid_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Spectral Centroid Mean')+
@@ -178,8 +166,8 @@ scatter_spec_Centroid <- comparison_data_fs_filtered %>%
 
 ## spectral Centroid mean - ID
 
-scatter_spec_Centroid_ID <- comparison_data_fs_filtered %>%
-  ggplot(aes(y = specCentroid_mean, x = norm_radius, fill = ID, color = ID))+
+scatter_spec_Centroid_ID <- comparison_filtered %>%
+  ggplot(aes(y = specCentroid_mean, x = radius, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Spectral Centroid Mean')+
@@ -189,8 +177,8 @@ scatter_spec_Centroid_ID <- comparison_data_fs_filtered %>%
 
 ## fundamental frequcny mean - sex
 
-scatter_f0 <- comparison_data_fs_filtered %>%
-  ggplot(aes(y = fundamental_mean, x = norm_radius, fill = sex, color = sex))+
+scatter_f0 <- comparison_filtered %>%
+  ggplot(aes(y = fundamental_mean, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Fundamental [Hz]')+
@@ -201,8 +189,8 @@ scatter_f0 <- comparison_data_fs_filtered %>%
 
 ## fundamental frequcny mean - ID
 
-scatter_f0_ID <- comparison_data_fs_filtered %>%
-  ggplot(aes(y = fundamental_mean, x = norm_radius, fill = ID, color = ID))+
+scatter_f0_ID <- comparison_filtered %>%
+  ggplot(aes(y = fundamental_mean, x = radius, fill = ID, color = ID))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Fundamental [Hz]')+

@@ -164,8 +164,7 @@ from_DLC_to_circle <- function(path, list_of_files){
   
   ## starting main loop ----
   for (a in 1:length(list_of_files)) {
-
-    radius <- data.frame()
+     radius <- data.frame()
     
     auto_data <- read_delim(paste(path, list_of_files[a], sep = "\\"), delim = "," )
     
@@ -178,6 +177,7 @@ from_DLC_to_circle <- function(path, list_of_files){
     
     for(n in 1:length(grouped_data_circle_estimation)){
       
+      if (length(grouped_data_circle_estimation) > 0){
       frame_data <- as.data.frame(grouped_data_circle_estimation[[n]])
       
       if(nrow(frame_data)>=3){
@@ -191,8 +191,13 @@ from_DLC_to_circle <- function(path, list_of_files){
       
       radius <- rbind(radius, circles_res)
       colnames(radius) <- z
-    }
+      } else {circles_LAN <- c(NA, NA, NA)
     
+      circles_res <- c(circles_LAN[3],n, list_of_files[a])
+      
+      radius <- rbind(radius, circles_res)
+      colnames(radius) <- z}
+    }
     print(a)
     radius_all <- rbind(radius_all, radius)
     
@@ -215,4 +220,4 @@ results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
 # 03: saving ----
 
-saveRDS(results, file = "DLC_estimated_radii_normalized_new.rds")
+saveRDS(results, file = "proof_2_boom_DLC_estimated_radii_normalized_new.rds")

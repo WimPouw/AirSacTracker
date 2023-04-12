@@ -32,12 +32,13 @@ library(zoo)      # na approximation
 library(corrplot)
 library(Hmisc)
 library(seewave)  # fundamental frequency estimation
+library(signal)
 
 # 00b: functions -----
 
 
 high_pass <- function(x, samplingrate, order, highpasscutoff)
-{bf <- butter(order,highpasscutoff/samplingrate, type="high") #normalized frequency
+{bf <- butter(order,highpasscutoff/samplingrate, type="stop") #normalized frequency
 x <<- as.numeric(signal::filtfilt(bf, x))} 
 
 # 01: load data I------------------------------
@@ -69,11 +70,12 @@ list_of_files_audio <- list.files(path = path, pattern = pattern)
 # 02a: acoustic analysis ---------------
 
 formants_all <- data.frame(matrix(ncol = 3, nrow = 0))
-spec_param_all <- data.frame(matrix(ncol = 10, nrow = 0))
+spec_param_all <- data.frame(matrix(ncol = 12, nrow = 0))
 fund_freq_mean_all <- data.frame(matrix(ncol = 3, nrow = 0))
 x <- c("formant_spacing", "frame", "audiofile")
-y <- c("ampl_mean","specCentroid_mean","dom_mean","entropy_mean",
-       "f1_freq_mean","f2_freq_mean", "duration_noSilence", "ampl_mean_noSilence",
+y <- c("ampl_mean","specCentroid_mean","dom_mean","entropyWi_mean",
+       "f1_freq_mean","f2_freq_mean", "duration_noSilence", "ampl_mean_noSilence","peakfreq_mean",
+       "entropySh_mean",
        "frame", "audiofile")
 z <- c("fundamental_mean", "frame", "audiofile")
 colnames(formants_all) <- x
@@ -125,12 +127,13 @@ for (wavsplit in 1:number_of_subwavs){
 subwave <- read_wav(wavfilelocation, time_exp = 1, from = audio_split_seq[wavsplit], to = (audio_split_seq[wavsplit]+(duration_frame*frame_factor))) # was *2 for video fs 25, changed to *4 for video fs 50, to have same duration?
 
 # only use for bark analysis, comment out otherwise 
-subwave <- high_pass(subwave, samplingrate = fs_video, order = 2, highpasscutoff = 300)
+#subwave_left <- high_pass(subwave@left, samplingrate = fs_audio, order = 1, highpasscutoff = 400)
   
 
 ## formant spacing ----------------
 
 spectrum <- phonTools::findformants(subwave@left, fs =subwave@samp.rate,showrejected = FALSE,verify = FALSE)
+#spectrum <- phonTools::findformants(subwave_left, fs =subwave@samp.rate,showrejected = FALSE,verify = FALSE) # this line for filtered data 
 formant_spacing <- mean(diff(spectrum$formant[1:5])) 
 
 formant_spacing_res <- c(formant_spacing, wavsplit, list_of_files_audio[a])
@@ -141,7 +144,7 @@ colnames(formants) <- x
 
 ## fundamental frequency
 
-fund_freq <- fund(subwave, wl = 512, ovlp = 50, fmax = 1000) #if no fmax is defined, no fundamental is found, we know the boom is around ~200 Hz, so 1000 is still a very conservative limit
+fund_freq <- fund(subwave, wl = 512, ovlp = 50, fmax = 1000, plot = FALSE) #if no fmax is defined, no fundamental is found, we know the boom is around ~200 Hz, so 1000 is still a very conservative limit
 fund_freq <- as.data.frame(fund_freq)
 
 fund_freq_mean_loop <- c(mean(fund_freq$y, na.rm = TRUE), wavsplit, list_of_files_audio[a]) #as we are using short audio snippets to match to video frames, we take the mean per video frame
@@ -161,6 +164,7 @@ spec_param_vector <- c(spec_param_list$summary$ampl_mean, spec_param_list$summar
                        spec_param_list$summary$dom_mean, spec_param_list$summary$entropy_mean,
                        spec_param_list$summary$f1_freq_mean, spec_param_list$summary$f2_freq_mean,
                        spec_param_list$summary$duration_noSilence, spec_param_list$summary$ampl_noSilence_mean,
+                       spec_param_list$summary$peakFreq_mean,spec_param_list$summary$entropySh_mean,
                        wavsplit, list_of_files_audio[a] )
 
 spec_param <- rbind(spec_param, spec_param_vector)
@@ -176,8 +180,11 @@ fund_freq_mean_all <- rbind(fund_freq_mean_all, fund_freq_mean)
 }
 
 #acoustic_param <- spec_param_all
-acoustic_param <- left_join(spec_param_all, formants_all, by = c('frame', 'audiofile'))
-acoustic_param <- left_join(acoustic_param, fund_freq_mean_all, by = c('frame', 'audiofile'))
+#acoustic_param <- left_join(spec_param_all, formants_all, by = c('frame', 'audiofile'))
+#acoustic_param <- left_join(acoustic_param, fund_freq_mean_all, by = c('frame', 'audiofile'))
+
+acoustic_param <- plyr::join(spec_param_all, formants_all, by= c("audiofile", "frame"), type="left", match="first")
+acoustic_param <- plyr::join(acoustic_param_test, fund_freq_mean_all, by= c("audiofile", "frame"), type="left", match="first")
 
 acoustic_param_backup <- acoustic_param
 # 03: combine radius and acoustic parameters-----------------
@@ -188,7 +195,7 @@ radius_results <- readRDS('DLC_estimated_radii_meta_data_norm_scaled_2.rds')
 filename <- strsplit(radius_results$videofile, split  = "DLC")
 filename <- as.data.frame(matrix(unlist(filename),ncol=2,byrow=T))
 
-radius_results$audiofile <- filename[,1]
+radius_results$match <- filename[,1]
 
 # prepare name & micorphone ID column for joining for acoustic results
 
@@ -211,13 +218,13 @@ filename_audio <- as.data.frame(matrix(unlist(filename_audio),ncol=2,byrow=T))
 filename_audio <- strsplit(filename_audio$V2, split = "boommic")
 filename_audio <- as.data.frame(matrix(unlist(filename_audio),ncol=2,byrow=T))
 
-acoustic_param$audiofile <- filename_audio[,2]
+acoustic_param$match <- filename_audio[,2]
 
 # only run the following 2 lines once per analysis!
 #acoustic_param <- acoustic_param %>% 
-#  mutate(audiofile = substring(audiofile, 1, nchar(audiofile)-4))
+#  plyr::mutate(match = substring(match, 1, nchar(match)-4))
 
-comparison_fs <- plyr::join(radius_results, acoustic_param, by= c("audiofile", "frame"), type="left", match="first")
+comparison_fs <- plyr::join(radius_results, acoustic_param, by= c("match", "frame"), type="left", match="first")
 
 # correlation matrix
 comparison_numeric_full_fs <- comparison_fs %>% 
@@ -226,18 +233,21 @@ comparison_numeric_full_fs <- comparison_fs %>%
   mutate(ampl_mean = as.numeric(ampl_mean),
          specCentroid_mean = as.numeric(specCentroid_mean),
          dom_mean = as.numeric(dom_mean),
-         entropy_mean = as.numeric(entropy_mean),
+         entropyWi_mean = as.numeric(entropyWi_mean),
          f1_freq_mean = as.numeric(f1_freq_mean),
          f2_freq_mean = as.numeric(f2_freq_mean),
          formant_spacing = as.numeric(formant_spacing),
          fundamental_mean = as.numeric(fundamental_mean)*1000,      #fundamental frequency is given in kHz, transform to Hertz
          duration_noSilence = as.numeric(duration_noSilence),
          ampl_mean_noSilence = as.numeric(ampl_mean_noSilence),
-         radius = as.numeric(radius))
+         radius = as.numeric(radius),
+         peakfreq_mean = as.numeric(peakfreq_mean),
+         entropySh_mean = as.numeric(entropySh_mean)
+         )
 
 #saving comparison for use in other scripts, etc.
 # full dataframe, including frame and videofile/audiofile name
-saveRDS(comparison_numeric_full_fs,'radius_acoustic_param_comparison_proof_Concept_1_fs.rds')
+saveRDS(comparison_numeric_full_fs,'radius_acoustic_param_comparison_proof_Concept_1_fs_all_files_double_check.rds')
 
 
 
