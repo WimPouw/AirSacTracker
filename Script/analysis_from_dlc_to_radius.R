@@ -1,12 +1,11 @@
-# functions to get circle (i.e. radius) estimations from DLC trackings 
-# automatically estimate circles for all DLC tracking datafiles
+# batch processing: automatically estimate circles for all DLC tracking datafiles
 # of interest for subsequent analysis and comparison of radii with acoustic parameters
-# with Landau circle estimation
 
 # Manuscript: A toolkit for the dynamic study of spherical biological objects
 # author: Dr. Lara S. Burchardt
 # start point: folder with DLC trackings in csv format
-# end point: circle estimations per frames of all videos chosen, structure: radius, frame, videofile
+# end point: circle estimations for all frames of all files chosen plus project relevant
+# additional information like sex, individual ID
 
 ############
 
@@ -20,6 +19,7 @@ library(install.load)
 
 install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
 library("foreach")
+
 # 01a: load data ----
 
 path <- choose.dir()
@@ -29,7 +29,6 @@ list_of_files <- list.files(path = path, pattern = pattern)
 # 01b: set parameters, dataframes ----
 
 # DLC tracking likelihood threshold
-
 threshold <- 0.6
 
 # 01c: functions ----------------
@@ -84,6 +83,7 @@ data_prep_radius_estim_DLC <- function(data){
   ## 01b: main ----
   
   # list of columns needed for circle estimation used later in function
+  # column names come from DLC output
   list_airsac_points <- c('Start_outline_outer_left_x','Start_outline_outer_left_y', 'Start_outline_outer_left_likelihood',
                           'Start_outline_outer_right_x', 'Start_outline_outer_right_y', 'Start_outline_outer_right_likelihood',
                           'LowestPoint_outline_x', 'LowestPoint_outline_y', 'LowestPoint_outline_likelihood',
@@ -111,6 +111,8 @@ data_prep_radius_estim_DLC <- function(data){
 
 
 ## sub function normalization ----
+# the nose-eyebridge-normalization does not always work, but is added to the results as an option
+# for normalization if suitable
 
 nose_eye_normalization <- function(auto_data, a = a,  min_frames = 2, threshold_normalization = 0.8){  
   norm_data <- c()
@@ -141,7 +143,7 @@ nose_eye_normalization <- function(auto_data, a = a,  min_frames = 2, threshold_
   
   if(nrow(df_sub_normalization) >= min_frames){  
     
-    distance <- foreach::foreach(i= 1:nrow(df_sub_normalization), .combine = c) %do% 
+    distance <- foreach(i= 1:nrow(df_sub_normalization), .combine = c) %do% 
       euc_dist(df_sub_normalization$EyeBridge_x, df_sub_normalization$Nose_x,
                df_sub_normalization$EyeBridge_y, df_sub_normalization$Nose_y)
   } else {
@@ -166,7 +168,8 @@ from_DLC_to_circle <- function(path, list_of_files){
   
   ## starting main loop ----
   for (a in 1:length(list_of_files)) {
-     radius <- data.frame()
+   
+    radius <- data.frame()
     
     auto_data <- read_delim(paste(path, list_of_files[a], sep = "\\"), delim = "," )
     
@@ -179,7 +182,6 @@ from_DLC_to_circle <- function(path, list_of_files){
     
     for(n in 1:length(grouped_data_circle_estimation)){
       
-      if (length(grouped_data_circle_estimation) > 0){
       frame_data <- as.data.frame(grouped_data_circle_estimation[[n]])
       
       if(nrow(frame_data)>=3){
@@ -193,13 +195,8 @@ from_DLC_to_circle <- function(path, list_of_files){
       
       radius <- rbind(radius, circles_res)
       colnames(radius) <- z
-      } else {circles_LAN <- c(NA, NA, NA)
-    
-      circles_res <- c(circles_LAN[3],n, list_of_files[a])
-      
-      radius <- rbind(radius, circles_res)
-      colnames(radius) <- z}
     }
+    
     print(a)
     radius_all <- rbind(radius_all, radius)
     
@@ -212,15 +209,74 @@ from_DLC_to_circle <- function(path, list_of_files){
   results <- left_join(results_I[[1]], results_I[[2]], by = "videofile")
   
   results$norm_radius <- as.numeric(results$radius)/results$normalization_value
-  
+
   return(results)
 }
+
+## smoothing function for post-processing
+
+butter.it <- function(x, samplingrate, order, lowpasscutoff)
+{bf <- butter(order,lowpasscutoff/samplingrate, type="low") #normalized frequency
+x <<- as.numeric(signal::filtfilt(bf, x))} 
 
 # 02: running analysis -----
 
 results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
 # 03: saving ----
+
+saveRDS(results, file = "DLC_estimated_radii_normalized.rds")
+
+# 04a: post-processing I: adding meta-data, sex + ID ----
+
+# adding column with information on sex
+index_female <- grep('Pelangi', results$videofile)
+results$index <- 1:nrow(results)
+
+for(a in 1: nrow(results)){
+  if(results$index[a] %in% index_female == TRUE){
+    
+    results$sex[a] = 'f'
+    
+  } else {
+    
+    results$sex[a] = 'm'
+    
+  }
+}
+
+# names: fajar, baju, roger, pelangi
+for (b in 1:nrow(results)){
+  
+  if(grepl('Pelangi', results$videofile[b], ignore.case = TRUE) == TRUE){
+    
+    results$ID[b] = 'Pelangi'
+    
+  }  else if (grepl('Fajar', results$videofile[b], ignore.case = TRUE) == TRUE){
+    
+    results$ID[b] = 'Fajar'
+    
+  } else if (grepl('Baju', results$videofile[b], ignore.case = TRUE) == TRUE){
+    
+    results$ID[b] = 'Baju'
+    
+  } else if (grepl('Roger', results$videofile[b], ignore.case = TRUE) == TRUE){
+    
+    results$ID[b] = 'Roger'
+    
+  } else {
+    
+    results$ID[b] = 'NA'
+  }
+  
+}
+
+results <- results %>% 
+  group_by(videofile) %>% 
+  mutate(radius_scaled = scales::rescale(as.numeric(radius, to = c(0,1))))
+
+# 05: saving data ----
 savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
-#saveRDS(results, file = "proof_2_boom_DLC_estimated_radii_normalized_new.rds")
 saveRDS(results, file = savename)
+#saveRDS(results, file = "DLC_estimated_radii_meta_data_norm_scaled_2.rds")
+
