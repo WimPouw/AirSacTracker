@@ -108,7 +108,10 @@ spec_param_all <- spec_param_all %>%
 
 acoustic_param <- plyr::join(spec_param_all, fund_freq_mean_all, by= c("audiofile", "frame"), type="left", match="first")
 
-acoustic_param_backup <- acoustic_param
 
-return(datasheet_with_acoustic_features_per_audio_and_frame)
+return(acoustic_param)
 }
+
+# 03 main, using function ----
+
+results <- acoustic_analysis(path, pattern)
