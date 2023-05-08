@@ -21,7 +21,7 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse", "effsize", "psych", "signal", "foreach", "kza")
+install_load("tidyverse", "effsize", "psych", "signal", "foreach", "kza", "plyr")
 
 # 01a: functions ----
 
@@ -38,6 +38,7 @@ manual_radius <- read_delim("manually_tracked_airsac_radii.csv", delim = ',')
 
 # we need the corresponding dlc radii
 
+# where does this come from? result of from dlc to circle?
 dlc_radius <- readRDS("dlc_for_comparison_to_manualtracks.rds")
 
 # hough data is not just a single datafile, which is why it is loaded in a loop later
@@ -112,7 +113,8 @@ colnames(df) <- c("videoname", "cor_radius","cor_radius_smoothed_kol", "cor_x", 
   #                "alpha","beta","thresh_div1","thresh_div2","dilation",
   #                "medianblur", "nr_frames_used", "nr_frames_in_video")
 
-# saved every of the 5 best examples in a seperate dataframe df_exp1, df_exp2 and so on
+# saved every of the 5 best examples in a seperate dataframe df_exp1, df_exp2 and so on by renaming the resulting df
+# of former step by df_exp1 etc. corresponidng to data
 
 df_full<- rbind(df_exp1, df_exp2, df_exp3, df_exp4, df_exp5)
 
@@ -122,7 +124,7 @@ write.table(df_full, "hough_vs_manuallytracked_radii_correlation_all_parameter_c
 # combine correlation grouped by parameter combination and grouped by video for statistics to report in manuscript
 
 correlation_per_video <- df_full %>% 
-  group_by(videoname) %>%                            
+  dplyr::group_by(videoname) %>%                            
   summarise(mean_cor_sm = mean(cor_radius_smoothed_kol), median_cor_sm = median(cor_radius_smoothed_kol),
             min_cor_sm = min(cor_radius_smoothed_kol), max_cor_sm = max(cor_radius_smoothed_kol),
             mean_cor = mean(cor_radius, na.rm = TRUE ), median_cor = median(cor_radius, na.rm = TRUE),
@@ -130,92 +132,20 @@ correlation_per_video <- df_full %>%
 
 # per example 
 correlation_per_setting <- df_full %>% 
-  group_by(example_nr) %>%                            
+  dplyr::group_by(example_nr) %>%                            
   summarise(mean_cor_sm = mean(cor_radius_smoothed_kol), median_cor_sm = median(cor_radius_smoothed_kol),
             min_cor_sm = min(cor_radius_smoothed_kol), max_cor_sm = max(cor_radius_smoothed_kol),
             mean_cor = mean(cor_radius, na.rm = TRUE ), median_cor = median(cor_radius, na.rm = TRUE),
-            min_cor = min(cor_radius, na.rm = TRUE), max_cor = max(cor_radius, na.rm = TRUE)) 
-# reported in manuscript are: mean/sd/min/max of the max_cor and max_cor_sm, to indicate variability between videos 
-# max_cor and max_cor_sm are indicative of best parameter combination per video 
+            min_cor = min(cor_radius, na.rm = TRUE), max_cor = max(cor_radius, na.rm = TRUE), .groups = 'drop') 
 
-best_combos_all <- df %>% 
-  group_by(alpha, beta, thresh_div1, thresh_div2, dilation, medianblur) %>%                            
-  summarise(mean_cor_sm = mean(cor_radius_smoothed), median_cor_sm = median(cor_radius_smoothed),
-            min_cor_sm = min(cor_radius_smoothed), max_cor_sm = max(cor_radius_smoothed),
-            sd_cor_sm = sd(cor_radius_smoothed, na.rm = TRUE), sd_cor = sd(cor_radius, na.rm = TRUE),
-            mean_cor = mean(cor_radius, na.rm = TRUE), median_cor = median(cor_radius, na.rm = TRUE),
-            min_cor = min(cor_radius, na.rm = TRUE), max_cor = max(cor_radius, na.rm = TRUE),
-            mean_cor_x = mean(cor_x, na.rm = TRUE), mean_cor_y = mean(cor_y, na.rm = TRUE)) 
-
-which.max(best_combos_all$mean_cor_sm) #best parameter combo, reported in manuscript are mean, sd, min, max for both smoothed and raw radii
-
-# looking at correlations in detail for the best setting combination for all videos
-
-# search for string: c1_8_c2_10_al_2_b_35_dil_7_blur_35 (best parameter combination overall)
-list_of_files_df <- as.data.frame(list_of_files)
-
-list_of_files_subset <- list_of_files_df %>% 
-  dplyr::filter(grepl('c1_8_c2_10_al_2_b_35_dil_7_blur_35', list_of_files, ignore.case = TRUE) == TRUE)
-
-temp_df <- data.frame()
-
-#reading each file within the range and append them to create one file
-
-for (i in 1:nrow(list_of_files_subset)){
-  #read the file
-  current_File <- read_delim(paste(path, list_of_files_subset[i,1], sep = "\\"), delim = ",")
-  
-  videoname <- list_of_files_subset[i,1]
-  videoname <- substring(videoname, 1, nchar(videoname)-4)
-  videoname <- str_split(videoname, pattern = "_")
-  videoname <- videoname[[1]]
-  videoname <- paste(videoname[14], videoname[15], sep = "_")
-  
-  current_File <- current_File %>% 
-  dplyr::mutate(smoothed_hough_radius = butter.it(current_File$r,
-                                             samplingrate =  25,
-                                             order = 2,
-                                             lowpasscutoff = 10),
-                videoname = videoname)
-  #Append the current file
-  temp_df = rbind(temp_df, current_File)    
-}
-
-joined_radii_best_hough <- plyr::join(temp_df, manual_radius, by= c("name"), type="left", match="first")
-
-joined_radii_best_hough <- joined_radii_best_hough %>% 
-  dplyr::filter(radius_man > 100)
-# Visualization
-
-joined_radii_best_hough %>% 
-  #dplyr::filter(videoname == "June16_07" | videoname == "June09_03") %>% 
-  ggplot(aes(x= radius_man, y = smoothed_hough_radius))+
-  geom_point(aes( fill = videoname, color = videoname), size = 2)+
-  geom_smooth(method = 'lm')+
-  ylab('Automatically tracked Radius [px], Hough')+
-  xlab('Manually labeled Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))
 
 # 03: dlc combining datasets + preparations ----
 
 # 03a: preparations
 dlc_radius <- dlc_radius[!is.na(dlc_radius$radius),]
-##
-dlc_test <- dlc_radius %>%
-  group_by(videoname) %>%
-  group_modify(
-      mutate(kol_smooth = kza(radius, k = 4,m = 3)$kza))
-      
-  group_map(~ kza(hough_radius$r, k = 4,m = 3)$kza)
 
-dlc_radius <- dlc_radius %>% 
-  mutate(smoothed_dlc_radius = butter.it(dlc_radius$radius,
-                                         samplingrate =  25,
-                                         order = 2,
-                                         lowpasscutoff = 10))
-
-# we need: framenr_52_framevid_June09_03, we have frame in column frame and videoname in filename as first part before DLC
+# to match with manual data we need the correct name format 
+# we need something like: framenr_52_framevid_June09_03, we have frame in column frame and videoname in filename as first part before DLC
 # -> split filename at DLC, use first in paste with frame and the respective words
 match_name <- data.frame()
 for(i in 1:length(dlc_radius$videofile)){
@@ -230,22 +160,37 @@ dlc_radius <- dlc_radius %>%
                 radius = as.numeric(radius),
                 videoname = match_name$V1) 
 
+# smoothing per video: kolmogorov-zurbenko 
+dlc_radius <- dlc_radius %>%
+  group_by(videoname) %>% 
+  mutate(kza_smoothed_radii = kza(radius, k = 4,m = 3)$kza)
+
 joined_radii_dlc <- plyr::join(dlc_radius, manual_radius, by= c("name"), type="left", match="first")
 
 # removing all lines, where no circle was tracked manually (indicated by very small circles)
 joined_radii_dlc <- joined_radii_dlc %>% 
-  dplyr::filter(radius_man > 100 & radius < 270) # we apply the filter to only take into accoutn automatically tracked radii below 250 px, to make it comparable to Hough circles, that can maximally find circles of 250 px
-# double check with Wim and check if 250 was the limit in hough transform 
+  dplyr::filter(radius_man > 100 & radius < 270 & kza_smoothed_radii < 270) # we apply the filter to only take into accoutn automatically tracked radii below 270 px, to make it comparable to Hough circles, that can maximally find circles of 270 px
 
 # 03b: correlation to test if tracking success is sufficient
 
+# dlc correl
 dlc_correlations <- joined_radii_dlc %>% 
   group_by(videoname) %>% 
   summarise(cor_radius = cor(radius, radius_man),
-            cor_radius_sm = cor(smoothed_dlc_radius, radius_man))
+            cor_radius_sm = cor(kza_smoothed_radii, radius_man, use= "pairwise.complete.obs"))
+
+dlc_correlations
+#   cor_radius cor_radius_sm
+# 1  0.8579891     0.8543827
+
+
+
+
+# 04: visualization both approaches ----
 
 # plotting radius comprison
 
+# visualization DLC
 dlc <- joined_radii_dlc %>% 
   ggplot(aes(x= radius_man, y = radius))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
@@ -253,11 +198,7 @@ dlc <- joined_radii_dlc %>%
   ylab('Automatically tracked Radius [px], DLC')+
   xlab('Manually labeled Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20))#,
-        legend.position = "none")
-
-cor_r <- corr.test(joined_radii_dlc$radius, joined_radii_dlc$radius_man)$r
-cor_r_sm <- corr.test(joined_radii_dlc$smoothed_dlc_radius, joined_radii_dlc$radius_man)
+  theme(text = element_text(size = 20))
 
 # visualization hough
 hough <- joined_radii_all %>%
