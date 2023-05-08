@@ -10,9 +10,6 @@
 
 ############
 
-# To do:
-# 1) check that column names match, are understandable and changed accordingly everywhere in code
-
 # 00: load packages ----
 
 if (!require(install.load)) {
@@ -25,10 +22,7 @@ install_load("tidyverse", "effsize", "psych", "signal", "foreach", "kza", "plyr"
 
 # 01a: functions ----
 
-# function explanation goes here
-butter.it <- function(x, samplingrate, order, lowpasscutoff)
-{bf <- butter(order,lowpasscutoff/samplingrate, type="low") #normalized frequency
-x <<- as.numeric(signal::filtfilt(bf, x))} 
+
 
 # 01b: load data ----
 
@@ -47,6 +41,8 @@ dlc_radius <- readRDS("dlc_for_comparison_to_manualtracks.rds")
 
 # example of what to read in: folder D:\PostDoc\Donders\AirSacTracker_2\Tracker_Backup_8May2023\module_hough\results\example 1
 # in this folder we have the tracked videos and csv files of one parameter combination
+
+## 02a: preparations Hough ----
 df <- data.frame()
 joined_radii_all <- data.frame()
 
@@ -64,9 +60,6 @@ for (a in 1: length(list_of_files)){
   #retrieve videoname from parameter optimization csv
   videoname <- list_of_files[a]
   videoname <- substring(videoname, 1, nchar(videoname)-4)
-  #videoname <- str_split(videoname, pattern = "_")
-  #videoname <- videoname[[1]]
-  #videoname <- paste(videoname[4], videoname[5], sep = "_")
   
   hough_radius <- hough_radius %>%
     drop_na() 
@@ -96,14 +89,6 @@ for (a in 1: length(list_of_files)){
   df[a,5] <- cor_y$r
   df[a,6] <- cor_r_sm_butter$r
   df[a,7] <- joined_radii$examplenr[1]
-  #df[a,6] <- hough_radius$alpha[1]
-  #df[a,7] <- hough_radius$beta[1]
-  #df[a,8] <- hough_radius$threh_div1[1]
-  #df[a,9] <- hough_radius$threh_div2[1]
-  #df[a,10] <- hough_radius$dilation[1]
-  #df[a,11] <- hough_radius$medianblur[1]
-  #df[a,12] <- nrow(joined_radii)
-  #df[a,13] <- nrow(hough_radius)
 
   joined_radii_all <- rbind(joined_radii_all, joined_radii)
   
@@ -121,9 +106,13 @@ df_full<- rbind(df_exp1, df_exp2, df_exp3, df_exp4, df_exp5)
 saveRDS(df_full, file = "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.rds")
 write.table(df_full, "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.csv", sep = ",")
 
+
+## 02b: correlations Hough -----
 # combine correlation grouped by parameter combination and grouped by video for statistics to report in manuscript
 
-correlation_per_video <- df_full %>% 
+detach(package:plyr) # needs to be detached, otherwise grouping does not work in function below
+
+correlation_per_video <- df_full %>%
   dplyr::group_by(videoname) %>%                            
   summarise(mean_cor_sm = mean(cor_radius_smoothed_kol), median_cor_sm = median(cor_radius_smoothed_kol),
             min_cor_sm = min(cor_radius_smoothed_kol), max_cor_sm = max(cor_radius_smoothed_kol),
@@ -132,14 +121,15 @@ correlation_per_video <- df_full %>%
 
 # per example 
 correlation_per_setting <- df_full %>% 
-  dplyr::group_by(example_nr) %>%                            
+  group_by(example_nr) %>%                            
   summarise(mean_cor_sm = mean(cor_radius_smoothed_kol), median_cor_sm = median(cor_radius_smoothed_kol),
             min_cor_sm = min(cor_radius_smoothed_kol), max_cor_sm = max(cor_radius_smoothed_kol),
             mean_cor = mean(cor_radius, na.rm = TRUE ), median_cor = median(cor_radius, na.rm = TRUE),
-            min_cor = min(cor_radius, na.rm = TRUE), max_cor = max(cor_radius, na.rm = TRUE), .groups = 'drop') 
+            min_cor = min(cor_radius, na.rm = TRUE), max_cor = max(cor_radius, na.rm = TRUE)) 
+# numbers from example 4 are reported in the manuscript, because of best mean correlation 
 
 
-# 03: dlc combining datasets + preparations ----
+# 03: DLC ----
 
 # 03a: preparations
 dlc_radius <- dlc_radius[!is.na(dlc_radius$radius),]
@@ -173,7 +163,7 @@ joined_radii_dlc <- joined_radii_dlc %>%
 
 # 03b: correlation to test if tracking success is sufficient
 
-# dlc correl
+# dlc correlations
 dlc_correlations <- joined_radii_dlc %>% 
   group_by(videoname) %>% 
   summarise(cor_radius = cor(radius, radius_man),
@@ -182,9 +172,6 @@ dlc_correlations <- joined_radii_dlc %>%
 dlc_correlations
 #   cor_radius cor_radius_sm
 # 1  0.8579891     0.8543827
-
-
-
 
 # 04: visualization both approaches ----
 
@@ -198,7 +185,8 @@ dlc <- joined_radii_dlc %>%
   ylab('Automatically tracked Radius [px], DLC')+
   xlab('Manually labeled Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20))
+  theme(text = element_text(size = 20),
+        legend.position = "none")
 
 # visualization hough
 hough <- joined_radii_all %>%
@@ -209,9 +197,14 @@ hough <- joined_radii_all %>%
   ylab('Automatically tracked Radius [px], Hough')+
   xlab('Manually labeled Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20))
+  theme(text = element_text(size = 20),
+        legend.position="bottom")+
+  guides(fill = FALSE)+
+  scale_color_discrete(name = "Video", labels = c("Video 1", "Video 2", "Video 3", "Video 4",
+                                                  "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"))
+        
 
 # labels legend ändern! can we put legend on the bottom of plot 2? 
-cowplot::plot_grid(dlc, hough, rel_heights = c(0.5, 0.5), ncol = 1, labels = c("A", "B"))
+cowplot::plot_grid(dlc, hough, rel_heights = c(0.45, 0.55), ncol = 1, labels = c("A", "B"), label_size = 16)
 
-ggsave("comparison_dlc_hough_manual_row.jpg", dpi = 300, width= 10, height = 14)
+ggsave("comparison_dlc_hough_manual_row.jpg", dpi = 300, width= 8, height = 14)
