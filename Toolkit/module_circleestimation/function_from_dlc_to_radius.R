@@ -1,5 +1,7 @@
-# batch processing: automatically estimate circles for all DLC tracking datafiles
+# functions to get circle (i.e. radius) estimations from DLC trackings 
+# automatically estimate circles for all DLC tracking datafiles
 # of interest for subsequent analysis and comparison of radii with acoustic parameters
+# with Landau circle estimation
 
 # Manuscript: A toolkit for the dynamic study of spherical biological objects
 # author: Dr. Lara S. Burchardt
@@ -17,7 +19,7 @@ if (!require(install.load)) {
 library(install.load)
 
 install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
-
+library("foreach")
 # 01a: load data ----
 
 path <- choose.dir()
@@ -164,8 +166,7 @@ from_DLC_to_circle <- function(path, list_of_files){
   
   ## starting main loop ----
   for (a in 1:length(list_of_files)) {
-
-    radius <- data.frame()
+     radius <- data.frame()
     
     auto_data <- read_delim(paste(path, list_of_files[a], sep = "\\"), delim = "," )
     
@@ -178,6 +179,7 @@ from_DLC_to_circle <- function(path, list_of_files){
     
     for(n in 1:length(grouped_data_circle_estimation)){
       
+      if (length(grouped_data_circle_estimation) > 0){
       frame_data <- as.data.frame(grouped_data_circle_estimation[[n]])
       
       if(nrow(frame_data)>=3){
@@ -191,8 +193,13 @@ from_DLC_to_circle <- function(path, list_of_files){
       
       radius <- rbind(radius, circles_res)
       colnames(radius) <- z
-    }
+      } else {circles_LAN <- c(NA, NA, NA)
     
+      circles_res <- c(circles_LAN[3],n, list_of_files[a])
+      
+      radius <- rbind(radius, circles_res)
+      colnames(radius) <- z}
+    }
     print(a)
     radius_all <- rbind(radius_all, radius)
     
@@ -214,5 +221,6 @@ from_DLC_to_circle <- function(path, list_of_files){
 results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
 # 03: saving ----
-
-saveRDS(results, file = "DLC_estimated_radii_normalized.rds")
+savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
+#saveRDS(results, file = "proof_2_boom_DLC_estimated_radii_normalized_new.rds")
+saveRDS(results, file = savename)
