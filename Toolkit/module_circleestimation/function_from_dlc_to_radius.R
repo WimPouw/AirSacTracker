@@ -222,5 +222,5 @@ results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
 # 03: saving ----
 savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
-#saveRDS(results, file = "proof_2_boom_DLC_estimated_radii_normalized_new.rds")
+
 saveRDS(results, file = savename)
