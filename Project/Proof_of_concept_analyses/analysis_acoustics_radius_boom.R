@@ -47,8 +47,16 @@ for (a in 1: nrow(acoustics_boom)){
 
 radius_boom <- radius_boom %>% 
   mutate(frame = as.numeric(frame))
+
 ### for 25 fps videos, 2 audio snippets need to be combined to match
 ### one video frame: every pair is combined, how? just take the first one? or average? 
+
+subset to fs_video= 25
+
+#boom_test <- acoustics_boom %>% as_tibble()
+#n <- nrow(boom_test)/2
+#orig <- boom_test %>% mutate(grp = sort(rep(1:2, n)))
+#means <- orig %>% group_by(grp) %>% summarise_all(mean)
 
 
 
