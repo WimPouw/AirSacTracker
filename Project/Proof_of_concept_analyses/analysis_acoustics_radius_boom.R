@@ -34,13 +34,11 @@ for (a in 1: nrow(acoustics_boom)){
   
   if(grepl('June', acoustics_boom$audiofile[a], ignore.case = TRUE) == TRUE){
     
-    acoustics_boom <- acoustics_boom %>% 
-      mutate(fs_video = 25)
+    acoustics_boom$fs_video[a] <- 25
     
   }  else if (grepl('August', acoustics_boom$audiofile[a], ignore.case = TRUE) == TRUE){
     
-    acoustics_boom <- acoustics_boom %>% 
-      mutate(fs_video = 50)
+    acoustics_boom$fs_video[a] <- 50
     
   } 
 }
@@ -51,14 +49,60 @@ radius_boom <- radius_boom %>%
 ### for 25 fps videos, 2 audio snippets need to be combined to match
 ### one video frame: every pair is combined, how? just take the first one? or average? 
 
-subset to fs_video= 25
+subset_fps25 <- acoustics_boom %>% 
+  dplyr::filter(fs_video == 25) %>% 
+  group_split(audiofile)
 
-#boom_test <- acoustics_boom %>% as_tibble()
-#n <- nrow(boom_test)/2
-#orig <- boom_test %>% mutate(grp = sort(rep(1:2, n)))
-#means <- orig %>% group_by(grp) %>% summarise_all(mean)
+subset_fps50 <- acoustics_boom %>% 
+  dplyr::filter(fs_video == 50)
+
+averaged_fps25 <- data.frame()
+
+for(a in 1:length(subset_fps25)){
+  
+  data <- subset_fps25[[a]]
+  
+  if((nrow(data) %% 2) == 0) {
+    
+    data <- data
+    
+  } else {
+    
+    data <- head(data, -1)
+  }
+  
+  counter = 0
+  matchname <- data$match[1]
+  audiofilename <- data$audiofile[1]
+  
+for( b in seq(from = 1, to = nrow(data), by = 2)){
+  
+  counter = counter + 1
+  data$group[b] <- counter
+  data$group[b+1] <- counter
+  
+}
+  #! check if means are actually calculated, if so move on with checking the combination with bind_rows with fps 50 parts
+  # which information are we losing? 
+  data_average_per_group <- data %>% 
+  group_by(group) %>% 
+  summarise_at(vars(amEnvDep:fundamental_mean),list(mean))
+  
+  data <- data_average_per_group %>% 
+    mutate(audiofile = audiofilename,
+           match = matchname,
+           fs_video = 25,
+           frame = group)
+  
+  averaged_fps25 <- rbind(averaged_fps25, data)
+  
+}
 
 
+##problem: unmatching column names now
+acoustics_boom_averagedfps25 <- rbind(averaged_fps25, subset_fps50)
+
+acoustics_boom_averagedfps25<- dplyr::bind_rows(averaged_fps25, subset_fps50)
 
 ### prepare match names to match audio to radius snippets
 
