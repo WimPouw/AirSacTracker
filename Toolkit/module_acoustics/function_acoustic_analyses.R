@@ -20,8 +20,8 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse", "signal", "phonTools", "rPraat", "bioacoustics", "tuneR",
-             "soundgen", "psych", "zoo", "corrplot", "Hmisc", "seewave", "plyr")
+install_load("plyr", "tidyverse", "signal", "phonTools", "rPraat", "bioacoustics", "tuneR",
+             "soundgen", "psych", "zoo", "corrplot", "Hmisc", "seewave" )
 
 # 01a: load data ----
 
