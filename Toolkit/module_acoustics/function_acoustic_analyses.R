@@ -115,3 +115,7 @@ return(acoustic_param)
 # 03 main, using function ----
 
 results <- acoustic_analysis(path, pattern)
+
+savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
+
+saveRDS(results, file = savename)
