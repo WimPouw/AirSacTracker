@@ -27,7 +27,6 @@ radius_boom <- readRDS("radius_estimation_boom_proof1.rds")
 
 ## 01b: data preparation ----
 
-
 ### get video sampling rate from video name (in June recordings were made with 25 fps, in August with 50)
 
 for (a in 1: nrow(acoustics_boom)){
@@ -43,74 +42,57 @@ for (a in 1: nrow(acoustics_boom)){
   } 
 }
 
+## add original video sampling rate to radius_boom Data as well  
+for (a in 1: nrow(radius_boom)){
+  
+  if(grepl('June', radius_boom$videofile[a], ignore.case = TRUE) == TRUE){
+    
+    radius_boom$fs_video[a] <- 25
+    
+  }  else if (grepl('August', radius_boom$videofile[a], ignore.case = TRUE) == TRUE){
+    
+    radius_boom$fs_video[a] <- 50
+    
+  } 
+}
+
 radius_boom <- radius_boom %>% 
   mutate(frame = as.numeric(frame))
 
-### for 25 fps videos, 2 audio snippets need to be combined to match
-### one video frame: every pair is combined, how? just take the first one? or average? 
-
-subset_fps25 <- acoustics_boom %>% 
-  dplyr::filter(fs_video == 25) %>% 
-  group_split(audiofile)
-
-subset_fps50 <- acoustics_boom %>% 
+subset_radius_fps50 <- radius_boom %>% 
   dplyr::filter(fs_video == 50)
 
-averaged_fps25 <- data.frame()
+subset_radius_fps25 <- radius_boom %>% 
+  dplyr::filter(fs_video == 25) 
 
-for(a in 1:length(subset_fps25)){
-  
-  data <- subset_fps25[[a]]
-  
-  if((nrow(data) %% 2) == 0) {
-    
-    data <- data
-    
-  } else {
-    
-    data <- head(data, -1)
-  }
-  
-  counter = 0
-  matchname <- data$match[1]
-  audiofilename <- data$audiofile[1]
-  
-for( b in seq(from = 1, to = nrow(data), by = 2)){
-  
-  counter = counter + 1
-  data$group[b] <- counter
-  data$group[b+1] <- counter
-  
-}
-  #! check if means are actually calculated, if so move on with checking the combination with bind_rows with fps 50 parts
-  # which information are we losing? 
-  data_average_per_group <- data %>% 
-  group_by(group) %>% 
-  summarise_at(vars(amEnvDep:fundamental_mean),list(mean))
-  
-  data <- data_average_per_group %>% 
-    mutate(audiofile = audiofilename,
-           match = matchname,
-           fs_video = 25,
-           frame = group)
-  
-  averaged_fps25 <- rbind(averaged_fps25, data)
-  
-}
-
-
-##problem: unmatching column names now
-acoustics_boom_averagedfps25 <- rbind(averaged_fps25, subset_fps50)
-
-acoustics_boom_averagedfps25<- dplyr::bind_rows(averaged_fps25, subset_fps50)
 
 ### prepare match names to match audio to radius snippets
 
+## 01b_2: data prep version 2 ----
+## downsampling approach: instead of averaging acoustic data for every 2 rows to match 25fps, we now run acoustic analysis with 25 fps and
+# downsample 50fps video data
+# so we need to downsample the radius data, we do that by taking every second row of the dataset (per video) and then need a new index as new frame
+# variable
+
+downsampled_50fps_radius <- subset_radius_fps50 %>%
+  group_by(videofile) %>%
+  dplyr::slice(seq(1, n(), by = 2))
+
+# add new frame index
+downsampled_50fps_radius <- downsampled_50fps_radius %>% 
+  group_by(videofile) %>%
+  mutate( original_frame = frame,
+          frame = row_number(videofile))
+
+# combine transformed 50fps with 25fps again
+
+radius_boom_downsampled <- rbind(downsampled_50fps_radius, subset_radius_fps25)
+
 # video match name
-filename <- strsplit(radius_boom$videofile, split  = "DLC_resnet")
+filename <- strsplit(radius_boom_downsampled$videofile, split  = "DLC_resnet")
 filename <- as.data.frame(matrix(unlist(filename),ncol=2,byrow=T))
 
-radius_boom$match <- filename[,1]
+radius_boom_downsampled$match <- filename[,1]
 
 # audio match name
 
@@ -147,7 +129,7 @@ acoustics_boom$match <- str_sub(acoustics_boom$match, 1, -5)
 
 ### matching radius and acoustics dataframe by match name and frame
 
-comparison_radius_boom <- left_join(radius_boom,acoustics_boom,  by= c("match", "frame"))
+comparison_radius_boom <- left_join(radius_boom_downsampled,acoustics_boom,  by= c("match", "frame"))
 
 # filter radii that are definitly wrong, i.e. very large
 # we set the maximum to the approx. maximum we found when tracking manually

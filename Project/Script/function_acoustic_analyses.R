@@ -28,6 +28,9 @@ install_load("plyr", "tidyverse", "signal", "phonTools", "rPraat", "bioacoustics
 path <- choose.dir()
 pattern <- "wav"
 
+fs <<- 25 #change here to be used througout the code, acoustic analysis will then be adjusted to match 25Hz sampling rate
+
+
 # 02: functions -----
 
 acoustic_analysis <- function(path, pattern){
@@ -40,17 +43,17 @@ list_of_files_audio <- list.files(path = path, pattern = pattern)
 # fundamental frequency and other parameters are calculated with different functions
 # and therefore need to be saved separately at first 
 spec_param_all <- data.frame()
-fund_freq_mean_all <- data.frame(matrix(ncol = 3, nrow = 0))
+fund_freq_all <- data.frame(matrix(ncol = 3, nrow = 0))
 
-z <- c("fundamental_mean", "frame", "audiofile")
+z <- c("f0", "audiofile", "frame")
 
 #colnames(spec_param_all) <- y
-colnames(fund_freq_mean_all) <- z
+colnames(fund_freq_all) <- z
 
 for (a in 1: length(list_of_files_audio)){
   
   #spec_param <- data.frame()
-  fund_freq_mean <- data.frame(matrix(ncol = 3, nrow = 0))
+  #fund_freq_mean <- data.frame(matrix(ncol = 3, nrow = 0))
   
   wavfilelocation <- paste(path, list_of_files_audio[a], sep = "/")
   
@@ -62,19 +65,22 @@ for (a in 1: length(list_of_files_audio)){
   
   
   # audio smaples per video frame, to cut wav file into snipptes matching video frames
-  audio_samples_per_frame <- fs_audio * (1/50)  #50 is fps that we use as reference here
-  # for other situations, we use the dynamic fs_video to differentiate between the 25 and 50 fps videos
+  audio_samples_per_frame <- fs_audio * (1/fs)  
     
     ## fundamental frequency
- #!!   # windowlength should match videoframe duration, check notes on how we wanted to achieve that
+   # windowlength should match videoframe duration, check notes on how we wanted to achieve that
     
-    fund_freq <- fund(wav, wl = audio_samples_per_frame, ovlp = 50, fmax = 1000, plot = FALSE) #if no fmax is defined, no fundamental is found, we know the boom is around ~200 Hz, so 1000 is still a very conservative limit
-    fund_freq <- as.data.frame(fund_freq)
+    fund_freq <- fund(wav, wl = audio_samples_per_frame, ovlp = 50, plot = FALSE) #if no fmax is defined, no fundamental is found, we know the boom is around ~200 Hz, so 2000 is still a very conservative limit
+    fund_freq_df <- as.data.frame(fund_freq)
     
     #fund_freq_mean_loop <- c(mean(fund_freq$y, na.rm = TRUE), wavsplit, list_of_files_audio[a]) #as we are using short audio snippets to match to video frames, we take the mean per video frame
+    fund_freq_df <- fund_freq_df %>% 
+      transmute(fund_freq = fund_freq_df$y*1000,
+                audiofile = list_of_files_audio[a])
     
-    fund_freq_mean <- rbind(fund_freq_mean, fund_freq_mean_loop)
-    colnames(fund_freq_mean) <- z
+    fund_freq_df$frame <- 1:nrow(fund_freq_df)
+    
+    colnames(fund_freq_df) <- z
     ## other spectral parameters------------
     
     #spec_param_list <- analyze(subwave, roughness = list(windowLength = 15, step = 3, amRes = 100))
@@ -82,16 +88,17 @@ for (a in 1: length(list_of_files_audio)){
                                loudness = NULL,      # no loudness analysis
                                novelty = NULL,       # no novelty analysis
                                roughness = NULL,     # no roughness analysis
-                               windowLength = 20,  # windowLength in msec, matched to videoframe length of 50fps video
-                               step = 10          # step size of sliding window, defining overlap, for wl 0.02 and step 0.01 we have an 50% overlap
+                               windowLength = 1000/fs,  # windowLength in msec, matched to videoframe length with softcoded fs
+                               step = 1000/fs/2          # step size of sliding window, defining overlap, we have a 50% overlap
     )
     
     spec_param_list <- spec_param_list$detailed
     
     spec_param_list$audiofile <- list_of_files_audio[a]
+    spec_param_list$frame <- 1:nrow(spec_param_list)
     
     spec_param_all <- rbind(spec_param_all, spec_param_list)
-    fund_freq_mean_all <- rbind(fund_freq_mean_all, fund_freq_mean)
+    fund_freq_all <- rbind(fund_freq_all, fund_freq_df)
     
   } 
 # to reduce size, we delete all columns that only have NA
@@ -101,12 +108,12 @@ not_any_na <- function(x) any(!is.na(x))
 spec_param_all <- spec_param_all %>%
   select(where(not_any_na))
 
-# we define a "frame" column, to be matched to fundamental frequency and video frames, this is a proxy! This is not exactly a frame,
-# but a reasonable way to match correct snippets with each other
 spec_param_all <- spec_param_all %>% 
-  mutate(frame = time/10)
+  group_by(audiofile) %>%
+  mutate( original_frame = frame,
+          frame = row_number(audiofile))
 
-acoustic_param <- plyr::join(spec_param_all, fund_freq_mean_all, by= c("audiofile", "frame"), type="left", match="first")
+acoustic_param <- plyr::join(spec_param_all, fund_freq_all, by= c("audiofile", "frame"), type="left", match="first")
 
 
 return(acoustic_param)
