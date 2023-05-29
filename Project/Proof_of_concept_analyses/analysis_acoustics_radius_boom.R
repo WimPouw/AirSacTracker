@@ -145,19 +145,201 @@ comparison_radius_boom <- comparison_radius_boom %>%
 # 02a: correlation matrix ----
 
 comparison_radius_boom_numeric <- comparison_radius_boom %>% 
-  select(-audiofile, -match, -videofile, -voiced, -fundamental_mean, -fs_video, -frame) 
+  ungroup() %>% 
+  select(-audiofile, -match, -videofile, -voiced, -f0, -fs_video, -frame) 
 
 
 cor_all <- cor(comparison_radius_boom_numeric)
 cor_all_2 <-rcorr(as.matrix(comparison_radius_boom_numeric))
 
-test <- cor_all_2$r
-
 
 #correlation plot, show all
-corrplot(cor_all_2$r, type = "upper", order = "original", 
-         tl.col = "black", tl.srt = 45)
+#corrplot(cor_all_2$r[1,1:55, drop=FALSE], type = "upper", order = "original", 
+#         tl.col = "black", tl.srt = 45)
 
 #correlation plot, only show significant correlations
-corrplot(cor_all_2$r, type="lower", order="original", 
-         p.mat = cor_all_2$P, sig.level = 0.05, insig = "blank", diag = FALSE)
+corrplot(cor_all_2$r[1,1:55, drop=FALSE], 
+         p.mat = cor_all_2$P[1,1:55, drop=FALSE], sig.level = 0.05, insig = "blank", diag = FALSE)
+
+
+# 03: visualization -----
+
+# 03a: adding meta data for plotting: sex + ID -----
+
+# adding column with information on sex
+index_female <- grep('Pelangi', comparison_radius_boom$videofile)
+comparison_radius_boom$index <- 1:nrow(comparison_radius_boom)
+
+for(a in 1: nrow(comparison_radius_boom)){
+  if(comparison_radius_boom$index[a] %in% index_female == TRUE){
+    
+    comparison_radius_boom$sex[a] = 'f'
+    
+  } else {
+    
+    comparison_radius_boom$sex[a] = 'm'
+    
+  }
+}
+
+# names: fajar, baju, roger, pelangi
+for (b in 1:nrow(comparison_radius_boom)){
+  
+  if(grepl('Pelangi', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
+    
+    comparison_radius_boom$ID[b] = 'Pelangi'
+    
+  }  else if (grepl('Fajar', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
+    
+    comparison_radius_boom$ID[b] = 'Fajar'
+    
+  } else if (grepl('Baju', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
+    
+    comparison_radius_boom$ID[b] = 'Baju'
+    
+  } else if (grepl('Roger', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
+    
+    comparison_radius_boom$ID[b] = 'Roger'
+    
+  } else {
+    
+    comparison_radius_boom$ID[b] = 'NA'
+  }
+  
+}
+
+
+# 03b: plots
+ 
+
+scatter_ampl <- comparison_radius_boom %>% 
+  #ggplot(aes(y = ampl_mean, x = radius, fill = sex, color = sex))+
+  ggplot(aes(y = ampl, x = radius, fill = sex, color = sex))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Amplitude')+
+  xlab('Airsac Radius [px]')+
+  #coord_cartesian(xlim = c(0,10))+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none',
+        axis.title.x = element_blank())
+
+#scatter_ampl_mean
+
+## amplitude mean - ID
+
+scatter_ampl_ID <- comparison_radius_boom %>%
+  ggplot(aes(y = ampl, x = radius, fill = ID, color = ID))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Amplitude')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none',
+        axis.title.x = element_blank())
+
+## pitch (f0) -sex
+
+scatter_pitch <- comparison_radius_boom %>%
+  ggplot(aes(y = pitch, x = radius, fill = sex, color = sex))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Pitch')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none')
+
+## pitch (f0) -ID
+
+scatter_pitch_ID <- comparison_radius_boom %>%
+  ggplot(aes(y = pitch, x = radius, fill = ID, color = ID))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Pitch')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none')
+
+## entropy mean -sex
+
+scatter_entropy <- comparison_radius_boom %>%
+  ggplot(aes(y = entropy, x = radius, fill = sex, color = sex))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Entropy')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none')
+
+## entropy mean - ID
+scatter_entropy_ID <- comparison_radius_boom %>%
+  #ggplot(aes(y = entropy_mean, x = radius, fill = ID, color = ID))+
+  ggplot(aes(y = entropy, x = radius, fill = ID, color = ID))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Entropy')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none')
+
+## dominant frequency mean - sex
+
+scatter_dom <- comparison_radius_boom %>%
+  ggplot(aes(y = dom, x = radius, fill = sex, color = sex))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Dominant Frequency[Hz]')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20),
+        axis.title.x = element_blank())
+
+## dominant frequency mean - ID
+
+scatter_dom_ID <- comparison_radius_boom %>%
+  ggplot(aes(y = dom, x = radius, fill = ID, color = ID))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Dominant Frequency [Hz]')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20),
+        axis.title.x = element_blank())
+
+## spectral Centroid mean - sex
+
+scatter_spec_Centroid <- comparison_radius_boom %>%
+  ggplot(aes(y = specCentroid, x = radius, fill = sex, color = sex))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Spectral Centroid')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))
+
+## spectral Centroid mean - ID
+
+scatter_spec_Centroid_ID <- comparison_radius_boom %>%
+  ggplot(aes(y = specCentroid, x = radius, fill = ID, color = ID))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Spectral Centroid')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))
+
+
+## cowplot
+
+cowplot::plot_grid(scatter_ampl, scatter_dom, scatter_entropy, scatter_spec_Centroid,scatter_pitch,
+                   rel_widths = c(0.45,0.55), ncol = 2)
+#labels = c("A", "B", "C", "D"), ncol = 2)
+
+cowplot::plot_grid(scatter_ampl_ID, scatter_dom_ID, scatter_entropy_ID, scatter_spec_Centroid_ID,scatter_pitch_ID,
+                   rel_widths = c(0.45,0.55), ncol = 2)

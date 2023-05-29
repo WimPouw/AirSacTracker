@@ -70,7 +70,7 @@ for (a in 1: length(list_of_files_audio)){
     ## fundamental frequency
    # windowlength should match videoframe duration, check notes on how we wanted to achieve that
     
-    fund_freq <- fund(wav, wl = audio_samples_per_frame, ovlp = 50, plot = FALSE) #if no fmax is defined, no fundamental is found, we know the boom is around ~200 Hz, so 2000 is still a very conservative limit
+    fund_freq <- fund(wav, wl = audio_samples_per_frame, plot = FALSE) #if no fmax is defined, no fundamental is found, we know the boom is around ~200 Hz, so 2000 is still a very conservative limit
     fund_freq_df <- as.data.frame(fund_freq)
     
     #fund_freq_mean_loop <- c(mean(fund_freq$y, na.rm = TRUE), wavsplit, list_of_files_audio[a]) #as we are using short audio snippets to match to video frames, we take the mean per video frame
