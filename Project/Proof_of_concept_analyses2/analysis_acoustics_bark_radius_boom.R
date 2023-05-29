@@ -60,7 +60,7 @@ for(z in 1:length(radius_boom_bark_sequences_last)){
 
 acoustic_bark_summary <- acoustics_bark %>%
   group_by(audiofile) %>% 
-  summarise_at(c("ampl", "specCentroid", "dom", "entropy", "entropySh", "f1_freq", "f2_freq", "specSlope"), list(mean = mean, max = max), na.rm = TRUE)
+  summarise_at(c("ampl", "specCentroid", "dom", "entropy", "entropySh", "f1_freq", "f2_freq", "specSlope", "pitch"), list(mean = mean, max = max), na.rm = TRUE)
 
 ### audio match name
 
@@ -84,7 +84,8 @@ plot1<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean Amplitude subsequent bark')+
-  xlab('Max Radius of previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -97,7 +98,8 @@ plot2<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Max Amplitude subsequent bark')+
-  xlab('Max Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -110,7 +112,8 @@ plot3<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean Dom Freq subsequent bark')+
-  xlab('Max Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -122,7 +125,8 @@ plot4<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Max Dom Freq subsequent bark')+
-  xlab('Max Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -134,7 +138,8 @@ plot5<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean spec Cent subsequent bark')+
-  xlab('Max  Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -146,7 +151,8 @@ plot6<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Max spec Cent subsequent bark')+
-  xlab('Max Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -158,7 +164,8 @@ plot7<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean Entropy (Wiener) subsequent bark')+
-  xlab('Max  Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -170,7 +177,8 @@ plot8<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Max Entropy (Wiener) subsequent bark')+
-  xlab('Max Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -182,7 +190,8 @@ plot9<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean Entropy (Shannon) subsequent bark')+
-  xlab('Max  Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -194,7 +203,8 @@ plot10<- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Max Entropy (Shannon) subsequent bark')+
-  xlab('Max Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -206,7 +216,8 @@ plot11 <- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean F1 subsequent bark [Hz]')+
-  xlab('Max Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
@@ -218,26 +229,42 @@ plot12 <- combined_radius_acoustics_boom_bark %>%
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Mean F2 subsequent bark [Hz]')+
-  xlab('Max Radius previous Boom [px]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(legend.position = 'none',)
-
+  theme(legend.position = 'none')
 
 plot13 <- combined_radius_acoustics_boom_bark %>%
-  dplyr::filter(radius>80) %>%
-  ggplot(aes(x= radius, y = duration_bark))+
+  dplyr::filter(radius > 80) %>%
+  dplyr::filter(pitch_mean > 300) %>% #to filter out part of snippets that might involve boom sound
+  ggplot(aes(x= radius, y = pitch_mean))+
   geom_point()+
-  #geom_smooth(method = "lm")+
-  ylab('Duration Bark [sec]')+
-  xlab('Max Radius previous Boom [px]')+
+  geom_smooth(method = 'lm')+
+  ylab('Mean F0 subsequent bark [Hz]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
-  theme(text = element_text(size = 20))#+
-theme(legend.position = 'none',)
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none')
 
-cowplot::plot_grid(plot1,plot3,plot5,plot7,plot9, plot2, plot4, plot6, plot8,plot10, ncol = 5, nrow = 2)
+plot14 <- combined_radius_acoustics_boom_bark %>%
+  dplyr::filter(radius > 80) %>%
+  dplyr::filter(pitch_max > 300) %>% #to filter out part of snippets that might involve boom sound
+  ggplot(aes(x= radius, y = pitch_max))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Max F0 subsequent bark [Hz]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Max Radius [px]')+
+  #coord_cartesian(xlim = c(0,10))+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none')
+
+cowplot::plot_grid(plot1,plot5,plot7,plot13, plot2, plot6, plot8,plot14, ncol = 4, nrow = 2)
 
 # 03: correlation matrix ----
 
@@ -250,9 +277,12 @@ cor_all_proof2_2 <-rcorr(as.matrix(acoustic_correlation))
 
 
 #correlation plot, show all
-corrplot(cor_all_proof2_2$r, type = "upper", order = "hclust", 
-         tl.col = "black", tl.srt = 45, diag = FALSE)
+corrplot(cor_all_proof2_2$r[1,2:22, drop = FALSE], type="upper", 
+         tl.col = "black")
 
 #correlation plot, only show significant correlations
-corrplot(cor_all_proof2_2$r, type="upper", order="hclust", 
-         p.mat = cor_all_proof2_2$P, sig.level = 0.05, insig = "blank", diag = FALSE)
+corrplot(cor_all_proof2_2$r[1,2:22, drop = FALSE], type="upper", 
+         p.mat = cor_all_proof2_2$P[1,2:22, drop = FALSE], sig.level = 0.05,
+         tl.col = "black",
+         insig = "blank")
+
