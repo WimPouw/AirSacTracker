@@ -15,7 +15,7 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit","corrplot", "scales", "spiro", "signal", "foreach")
+install_load("tidyverse","conicfit","corrplot", "scales", "spiro", "signal", "foreach", "Hmisc")
 library("foreach")
 
 # 01: data ----
@@ -101,32 +101,6 @@ filename <- as.data.frame(matrix(unlist(filename),ncol=2,byrow=T))
 acoustics_boom$match <- filename[,2]
 acoustics_boom$match <- str_sub(acoustics_boom$match, 1, -5)
 
-# for (b in 1: nrow(acoustics_boom)){
-#   
-#   if(grepl('Fajar', acoustics_boom$match[b], ignore.case = TRUE) == TRUE){
-#     
-#     # acoustics_boom$match string -9 (fajar.wav is 9 characters)
-#     acoustics_boom$match[b] <- str_sub(acoustics_boom$match[b], 1, -10)
-#     
-#     
-#   }  else if (grepl('Baju', acoustics_boom$match[b], ignore.case = TRUE) == TRUE){
-#     
-#     # acoustics_boom$match string -8 (baju.wav is 8 characters)
-#     acoustics_boom$match[b] <- str_sub(acoustics_boom$match[b], 1, -9)
-#     
-#   } else if (grepl('Pelangi', acoustics_boom$match[b], ignore.case = TRUE) == TRUE){
-#     
-#     # acoustics_boom$match string -11 (pelangi.wav is 11 characters)
-#     acoustics_boom$match[b] <- str_sub(acoustics_boom$match[b], 1, -12)
-#     
-#   } else if (grepl('Roger', acoustics_boom$match[b], ignore.case = TRUE) == TRUE) {
-#     
-#     # acoustics_boom$match string -9 (roger.wav is 9 characters)
-#     acoustics_boom$match[b] <- str_sub(acoustics_boom$match[b], 1, -10)
-#     
-#   }
-# }
-
 ### matching radius and acoustics dataframe by match name and frame
 
 comparison_radius_boom <- left_join(radius_boom_downsampled,acoustics_boom,  by= c("match", "frame"))
@@ -140,35 +114,8 @@ comparison_radius_boom <- comparison_radius_boom %>%
 
 
 # 02: analysis ----
-# comparison boom acoustics and radius 
 
-# 02a: correlation matrix ----
-
-comparison_radius_boom_numeric <- comparison_radius_boom %>% 
-  ungroup() %>% 
-  select(-audiofile, -match, -videofile, -voiced, -f0, -fs_video, -frame) 
-
-
-cor_all <- cor(comparison_radius_boom_numeric)
-cor_all_2 <-rcorr(as.matrix(comparison_radius_boom_numeric))
-
-
-#correlation plot, show all
-#corrplot(cor_all_2$r[1,1:55, drop=FALSE], type = "upper", order = "original", 
-#         tl.col = "black", tl.srt = 45)
-
-#correlation plot, only show significant correlations
-corrplot(cor_all_2$r[1,9:53, drop=FALSE], 
-         p.mat = cor_all_2$P[1,9:53, drop=FALSE],
-         sig.level = 0.05, insig = "blank", diag = FALSE,
-         tl.col = "black", #tl.srt = 90,
-         #addCoef.col = 'black',
-         cl.pos = 'b', col = COL2('BrBG'))
-
-
-# 03: visualization -----
-
-# 03a: adding meta data for plotting: sex + ID -----
+# 02a: adding metadata ----
 
 # adding column with information on sex
 index_female <- grep('Pelangi', comparison_radius_boom$videofile)
@@ -197,12 +144,14 @@ for (b in 1:nrow(comparison_radius_boom)){
   }  else if (grepl('Fajar', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Fajar'
-    comparison_radius_boom$ageclass[b] = "Juvenile"
+    #comparison_radius_boom$ageclass[b] = "Juvenile"
+    comparison_radius_boom$ageclass[b] = "non-Adult"
     
   } else if (grepl('Baju', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Baju'
-    comparison_radius_boom$ageclass[b] = "Subadult"
+    #comparison_radius_boom$ageclass[b] = "Subadult"
+    comparison_radius_boom$ageclass[b] = "non-Adult"
     
   } else if (grepl('Roger', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
@@ -218,10 +167,45 @@ for (b in 1:nrow(comparison_radius_boom)){
 }
 
 
+# 02b: correlation matrix ----
+
+comparison_radius_boom_numeric_adult <- comparison_radius_boom %>% 
+  ungroup() %>%
+  dplyr::filter(ageclass == "Adult") %>% 
+  select(radius, ampl, pitch, entropy, specCentroid)
+  #select(-audiofile, -match,
+  #       -videofile, -voiced,
+  #       -fs_video, -frame) 
+
+
+cor_all <- cor(comparison_radius_boom_numeric)
+cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
+
+
+#correlation plot, show all
+#corrplot(cor_all_2$r[1,1:55, drop=FALSE], type = "upper", order = "original", 
+#         tl.col = "black", tl.srt = 45)
+
+#correlation plot, only show significant correlations
+corrplot(cor_all_2$r[1,1:5, drop=FALSE], 
+         p.mat = cor_all_2$P[1,1:5, drop=FALSE],
+         sig.level = 0.05, insig = "blank", diag = FALSE,
+         tl.col = "black", #tl.srt = 90,
+         addCoef.col = 'black',
+         cl.pos = 'r')#, col = COL2('BrBG'))
+
+
+# 03: visualization -----
+
+# 03a: adding meta data for plotting: sex + ID -----
+
+
+
 # 03b: scatter plots acoustics vs. radius ----
  
+# scatter amplitude - sex
 
-scatter_ampl <- comparison_radius_boom %>% 
+scatter_ampl_sex <- comparison_radius_boom %>% 
   #ggplot(aes(y = ampl_mean, x = radius, fill = sex, color = sex))+
   ggplot(aes(y = ampl, x = radius, fill = sex, color = sex))+
   geom_point()+
@@ -234,9 +218,7 @@ scatter_ampl <- comparison_radius_boom %>%
   theme(legend.position = 'none',
         axis.title.x = element_blank())
 
-#scatter_ampl_mean
-
-## amplitude mean - ID
+# amplitude mean - ID
 
 scatter_ampl_ID <- comparison_radius_boom %>%
   ggplot(aes(y = ampl, x = radius, fill = ID, color = ID))+
@@ -249,9 +231,22 @@ scatter_ampl_ID <- comparison_radius_boom %>%
   theme(legend.position = 'none',
         axis.title.x = element_blank())
 
+# amplitude - age
+
+scatter_ampl_age <- comparison_radius_boom %>%
+  ggplot(aes(y = ampl, x = radius, fill = ageclass, color = ageclass))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Amplitude')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none',
+        axis.title.x = element_blank())
+
 ## pitch (f0) -sex
 
-scatter_pitch <- comparison_radius_boom %>%
+scatter_pitch_sex <- comparison_radius_boom %>%
   ggplot(aes(y = pitch, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
@@ -259,7 +254,7 @@ scatter_pitch <- comparison_radius_boom %>%
   xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(legend.position = 'none')
+  theme(axis.title.x = element_blank())
 
 ## pitch (f0) -ID
 
@@ -271,11 +266,24 @@ scatter_pitch_ID <- comparison_radius_boom %>%
   xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(legend.position = 'none')
+  theme(axis.title.x = element_blank())
 
-## entropy mean -sex
 
-scatter_entropy <- comparison_radius_boom %>%
+## pitch (f0) - age
+
+scatter_pitch_age <- comparison_radius_boom %>%
+  ggplot(aes(y = pitch, x = radius, fill = ageclass, color = ageclass))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Pitch')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))#+
+  theme(axis.title.x = element_blank())
+
+## entropy  -sex
+
+scatter_entropy_sex <- comparison_radius_boom %>%
   ggplot(aes(y = entropy, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
@@ -285,7 +293,7 @@ scatter_entropy <- comparison_radius_boom %>%
   theme(text = element_text(size = 20))+
   theme(legend.position = 'none')
 
-## entropy mean - ID
+## entropy - ID
 scatter_entropy_ID <- comparison_radius_boom %>%
   #ggplot(aes(y = entropy_mean, x = radius, fill = ID, color = ID))+
   ggplot(aes(y = entropy, x = radius, fill = ID, color = ID))+
@@ -297,33 +305,20 @@ scatter_entropy_ID <- comparison_radius_boom %>%
   theme(text = element_text(size = 20))+
   theme(legend.position = 'none')
 
-## dominant frequency mean - sex
-
-scatter_dom <- comparison_radius_boom %>%
-  ggplot(aes(y = dom, x = radius, fill = sex, color = sex))+
+## entropy - age
+scatter_entropy_age <- comparison_radius_boom %>%
+  ggplot(aes(y = entropy, x = radius, fill = ageclass, color = ageclass))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  ylab('Dominant Frequency[Hz]')+
+  ylab('Entropy')+
   xlab('Airsac Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20),
-        axis.title.x = element_blank())
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none')
 
-## dominant frequency mean - ID
+## spectral Centroid - sex
 
-scatter_dom_ID <- comparison_radius_boom %>%
-  ggplot(aes(y = dom, x = radius, fill = ID, color = ID))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Dominant Frequency [Hz]')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20),
-        axis.title.x = element_blank())
-
-## spectral Centroid mean - sex
-
-scatter_spec_Centroid <- comparison_radius_boom %>%
+scatter_spec_Centroid_sex <- comparison_radius_boom %>%
   ggplot(aes(y = specCentroid, x = radius, fill = sex, color = sex))+
   geom_point()+
   geom_smooth(method = 'lm')+
@@ -332,10 +327,21 @@ scatter_spec_Centroid <- comparison_radius_boom %>%
   theme_minimal()+
   theme(text = element_text(size = 20))
 
-## spectral Centroid mean - ID
+## spectral Centroid - ID
 
 scatter_spec_Centroid_ID <- comparison_radius_boom %>%
   ggplot(aes(y = specCentroid, x = radius, fill = ID, color = ID))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Spectral Centroid')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))
+
+## spectral Centroid  - age
+
+scatter_spec_Centroid_age <- comparison_radius_boom %>%
+  ggplot(aes(y = specCentroid, x = radius, fill = ageclass, color = ageclass))+
   geom_point()+
   geom_smooth(method = 'lm')+
   ylab('Spectral Centroid')+
@@ -354,13 +360,23 @@ scatter_spec_Slope_ID <- comparison_radius_boom %>%
   theme(text = element_text(size = 20))
 
 
-## cowplot
+## plot grids ----
 
-cowplot::plot_grid(scatter_ampl, scatter_dom, scatter_entropy, scatter_spec_Centroid,scatter_pitch,
+# plot grid sex
+cowplot::plot_grid(scatter_ampl_sex, scatter_pitch_sex,
+                   scatter_entropy_sex, scatter_spec_Centroid_sex,
                    rel_widths = c(0.45,0.55), ncol = 2)
 #labels = c("A", "B", "C", "D"), ncol = 2)
 
-cowplot::plot_grid(scatter_ampl_ID, scatter_dom_ID, scatter_entropy_ID, scatter_spec_Centroid_ID,scatter_pitch_ID,
+#plot grid ID
+cowplot::plot_grid(scatter_ampl_ID, scatter_pitch_ID,
+                   scatter_entropy_ID, scatter_spec_Centroid_ID,
+                   rel_widths = c(0.45,0.55), ncol = 2)
+
+# plot grid ageclass
+
+cowplot::plot_grid(scatter_ampl_age, scatter_pitch_age,
+                   scatter_entropy_age, scatter_spec_Centroid_age,
                    rel_widths = c(0.45,0.55), ncol = 2)
 
 # 03c: radius inflation over time ----
