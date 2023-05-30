@@ -192,22 +192,27 @@ for (b in 1:nrow(comparison_radius_boom)){
   if(grepl('Pelangi', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Pelangi'
+    comparison_radius_boom$ageclass[b] = "Adult"
     
   }  else if (grepl('Fajar', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Fajar'
+    comparison_radius_boom$ageclass[b] = "Juvenile"
     
   } else if (grepl('Baju', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Baju'
+    comparison_radius_boom$ageclass[b] = "Subadult"
     
   } else if (grepl('Roger', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Roger'
+    comparison_radius_boom$ageclass[b] = "Adult"
     
   } else {
     
     comparison_radius_boom$ID[b] = 'NA'
+    comparison_radius_boom$ageclass[b] = "NA"
   }
   
 }
