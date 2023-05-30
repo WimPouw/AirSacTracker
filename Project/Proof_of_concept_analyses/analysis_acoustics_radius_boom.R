@@ -15,7 +15,8 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit","corrplot", "scales", "spiro", "signal", "foreach", "Hmisc")
+install_load("tidyverse","conicfit","corrplot", "scales", "spiro",
+             "signal", "foreach", "Hmisc", "ggplotify")
 library("foreach")
 
 # 01: data ----
@@ -172,29 +173,24 @@ for (b in 1:nrow(comparison_radius_boom)){
 comparison_radius_boom_numeric_adult <- comparison_radius_boom %>% 
   ungroup() %>%
   dplyr::filter(ageclass == "Adult") %>% 
-  select(radius, ampl, pitch, entropy, specCentroid)
-  #select(-audiofile, -match,
-  #       -videofile, -voiced,
-  #       -fs_video, -frame) 
+  select(radius, ampl, pitch, entropy, specCentroid, f1_freq, f2_freq,
+         harmEnergy, peakFreq, fmPurity, HNR)
+  
 
-
-cor_all <- cor(comparison_radius_boom_numeric)
 cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
 
 
-#correlation plot, show all
-#corrplot(cor_all_2$r[1,1:55, drop=FALSE], type = "upper", order = "original", 
-#         tl.col = "black", tl.srt = 45)
-
 #correlation plot, only show significant correlations
-corrplot(cor_all_2$r[1,1:5, drop=FALSE], 
-         p.mat = cor_all_2$P[1,1:5, drop=FALSE],
-         sig.level = 0.05, insig = "blank", diag = FALSE,
+
+ corrplot(cor_all_2$r[1,1:11, drop=FALSE], 
+         p.mat = cor_all_2$P[1,1:11, drop=FALSE],
+         sig.level = 0.01, insig = "blank", diag = FALSE,
          tl.col = "black", #tl.srt = 90,
          addCoef.col = 'black',
-         cl.pos = 'r')#, col = COL2('BrBG'))
-
-
+         cl.pos = 'r') #, col = COL2('BrBG'))
+ 
+ correlation_plot <-recordPlot()
+ 
 # 03: visualization -----
 
 # 03a: adding meta data for plotting: sex + ID -----
@@ -215,8 +211,7 @@ scatter_ampl_sex <- comparison_radius_boom %>%
   #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(legend.position = 'none',
-        axis.title.x = element_blank())
+  theme(legend.position = 'none')
 
 # amplitude mean - ID
 
@@ -242,7 +237,13 @@ scatter_ampl_age <- comparison_radius_boom %>%
   theme_minimal()+
   theme(text = element_text(size = 20))+
   theme(legend.position = 'none',
-        axis.title.x = element_blank())
+        axis.title.x = element_blank())+
+  scale_colour_manual(name = "Age Class",
+                      labels = c("Adult", "Juvenile"),
+                      values = c("darkred", "grey60"))+
+  scale_fill_manual(name = "Age Class",
+                    labels = c("Adult", "Juvenile"),
+                    values = c("darkred", "grey40"))
 
 ## pitch (f0) -sex
 
@@ -254,7 +255,7 @@ scatter_pitch_sex <- comparison_radius_boom %>%
   xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(axis.title.x = element_blank())
+  theme(legend.position = 'none')
 
 ## pitch (f0) -ID
 
@@ -266,7 +267,8 @@ scatter_pitch_ID <- comparison_radius_boom %>%
   xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(axis.title.x = element_blank())
+  theme(axis.title.x = element_blank(),
+        legend.position = 'none')
 
 
 ## pitch (f0) - age
@@ -278,8 +280,15 @@ scatter_pitch_age <- comparison_radius_boom %>%
   ylab('Pitch')+
   xlab('Airsac Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20))#+
-  theme(axis.title.x = element_blank())
+  theme(text = element_text(size = 20))+
+  theme(axis.title.x = element_blank(),
+        legend.position = 'none')+
+  scale_colour_manual(name = "Age Class",
+                      labels = c("Adult", "Juvenile"),
+                      values = c("darkred", "grey60"))+
+  scale_fill_manual(name = "Age Class",
+                    labels = c("Adult", "Juvenile"),
+                    values = c("darkred", "grey40"))
 
 ## entropy  -sex
 
@@ -303,7 +312,8 @@ scatter_entropy_ID <- comparison_radius_boom %>%
   xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(legend.position = 'none')
+  theme(legend.position = 'none',
+        axis.title.x = element_blank())
 
 ## entropy - age
 scatter_entropy_age <- comparison_radius_boom %>%
@@ -314,7 +324,14 @@ scatter_entropy_age <- comparison_radius_boom %>%
   xlab('Airsac Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(legend.position = 'none')
+  theme(legend.position = 'none',
+        axis.title.x = element_blank())+
+  scale_colour_manual(name = "Age Class",
+                      labels = c("Adult", "Juvenile"),
+                      values = c("darkred", "grey60"))+
+  scale_fill_manual(name = "Age Class",
+                      labels = c("Adult", "Juvenile"),
+                      values = c("darkred", "grey40"))
 
 ## spectral Centroid - sex
 
@@ -325,7 +342,8 @@ scatter_spec_Centroid_sex <- comparison_radius_boom %>%
   ylab('Spectral Centroid')+
   xlab('Airsac Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20))
+  theme(text = element_text(size = 20),
+        legend.position = 'none')
 
 ## spectral Centroid - ID
 
@@ -336,7 +354,9 @@ scatter_spec_Centroid_ID <- comparison_radius_boom %>%
   ylab('Spectral Centroid')+
   xlab('Airsac Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20))
+  theme(text = element_text(size = 20),
+        axis.title.x = element_blank(),
+        legend.position = 'none')
 
 ## spectral Centroid  - age
 
@@ -347,7 +367,15 @@ scatter_spec_Centroid_age <- comparison_radius_boom %>%
   ylab('Spectral Centroid')+
   xlab('Airsac Radius [px]')+
   theme_minimal()+
-  theme(text = element_text(size = 20))
+  theme(text = element_text(size = 20),
+        axis.title.x = element_blank(),
+        legend.position = 'none')+
+  scale_colour_manual(name = "Age Class",
+                      labels = c("Adult", "Juvenile"),
+                      values = c("darkred", "grey60"))+
+  scale_fill_manual(name = "Age Class",
+                    labels = c("Adult", "Juvenile"),
+                    values = c("darkred", "grey40"))
 
 ## spectral slope
 scatter_spec_Slope_ID <- comparison_radius_boom %>%
@@ -378,6 +406,17 @@ cowplot::plot_grid(scatter_ampl_ID, scatter_pitch_ID,
 cowplot::plot_grid(scatter_ampl_age, scatter_pitch_age,
                    scatter_entropy_age, scatter_spec_Centroid_age,
                    rel_widths = c(0.45,0.55), ncol = 2)
+
+# plot grid, all comparisons per parameter: age, id, sex for ampl, pitch, entropy, specCentroid
+
+cowplot::plot_grid(scatter_ampl_age, scatter_pitch_age,
+                                  scatter_entropy_age, scatter_spec_Centroid_age,
+                                  scatter_ampl_ID, scatter_pitch_ID,
+                                  scatter_entropy_ID, scatter_spec_Centroid_ID,
+                                  scatter_ampl_sex, scatter_pitch_sex,
+                                  scatter_entropy_sex, scatter_spec_Centroid_sex,
+                                  ncol = 4, nrow = 3)
+
 
 # 03c: radius inflation over time ----
 
