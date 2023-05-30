@@ -15,7 +15,7 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
+install_load("tidyverse","conicfit","corrplot", "scales", "spiro", "signal", "foreach")
 library("foreach")
 
 # 01: data ----
@@ -158,8 +158,12 @@ cor_all_2 <-rcorr(as.matrix(comparison_radius_boom_numeric))
 #         tl.col = "black", tl.srt = 45)
 
 #correlation plot, only show significant correlations
-corrplot(cor_all_2$r[1,1:55, drop=FALSE], 
-         p.mat = cor_all_2$P[1,1:55, drop=FALSE], sig.level = 0.05, insig = "blank", diag = FALSE)
+corrplot(cor_all_2$r[1,9:53, drop=FALSE], 
+         p.mat = cor_all_2$P[1,9:53, drop=FALSE],
+         sig.level = 0.05, insig = "blank", diag = FALSE,
+         tl.col = "black", #tl.srt = 90,
+         #addCoef.col = 'black',
+         cl.pos = 'b', col = COL2('BrBG'))
 
 
 # 03: visualization -----
@@ -209,7 +213,7 @@ for (b in 1:nrow(comparison_radius_boom)){
 }
 
 
-# 03b: plots
+# 03b: scatter plots acoustics vs. radius ----
  
 
 scatter_ampl <- comparison_radius_boom %>% 
@@ -334,6 +338,16 @@ scatter_spec_Centroid_ID <- comparison_radius_boom %>%
   theme_minimal()+
   theme(text = element_text(size = 20))
 
+## spectral slope
+scatter_spec_Slope_ID <- comparison_radius_boom %>%
+  ggplot(aes(y = specSlope, x = radius, fill = ID, color = ID))+
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  ylab('Spectral Slope')+
+  xlab('Airsac Radius [px]')+
+  theme_minimal()+
+  theme(text = element_text(size = 20))
+
 
 ## cowplot
 
@@ -343,3 +357,79 @@ cowplot::plot_grid(scatter_ampl, scatter_dom, scatter_entropy, scatter_spec_Cent
 
 cowplot::plot_grid(scatter_ampl_ID, scatter_dom_ID, scatter_entropy_ID, scatter_spec_Centroid_ID,scatter_pitch_ID,
                    rel_widths = c(0.45,0.55), ncol = 2)
+
+# 03c: radius inflation over time ----
+
+# timeseries plots Fajar
+plot_fajar <- comparison_radius_boom %>%
+  dplyr::filter(ID == 'Fajar') %>% 
+  ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
+  geom_line(size = 1.4)+
+  xlab('Frame')+
+  ylab('Airsac Radius [px]')+
+  ggtitle('Fajar')+
+  theme_minimal()+
+  theme(legend.position = 'none',
+        text = element_text(size = 20))#,
+#axis.title.y = element_blank())
+
+#timeseries plots Pelangi
+plot_pelangi <- comparison_radius_boom %>%
+  dplyr::filter(ID == 'Pelangi') %>% 
+  ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
+  geom_line(size = 1.4)+
+  xlab('Frame')+
+  ylab('Airsac Radius [px]')+
+  ggtitle('Pelangi')+
+  theme_minimal()+
+  theme(legend.position = 'none',
+        text = element_text(size = 20))#,
+#axis.title.y = element_blank())
+
+#timeseries plots Baju
+plot_baju <- comparison_radius_boom %>%
+  dplyr::filter(ID == 'Baju') %>% 
+  ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
+  geom_line(size = 1.4)+
+  xlab('Frame')+
+  ylab('Airsac Radius [px]')+
+  ggtitle('Baju')+
+  theme_minimal()#+
+  theme(legend.position = 'none',
+        text = element_text(size = 20))#,
+#axis.title.y = element_blank())
+
+#timeseries plots Roger
+plot_roger <- comparison_radius_boom %>%
+  dplyr::filter(ID == 'Roger') %>% 
+  ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
+  geom_line(size = 1.4)+
+  xlab('Time [ms]')+
+  ylab('Airsac Radius [px]')+
+  ggtitle('Roger')+
+  theme_minimal()+
+  theme(legend.position = 'none',
+        text = element_text(size = 20))#,
+#axis.title.y = element_blank())
+
+cowplot::plot_grid(plot_fajar, plot_pelangi, plot_baju, plot_roger,
+                   ncol = 2)
+
+# deflation-inflation example Baju
+
+baju_example <- "_Opp_June_13_Session_1_zoom_syncedboom_7_3_BajuDLC_resnet101_Deep_AirSacTrackingV1Jan1shuffle1_500000.csv"
+
+detail_plot_baju <- comparison_radius_boom %>%
+  dplyr::filter(videofile == baju_example) %>% 
+  ggplot()+
+  geom_line(aes(x = frame, y = radius), color = "black",size = 1.4)+
+  geom_line(aes(x = frame, y = ampl), color = "red", size = 1.4)+
+  geom_line(aes(x = frame, y = pitch), color = "green", size = 1.4)+
+  geom_line(aes(x = frame, y = entropy), color = "yellow", size = 1.4)+
+  xlab('Frame')+
+  ylab('Parameters')+
+  ggtitle('Baju')+
+  theme_minimal()#+
+  theme(legend.position = 'none',
+        text = element_text(size = 20))#,
+#axis.title.y = element_blank())
