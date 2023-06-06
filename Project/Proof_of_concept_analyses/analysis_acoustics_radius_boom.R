@@ -16,7 +16,7 @@ if (!require(install.load)) {
 library(install.load)
 
 install_load("tidyverse","conicfit","corrplot", "scales", "spiro",
-             "signal", "foreach", "Hmisc", "ggplotify")
+             "signal", "foreach", "Hmisc", "ggplotify", "cowplot")
 library("foreach")
 
 # 01: data ----
