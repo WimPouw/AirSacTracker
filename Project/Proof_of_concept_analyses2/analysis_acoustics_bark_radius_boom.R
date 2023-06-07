@@ -65,9 +65,10 @@ for(z in 1:length(radius_boom_bark_sequences_last)){
 
 acoustic_bark_summary <- acoustics_bark %>%
   group_by(audiofile) %>% 
-  summarise_at(c("ampl", "specCentroid", "dom", "entropy", "entropySh", "f1_freq", "f2_freq", "specSlope", "pitch", "harmEnergy",
-                 "peakFreq", "fmPurity", "HNR"), list(~mean(.x,na.rm = TRUE), ~max(.x,na.rm = TRUE), ~min(.x,na.rm = TRUE)))
-
+  summarise(across(c("ampl", "specCentroid", "dom", "entropy", "entropySh", "f1_freq", "f2_freq", "specSlope", "pitch", "harmEnergy",
+                     "peakFreq", "HNR"),
+                   list(mean = mean, min = min, max = max), na.rm = TRUE))
+                   
 ### audio match name
 
 filename <- strsplit(acoustic_bark_summary$audiofile, split  = "bark")
@@ -276,11 +277,11 @@ cowplot::plot_grid(plot1,plot5,plot7,plot13, plot2, plot6, plot8,plot14, ncol = 
 
 acoustic_correlation <- combined_radius_acoustics_boom_bark %>% 
   select(radius, ampl_mean, pitch_mean, entropy_mean, specCentroid_mean, f1_freq_mean, f2_freq_mean,
-         harmEnergy_mean, peakFreq_mean, HNR_mean)#,
-         #ampl_max, pitch_max, entropy_max, specCentroid_max, f1_freq_max, f2_freq_max,
-         #harmEnergy_max, peakFreq_max, HNR_max,
-         #ampl_min, pitch_min, entropy_min, specCentroid_min, f1_freq_min, f2_freq_min,
-         #harmEnergy_min, peakFreq_min, HNR_min)
+         peakFreq_mean,
+         ampl_max, pitch_max, entropy_max, specCentroid_max, f1_freq_max, f2_freq_max,
+         peakFreq_max,
+         ampl_min, pitch_min, entropy_min, specCentroid_min, f1_freq_min, f2_freq_min,
+         peakFreq_min)
 
 
   #dplyr::filter(radius>80) %>% 
@@ -291,12 +292,12 @@ cor_all_proof2_2 <-rcorr(as.matrix(acoustic_correlation))
 
 
 #correlation plot, show all
-corrplot(cor_all_proof2_2$r[1,2:19, drop = FALSE], type="upper", 
+corrplot(cor_all_proof2_2$r[1,2:22, drop = FALSE], type="upper", 
          tl.col = "black")
 
 #correlation plot, only show significant correlations
-corrplot(cor_all_proof2_2$r[1,2:19, drop = FALSE], type="upper", 
-         p.mat = cor_all_proof2_2$P[1,2:19, drop = FALSE], sig.level = 0.05,
+corrplot(cor_all_proof2_2$r[1,2:22, drop = FALSE], type="upper", 
+         p.mat = cor_all_proof2_2$P[1,2:22, drop = FALSE], sig.level = 0.05,
          tl.col = "black",
          insig = "blank")
 
