@@ -17,7 +17,7 @@ if (!require(install.load)) {
 library(install.load)
 
 install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach", "Hmisc", "cowplot", "corrplot")
-library("foreach")
+#library("foreach")
 
 # 01: data ----
 ## 01a: load data ----
@@ -41,6 +41,8 @@ radius_boom_bark_sequences$match <- filename[,1]
 radius_boom_bark_sequences_last <- radius_boom_bark_sequences %>% 
   group_split(videofile)
 
+data_last <- c()
+
 for(z in 1:length(radius_boom_bark_sequences_last)){
   
   data <- radius_boom_bark_sequences_last[[z]]
@@ -50,9 +52,38 @@ for(z in 1:length(radius_boom_bark_sequences_last)){
   data <- data[!is.na(data$radius),]
   
   if(nrow(data) > 1){
-    data_max[z,] <- data[data$frame == max(data$frame),]
+    
+    last_data <- data[data$frame == max(data$frame),]
+    data_last <- rbind(data_last, last_data) 
   } else {
-    data_max[z,] <- NA
+    last_data <- NA
+    data_last <- rbind(data_last, last_data)
+  }
+}
+
+
+radius_boom_bark_sequences_max <- radius_boom_bark_sequences %>% 
+  group_split(videofile)
+
+data_max <- c()
+
+for(z in 1:length(radius_boom_bark_sequences_max)){
+  
+  data <- radius_boom_bark_sequences_last[[z]]
+  
+  data <- data %>% 
+    mutate(radius = as.numeric(radius),
+           frame = as.numeric(frame))
+  data <- data[!is.na(data$radius),]
+  
+  if(nrow(data) > 1){
+    max_data <- data[data$radius == max(data$radius, na.rm = TRUE),]
+    
+    data_max <- rbind (data_max, max_data) 
+      } else {
+        
+    max_data <- NA    
+    data_max <- rbind(data_max,max_data)
   }
 }
 
@@ -67,7 +98,7 @@ acoustic_bark_summary <- acoustics_bark %>%
   group_by(audiofile) %>% 
   summarise(across(c("ampl", "specCentroid", "dom", "entropy", "entropySh", "f1_freq", "f2_freq", "specSlope", "pitch", "harmEnergy",
                      "peakFreq", "HNR"),
-                   list(mean = mean, min = min, max = max), na.rm = TRUE))
+                   list(mean = mean, min = min, max = max, median = median), na.rm = TRUE))
                    
 ### audio match name
 
@@ -80,17 +111,62 @@ acoustic_bark_summary$match <- filename[,2]
 
 ### data joining: match acoustics_bark with last radius of preceeding boom
 
-combined_radius_acoustics_boom_bark <- left_join(data_max, acoustic_bark_summary)
-#combined_radius_acoustics <- left_join(combined_radius_acoustics, duration_bark)
+combined_radius_acoustics_boom_bark_max <- left_join(data_max, acoustic_bark_summary)
+combined_radius_acoustics_boom_bark_last <- left_join(data_last, acoustic_bark_summary)
 
-# 02: data visualization ----
 
-plot1<- combined_radius_acoustics_boom_bark %>%
+# 02: correlation matrix ----
+
+acoustic_correlation_max <- combined_radius_acoustics_boom_bark_max %>% 
+  select(radius, ampl_mean, pitch_mean, entropy_mean, specCentroid_mean, f1_freq_mean, f2_freq_mean,
+         peakFreq_mean,
+         ampl_max, pitch_max, entropy_max, specCentroid_max, f1_freq_max, f2_freq_max,
+         peakFreq_max,
+         ampl_min, pitch_min, entropy_min, specCentroid_min, f1_freq_min, f2_freq_min,
+         peakFreq_min,
+         ampl_median, pitch_median, entropy_median, specCentroid_median, f1_freq_median, f2_freq_median,
+         peakFreq_median)
+
+
+acoustic_correlation_last <- combined_radius_acoustics_boom_bark_last %>% 
+  select(radius, ampl_mean, pitch_mean, entropy_mean, specCentroid_mean, f1_freq_mean, f2_freq_mean,
+         peakFreq_mean,
+         ampl_max, pitch_max, entropy_max, specCentroid_max, f1_freq_max, f2_freq_max,
+         peakFreq_max,
+         ampl_min, pitch_min, entropy_min, specCentroid_min, f1_freq_min, f2_freq_min,
+         peakFreq_min,
+         ampl_median, pitch_median, entropy_median, specCentroid_median, f1_freq_median, f2_freq_median,
+         peakFreq_median)
+
+
+cor_all_proof_max <- cor(acoustic_correlation_max)
+cor_all_proof_max_2 <-rcorr(as.matrix(acoustic_correlation_max))
+
+
+#correlation plot, show all
+corrplot(cor_all_proof_max_2$r[1,2:29, drop = FALSE], type="upper", 
+         tl.col = "black")
+
+#correlation plot, only show significant correlations
+corrplot(cor_all_proof_max_2$r[1,2:29, drop = FALSE], type="upper", 
+         p.mat = cor_all_proof_max_2$P[1,2:29, drop = FALSE], sig.level = 0.05,
+         tl.col = "black",
+         insig = "blank")
+
+
+# 03: data visualization ----
+
+
+
+# amplitude plots 
+
+# ampl median
+ampl_median <- combined_radius_acoustics_boom_bark %>%
   dplyr::filter(radius>80) %>% 
-  ggplot(aes(x= radius, y = ampl_mean))+
+  ggplot(aes(x= radius, y = ampl_median))+
   geom_point()+
   geom_smooth(method = 'lm')+
-  ylab('Mean Amplitude subsequent bark')+
+  ylab('Median Amplitude bark')+
   #xlab('Max Radius previous Boom [px]')+
   xlab('Max Radius [px]')+
   #coord_cartesian(xlim = c(0,10))+
@@ -273,31 +349,4 @@ plot14 <- combined_radius_acoustics_boom_bark %>%
 
 cowplot::plot_grid(plot1,plot5,plot7,plot13, plot2, plot6, plot8,plot14, ncol = 4, nrow = 2)
 
-# 03: correlation matrix ----
-
-acoustic_correlation <- combined_radius_acoustics_boom_bark %>% 
-  select(radius, ampl_mean, pitch_mean, entropy_mean, specCentroid_mean, f1_freq_mean, f2_freq_mean,
-         peakFreq_mean,
-         ampl_max, pitch_max, entropy_max, specCentroid_max, f1_freq_max, f2_freq_max,
-         peakFreq_max,
-         ampl_min, pitch_min, entropy_min, specCentroid_min, f1_freq_min, f2_freq_min,
-         peakFreq_min)
-
-
-  #dplyr::filter(radius>80) %>% 
-  #select(-videofile, -audiofile, -match)
-
-cor_all_proof2 <- cor(acoustic_correlation)
-cor_all_proof2_2 <-rcorr(as.matrix(acoustic_correlation))
-
-
-#correlation plot, show all
-corrplot(cor_all_proof2_2$r[1,2:22, drop = FALSE], type="upper", 
-         tl.col = "black")
-
-#correlation plot, only show significant correlations
-corrplot(cor_all_proof2_2$r[1,2:22, drop = FALSE], type="upper", 
-         p.mat = cor_all_proof2_2$P[1,2:22, drop = FALSE], sig.level = 0.05,
-         tl.col = "black",
-         insig = "blank")
 
