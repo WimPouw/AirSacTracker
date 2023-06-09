@@ -17,7 +17,6 @@ library(install.load)
 
 install_load("tidyverse","conicfit","corrplot", "scales", "spiro",
              "signal", "foreach", "Hmisc", "ggplotify", "cowplot")
-library("foreach")
 
 # 01: data ----
 
@@ -76,7 +75,6 @@ subset_radius_fps50 <- radius_boom %>%
 subset_radius_fps25 <- radius_boom %>% 
   dplyr::filter(fs_video == 25) 
 
-
 ### prepare match names to match audio to radius snippets
 
 ## 01b_2: data prep version 2 ----
@@ -122,7 +120,6 @@ comparison_radius_boom <- left_join(radius_boom_downsampled,acoustics_boom,  by=
 comparison_radius_boom <- comparison_radius_boom %>%
   mutate(radius = as.numeric(radius)) %>% 
   dplyr::filter(radius < 270)
-
 
 # 02: analysis ----
 
@@ -179,7 +176,6 @@ for (b in 1:nrow(comparison_radius_boom)){
   
 }
 
-
 # 02b: correlation matrix ----
 
 ## 02b-1: adults ----
@@ -190,9 +186,7 @@ comparison_radius_boom_numeric_adult <- comparison_radius_boom %>%
   select(radius, ampl, pitch, entropy, specCentroid, f1_freq, f2_freq,
          harmEnergy, peakFreq, fmPurity, HNR)
   
-
 cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
-
 
 #correlation plot, only show significant correlations
 
@@ -213,9 +207,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    select(radius, ampl, pitch, entropy, specCentroid, f1_freq, f2_freq,
           harmEnergy, peakFreq, fmPurity, HNR)
  
- 
  cor_all_2_nonadult <- rcorr(as.matrix(comparison_radius_boom_numeric_nonadult))
- 
  
  #correlation plot, only show significant correlations for non-adults
  
@@ -247,11 +239,11 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
    scale_y_continuous(expand = c(0, 0),
-                      limits= c(0,0.45),
+                      limits= c(0,0.5),
                       breaks= c(0,0.1,0.2,0.3,0.4))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
-   annotate("text", x=100, y=0.4, label= " R² = 0.45")
+   annotate("text", x=120, y=0.4, label= " R² = 0.45")
  
 ### adults - pooled - pitch (f0) 
  
@@ -269,7 +261,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
                       breaks= c(200,250,300,350,400))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
-   annotate("text", x=100, y=400, label= " R² = 0.82")
+   annotate("text", x=120, y=400, label= " R² = 0.82")
 
 ### adults - pooled - entropy
  
@@ -282,9 +274,12 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(0,0.5),
+                      breaks= c(0,0.1,0.2,0.3,0.4))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
-   annotate("text", x=100, y=0.3, label= " R² = -0.31")
+   annotate("text", x=120, y=0.4, label= " R² = -0.31")
 
 ### adults - pooled - spectral Centroid
  
@@ -297,9 +292,12 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(1000,6000),
+                      breaks= c(1000,2000,3000,4000, 5000))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
-   annotate("text", x = 100, y = 4500, label = " R² = -0.55")
+   annotate("text", x = 120, y = 5000, label = " R² = -0.55")
 
  ### adults divided by sex
  ### adults - by sex - amplitude
@@ -313,6 +311,9 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(0,0.5),
+                      breaks= c(0,0.1,0.2,0.3,0.4))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
    scale_fill_manual(name = "Sex",
@@ -334,6 +335,9 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(200,450),
+                      breaks= c(200,250,300,350,400))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
    scale_fill_manual(name = "Sex",
@@ -355,6 +359,9 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(0,0.5),
+                      breaks= c(0,0.1,0.2,0.3,0.4))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
    scale_fill_manual(name = "Sex",
@@ -376,6 +383,9 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(1000,6000),
+                      breaks= c(1000,2000,3000,4000, 5000))+
    theme(text = element_text(size = 20))+
    scale_fill_manual(name = "Sex",
                      labels = c("Female", "Male"),
@@ -406,9 +416,12 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(0,0.5),
+                      breaks= c(0,0.1,0.2,0.3,0.4))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
-   annotate("text", x=60, y=0.4, label= " R² = -0.03")
+   annotate("text", x=80, y=0.4, label= " R² = -0.03")
  
  ### non-adults - pooled - pitch (f0) 
  
@@ -421,9 +434,12 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(200,450),
+                      breaks= c(200,250,300,350,400))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
-   annotate("text", x=60, y=310, label= " R² = 0.01")
+   annotate("text", x=80, y=400, label= " R² = 0.01")
  
  ### non-adults - pooled - entropy
  
@@ -436,9 +452,12 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(0,0.5),
+                      breaks= c(0,0.1,0.2,0.3,0.4))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
-   annotate("text", x=60, y=0.3, label= " R² = 0.03")
+   annotate("text", x=80, y=0.4, label= " R² = 0.03")
  
  ### non-adults - pooled - spectral Centroid
  
@@ -451,9 +470,12 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(1000,6000),
+                      breaks= c(1000,2000,3000,4000, 5000))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
-   annotate("text", x = 100, y = 4500, label = " R² = -0.01")
+   annotate("text", x = 80, y = 5000, label = " R² = -0.01")
  
  ### non-Adutls divided by detailed age class (juvenile/sub-adult)
  ### nonadults - by ageclass - amplitude
@@ -467,6 +489,9 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(0,0.5),
+                      breaks= c(0,0.1,0.2,0.3,0.4))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
    scale_fill_manual(name = "Ageclass",
@@ -488,6 +513,9 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(200,450),
+                      breaks= c(200,250,300,350,400))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
    scale_fill_manual(name = "Ageclass",
@@ -509,6 +537,9 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(0,0.5),
+                      breaks= c(0,0.1,0.2,0.3,0.4))+
    theme(text = element_text(size = 20))+
    theme(legend.position = 'none')+
    scale_fill_manual(name = "Ageclass",
@@ -530,7 +561,9 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
    theme_minimal()+
-   
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(1000,6000),
+                      breaks= c(1000,2000,3000,4000, 5000))+
    theme(text = element_text(size = 20))+
    scale_fill_manual(name = "Ageclass",
                      labels = c("Subadult", "Juvenile"),
@@ -573,7 +606,7 @@ cowplot::plot_grid(scatter_nonadults_ampl_pooled, scatter_nonadults_pitch_pooled
 
 cowplot::plot_grid(scatter_nonadults_ampl_ageclass, scatter_nonadults_pitch_ageclass,
                    scatter_nonadults_entropy_ageclass, scatter_nonadults_specCentroid_ageclass,legend_nonadults_ageclass,
-                   ncol = 5, align = "h", labels = c("N", "O", "P", "Q"))
+                   ncol = 5, align = "h", labels = c("N", "O", "P", "Q", ""))
 
   # 04: old plots -----
   
