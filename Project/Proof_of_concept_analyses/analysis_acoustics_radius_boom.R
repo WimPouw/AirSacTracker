@@ -176,7 +176,25 @@ for (b in 1:nrow(comparison_radius_boom)){
   
 }
 
-# 02b: correlation matrix ----
+# 02b: stats ----
+
+# number of call sequences
+
+adults <- comparison_radius_boom %>% 
+  dplyr::filter(ageclass == "Adult")
+
+n_calls <- unique(adults$videofile)
+n_calls <- length(n_calls)
+
+# number of call sequences: 25
+
+# number of datapoints
+
+n_datapoints <- nrow(adults)
+
+# number of datapoints: 176 
+
+# 02c: correlation matrix ----
 
 ## 02b-1: adults ----
 
