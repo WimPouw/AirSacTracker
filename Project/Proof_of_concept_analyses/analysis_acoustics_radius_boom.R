@@ -26,6 +26,16 @@ acoustics_boom <- readRDS("acoustic_analysis_boom_multi_checked.rds")
 
 radius_boom <- readRDS("radius_estimation_boom_proof1.rds")
 
+# https://stackoverflow.com/questions/57153428/r-plot-color-combinations-that-are-colorblind-accessible
+# we only use colors from a colorblind-safe palette
+safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", 
+                             "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
+
+# colors for sex  (male/female) :  "#44AA99", "#CC6677"
+# colors for age classes (juvenile/ sub-adult) : "#882255", "#117733"
+# color adults pooled: black
+# color non-adults pooled: black
+
 ## 01b: data preparation ----
 
 ### get video sampling rate from video name (in June recordings were made with 25 fps, in August with 50)
@@ -140,23 +150,25 @@ for (b in 1:nrow(comparison_radius_boom)){
   if(grepl('Pelangi', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Pelangi'
+    comparison_radius_boom$ageclass_detailed[b] = "Adult"
     comparison_radius_boom$ageclass[b] = "Adult"
     
   }  else if (grepl('Fajar', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Fajar'
-    #comparison_radius_boom$ageclass[b] = "Juvenile"
+    comparison_radius_boom$ageclass_detailed[b] = "Juvenile"
     comparison_radius_boom$ageclass[b] = "non-Adult"
     
   } else if (grepl('Baju', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Baju'
-    #comparison_radius_boom$ageclass[b] = "Subadult"
+    comparison_radius_boom$ageclass_detailed[b] = "Subadult"
     comparison_radius_boom$ageclass[b] = "non-Adult"
     
   } else if (grepl('Roger', comparison_radius_boom$videofile[b], ignore.case = TRUE) == TRUE){
     
     comparison_radius_boom$ID[b] = 'Roger'
+    comparison_radius_boom$ageclass_detailed[b] = "Adult"
     comparison_radius_boom$ageclass[b] = "Adult"
     
   } else {
@@ -169,6 +181,8 @@ for (b in 1:nrow(comparison_radius_boom)){
 
 
 # 02b: correlation matrix ----
+
+## 02b-1: adults ----
 
 comparison_radius_boom_numeric_adult <- comparison_radius_boom %>% 
   ungroup() %>%
@@ -189,307 +203,636 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
          addCoef.col = 'black',
          cl.pos = 'r') #, col = COL2('BrBG'))
  
- correlation_plot <-recordPlot()
+# correlation_plot <-recordPlot()
+ 
+ ## 02b-2: non-adults ----
+ 
+ comparison_radius_boom_numeric_nonadult <- comparison_radius_boom %>% 
+   ungroup() %>%
+   dplyr::filter(ageclass == "non-Adult") %>% 
+   select(radius, ampl, pitch, entropy, specCentroid, f1_freq, f2_freq,
+          harmEnergy, peakFreq, fmPurity, HNR)
+ 
+ 
+ cor_all_2_nonadult <- rcorr(as.matrix(comparison_radius_boom_numeric_nonadult))
+ 
+ 
+ #correlation plot, only show significant correlations for non-adults
+ 
+ corrplot(cor_all_2_nonadult$r[1,1:11, drop=FALSE], 
+          p.mat = cor_all_2_nonadult$P[1,1:11, drop=FALSE],
+          sig.level = 0.05, insig = "blank", diag = FALSE,
+          tl.col = "black", #tl.srt = 90,
+          addCoef.col = 'black',
+          cl.pos = 'r') #, col = COL2('BrBG'))
+ 
+# correlation_plot <-recordPlot()
  
 # 03: visualization -----
 
-# 03a: adding meta data for plotting: sex + ID -----
-
-
-
-# 03b: scatter plots acoustics vs. radius ----
+## 03a: adults ----
+## acoustics vs. radius for adults only (Pelangi & Roger)
+## plotted acoustic parameters: amplitude, pitch (f0), entropy and Spectral Centroid 
  
-# scatter amplitude - sex
+ 
+### adults - pooled - amplitude
+ 
+ scatter_adults_ampl_pooled <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "Adult") %>% 
+   ggplot(aes(y = ampl, x = radius))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Amplitude')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(0,0.45),
+                      breaks= c(0,0.1,0.2,0.3,0.4))+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   annotate("text", x=100, y=0.4, label= " R² = 0.45")
+ 
+### adults - pooled - pitch (f0) 
+ 
+ scatter_adults_pitch_pooled <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "Adult") %>% 
+   ggplot(aes(y = pitch, x = radius))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Pitch [Hz]')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   scale_y_continuous(expand = c(0, 0),
+                      limits= c(200,450),
+                      breaks= c(200,250,300,350,400))+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   annotate("text", x=100, y=400, label= " R² = 0.82")
 
-scatter_ampl_sex <- comparison_radius_boom %>% 
-  #ggplot(aes(y = ampl_mean, x = radius, fill = sex, color = sex))+
-  ggplot(aes(y = ampl, x = radius, fill = sex, color = sex))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Amplitude')+
-  xlab('Airsac Radius [px]')+
-  #coord_cartesian(xlim = c(0,10))+
-  theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(legend.position = 'none')
+### adults - pooled - entropy
+ 
+ scatter_adults_entropy_pooled <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "Adult") %>% 
+   ggplot(aes(y = entropy, x = radius))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Entropy')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   annotate("text", x=100, y=0.3, label= " R² = -0.31")
 
-# amplitude mean - ID
+### adults - pooled - spectral Centroid
+ 
+ scatter_adults_specCentroid_pooled <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "Adult") %>% 
+   ggplot(aes(y = specCentroid, x = radius))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Spectral Centroid [Hz]')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   annotate("text", x = 100, y = 4500, label = " R² = -0.55")
 
-scatter_ampl_ID <- comparison_radius_boom %>%
-  ggplot(aes(y = ampl, x = radius, fill = ID, color = ID))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Amplitude')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(legend.position = 'none',
-        axis.title.x = element_blank())
+ ### adults divided by sex
+ ### adults - by sex - amplitude
+ 
+ scatter_adults_ampl_sex <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "Adult") %>% 
+   ggplot(aes(y = ampl, x = radius, fill = sex, color = sex))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Amplitude')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   scale_fill_manual(name = "Sex",
+                     labels = c("Female", "Male"),
+                     values = c("#CC6677", "#44AA99"))+
+   scale_color_manual(name = "Sex",
+                      labels = c("Female", "Male"),
+                      values = c("#CC6677", "#44AA99"))#+
+   #annotate("text", x=100, y=0.4, label= " R² = 0.45, p = ")
+ 
+ ### adults - by sex - pitch (f0)
+ 
+ scatter_adults_pitch_sex <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "Adult") %>% 
+   ggplot(aes(y = pitch, x = radius, fill = sex, color = sex))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Pitch [Hz]')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   scale_fill_manual(name = "Sex",
+                     labels = c("Female", "Male"),
+                     values = c("#CC6677", "#44AA99"))+
+   scale_color_manual(name = "Sex",
+                      labels = c("Female", "Male"),
+                      values = c("#CC6677", "#44AA99"))#+
+ #annotate("text", x=100, y=0.4, label= " R² = 0.45, p = ")
+ 
+ ### adults - by sex - entropy 
+ 
+ scatter_adults_entropy_sex <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "Adult") %>% 
+   ggplot(aes(y = entropy, x = radius, fill = sex, color = sex))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Entropy')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   scale_fill_manual(name = "Sex",
+                     labels = c("Female", "Male"),
+                     values = c("#CC6677", "#44AA99"))+
+   scale_color_manual(name = "Sex",
+                      labels = c("Female", "Male"),
+                      values = c("#CC6677", "#44AA99"))#+
+ #annotate("text", x=100, y=0.4, label= " R² = 0.45, p = ")
+ 
+ ### adults - by sex - spectral Centroid
+ 
+ scatter_adults_specCentroid_sex <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "Adult") %>% 
+   ggplot(aes(y = specCentroid, x = radius, fill = sex, color = sex))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Spectral Centroid [Hz]')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   scale_fill_manual(name = "Sex",
+                     labels = c("Female", "Male"),
+                     values = c("#CC6677", "#44AA99"))+
+   scale_color_manual(name = "Sex",
+                      labels = c("Female", "Male"),
+                      values = c("#CC6677", "#44AA99"))
+   #scale_colour_manual(name = "Sex",
+   #                    labels = c("Male", "Female"))#,
+   #                     values = c("#44AA99","#CC6677"))#+
+   #theme(legend.position = 'none')#+
+  #annotate("text", x=100, y=0.4, label= " R² = 0.45, p = ")
+ 
+ legend_adults_sex <- get_legend(scatter_adults_specCentroid_sex)
+ 
+ scatter_adults_specCentroid_sex <- scatter_adults_specCentroid_sex + theme(legend.position = "none")
+ 
+## 03b: non-adults ----
 
-# amplitude - age
+ ### non- adults - pooled - amplitude
+ 
+ scatter_nonadults_ampl_pooled <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "non-Adult") %>% 
+   ggplot(aes(y = ampl, x = radius))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Amplitude')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   annotate("text", x=60, y=0.4, label= " R² = -0.03")
+ 
+ ### non-adults - pooled - pitch (f0) 
+ 
+ scatter_nonadults_pitch_pooled <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "non-Adult") %>% 
+   ggplot(aes(y = pitch, x = radius))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Pitch [Hz]')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   annotate("text", x=60, y=310, label= " R² = 0.01")
+ 
+ ### non-adults - pooled - entropy
+ 
+ scatter_nonadults_entropy_pooled <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "non-Adult") %>% 
+   ggplot(aes(y = entropy, x = radius))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Entropy')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   annotate("text", x=60, y=0.3, label= " R² = 0.03")
+ 
+ ### non-adults - pooled - spectral Centroid
+ 
+ scatter_nonadults_specCentroid_pooled <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "non-Adult") %>% 
+   ggplot(aes(y = specCentroid, x = radius))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Spectral Centroid [Hz]')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   annotate("text", x = 100, y = 4500, label = " R² = -0.01")
+ 
+ ### non-Adutls divided by detailed age class (juvenile/sub-adult)
+ ### nonadults - by ageclass - amplitude
+ 
+ scatter_nonadults_ampl_ageclass <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "non-Adult") %>% 
+   ggplot(aes(y = ampl, x = radius, fill = ageclass_detailed, color = ageclass_detailed))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Amplitude')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   scale_fill_manual(name = "Ageclass",
+                     labels = c("Subadult", "Juvenile"),
+                     values = c("#117733", "#882255"))+
+   scale_color_manual(name = "Ageclass",
+                      labels = c("Subadult", "Juvenile"),
+                      values = c("#117733", "#882255"))#+
+ #annotate("text", x=100, y=0.4, label= " R² = 0.45, p = ")
+ 
+ ### nonadults - by ageclass - pitch (f0)
+ 
+ scatter_nonadults_pitch_ageclass <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "non-Adult") %>% 
+   ggplot(aes(y = pitch, x = radius, fill = ageclass_detailed, color = ageclass_detailed))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Pitch [Hz]')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   scale_fill_manual(name = "Ageclass",
+                     labels = c("Subadult", "Juvenile"),
+                     values = c("#117733", "#882255"))+
+   scale_color_manual(name = "Ageclass",
+                      labels = c("Subadult", "Juvenile"),
+                      values = c("#117733", "#882255"))#+
+ #annotate("text", x=100, y=0.4, label= " R² = 0.45, p = ")
+ 
+ ### nonadults - by ageclass - entropy 
+ 
+ scatter_nonadults_entropy_ageclass <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "non-Adult") %>% 
+   ggplot(aes(y = entropy, x = radius, fill = ageclass_detailed, color = ageclass_detailed))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Entropy')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   theme(text = element_text(size = 20))+
+   theme(legend.position = 'none')+
+   scale_fill_manual(name = "Ageclass",
+                     labels = c("Subadult", "Juvenile"),
+                     values = c("#117733", "#882255"))+
+   scale_color_manual(name = "Ageclass",
+                      labels = c("Subadult", "Juvenile"),
+                      values = c("#117733", "#882255"))#+
+ #annotate("text", x=100, y=0.4, label= " R² = 0.45, p = ")
+ 
+ ### nonadults - by ageclass - spectral Centroid
+ 
+ scatter_nonadults_specCentroid_ageclass <- comparison_radius_boom %>%
+   dplyr::filter(ageclass == "non-Adult") %>% 
+   ggplot(aes(y = specCentroid, x = radius, fill = ageclass_detailed, color = ageclass_detailed))+
+   geom_point()+
+   geom_smooth(method = 'lm')+
+   ylab('Spectral Centroid [Hz]')+
+   xlab('Airsac Radius [px]')+
+   #coord_cartesian(xlim = c(0,10))+
+   theme_minimal()+
+   
+   theme(text = element_text(size = 20))+
+   scale_fill_manual(name = "Ageclass",
+                     labels = c("Subadult", "Juvenile"),
+                     values = c("#117733", "#882255"))+
+   scale_color_manual(name = "Ageclass",
+                      labels = c("Subadult", "Juvenile"),
+                      values = c("#117733", "#882255"))
+ #scale_colour_manual(name = "Sex",
+ #                    labels = c("Male", "Female"))#,
+ #                     values = c("#44AA99","#CC6677"))#+
+ #theme(legend.position = 'none')#+
+ #annotate("text", x=100, y=0.4, label= " R² = 0.45, p = ")
+ legend_nonadults_ageclass <- get_legend(scatter_nonadults_specCentroid_ageclass)
+ 
+ scatter_nonadults_specCentroid_ageclass <- scatter_nonadults_specCentroid_ageclass + theme(legend.position = "none")
+ 
+ 
+## 03c: plot grids ----
 
-scatter_ampl_age <- comparison_radius_boom %>%
-  ggplot(aes(y = ampl, x = radius, fill = ageclass, color = ageclass))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Amplitude')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(legend.position = 'none',
-        axis.title.x = element_blank())+
-  scale_colour_manual(name = "Age Class",
-                      labels = c("Adult", "Juvenile"),
-                      values = c("darkred", "grey60"))+
-  scale_fill_manual(name = "Age Class",
-                    labels = c("Adult", "Juvenile"),
-                    values = c("darkred", "grey40"))
-
-## pitch (f0) -sex
-
-scatter_pitch_sex <- comparison_radius_boom %>%
-  ggplot(aes(y = pitch, x = radius, fill = sex, color = sex))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Pitch')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(legend.position = 'none')
-
-## pitch (f0) -ID
-
-scatter_pitch_ID <- comparison_radius_boom %>%
-  ggplot(aes(y = pitch, x = radius, fill = ID, color = ID))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Pitch')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(axis.title.x = element_blank(),
-        legend.position = 'none')
-
-
-## pitch (f0) - age
-
-scatter_pitch_age <- comparison_radius_boom %>%
-  ggplot(aes(y = pitch, x = radius, fill = ageclass, color = ageclass))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Pitch')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(axis.title.x = element_blank(),
-        legend.position = 'none')+
-  scale_colour_manual(name = "Age Class",
-                      labels = c("Adult", "Juvenile"),
-                      values = c("darkred", "grey60"))+
-  scale_fill_manual(name = "Age Class",
-                    labels = c("Adult", "Juvenile"),
-                    values = c("darkred", "grey40"))
-
-## entropy  -sex
-
-scatter_entropy_sex <- comparison_radius_boom %>%
-  ggplot(aes(y = entropy, x = radius, fill = sex, color = sex))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Entropy')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(legend.position = 'none')
-
-## entropy - ID
-scatter_entropy_ID <- comparison_radius_boom %>%
-  #ggplot(aes(y = entropy_mean, x = radius, fill = ID, color = ID))+
-  ggplot(aes(y = entropy, x = radius, fill = ID, color = ID))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Entropy')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(legend.position = 'none',
-        axis.title.x = element_blank())
-
-## entropy - age
-scatter_entropy_age <- comparison_radius_boom %>%
-  ggplot(aes(y = entropy, x = radius, fill = ageclass, color = ageclass))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Entropy')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(legend.position = 'none',
-        axis.title.x = element_blank())+
-  scale_colour_manual(name = "Age Class",
-                      labels = c("Adult", "Juvenile"),
-                      values = c("darkred", "grey60"))+
-  scale_fill_manual(name = "Age Class",
-                      labels = c("Adult", "Juvenile"),
-                      values = c("darkred", "grey40"))
-
-## spectral Centroid - sex
-
-scatter_spec_Centroid_sex <- comparison_radius_boom %>%
-  ggplot(aes(y = specCentroid, x = radius, fill = sex, color = sex))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Spectral Centroid')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20),
-        legend.position = 'none')
-
-## spectral Centroid - ID
-
-scatter_spec_Centroid_ID <- comparison_radius_boom %>%
-  ggplot(aes(y = specCentroid, x = radius, fill = ID, color = ID))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Spectral Centroid')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20),
-        axis.title.x = element_blank(),
-        legend.position = 'none')
-
-## spectral Centroid  - age
-
-scatter_spec_Centroid_age <- comparison_radius_boom %>%
-  ggplot(aes(y = specCentroid, x = radius, fill = ageclass, color = ageclass))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Spectral Centroid')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20),
-        axis.title.x = element_blank(),
-        legend.position = 'none')+
-  scale_colour_manual(name = "Age Class",
-                      labels = c("Adult", "Juvenile"),
-                      values = c("darkred", "grey60"))+
-  scale_fill_manual(name = "Age Class",
-                    labels = c("Adult", "Juvenile"),
-                    values = c("darkred", "grey40"))
-
-## spectral slope
-scatter_spec_Slope_ID <- comparison_radius_boom %>%
-  ggplot(aes(y = specSlope, x = radius, fill = ID, color = ID))+
-  geom_point()+
-  geom_smooth(method = 'lm')+
-  ylab('Spectral Slope')+
-  xlab('Airsac Radius [px]')+
-  theme_minimal()+
-  theme(text = element_text(size = 20))
+# plot grid adults pooled
 
 
-## plot grids ----
+ cowplot::plot_grid(scatter_adults_ampl_pooled, scatter_adults_pitch_pooled,
+                   scatter_adults_entropy_pooled, scatter_adults_specCentroid_pooled,
+                   ncol = 4, align = "h", labels = c("A", "B", "C", "D"))
 
-# plot grid sex
-cowplot::plot_grid(scatter_ampl_sex, scatter_pitch_sex,
-                   scatter_entropy_sex, scatter_spec_Centroid_sex,
-                   rel_widths = c(0.45,0.55), ncol = 2)
-#labels = c("A", "B", "C", "D"), ncol = 2)
-
-#plot grid ID
-cowplot::plot_grid(scatter_ampl_ID, scatter_pitch_ID,
-                   scatter_entropy_ID, scatter_spec_Centroid_ID,
-                   rel_widths = c(0.45,0.55), ncol = 2)
+#plot grid adults by sex
+ 
+cowplot::plot_grid(scatter_adults_ampl_sex, scatter_adults_pitch_sex,
+                   scatter_adults_entropy_sex, scatter_adults_specCentroid_sex,legend_adults_sex,
+                   ncol = 5, labels = c("F", "G", "H", "I", ""))
 
 # plot grid ageclass
 
-cowplot::plot_grid(scatter_ampl_age, scatter_pitch_age,
-                   scatter_entropy_age, scatter_spec_Centroid_age,
-                   rel_widths = c(0.45,0.55), ncol = 2)
+cowplot::plot_grid(scatter_nonadults_ampl_pooled, scatter_nonadults_pitch_pooled,
+                   scatter_nonadults_entropy_pooled, scatter_nonadults_specCentroid_pooled,
+                   ncol = 4, align = "h", labels = c("J", "K", "L", "M"))
 
-# plot grid, all comparisons per parameter: age, id, sex for ampl, pitch, entropy, specCentroid
+# plot grid ageclass by ageclass detailed
 
-cowplot::plot_grid(scatter_ampl_age, scatter_pitch_age,
-                                  scatter_entropy_age, scatter_spec_Centroid_age,
-                                  scatter_ampl_ID, scatter_pitch_ID,
-                                  scatter_entropy_ID, scatter_spec_Centroid_ID,
-                                  scatter_ampl_sex, scatter_pitch_sex,
-                                  scatter_entropy_sex, scatter_spec_Centroid_sex,
-                                  ncol = 4, nrow = 3)
+cowplot::plot_grid(scatter_nonadults_ampl_ageclass, scatter_nonadults_pitch_ageclass,
+                   scatter_nonadults_entropy_ageclass, scatter_nonadults_specCentroid_ageclass,legend_nonadults_ageclass,
+                   ncol = 5, align = "h", labels = c("N", "O", "P", "Q"))
 
-
-# 03c: radius inflation over time ----
-
-# timeseries plots Fajar
-plot_fajar <- comparison_radius_boom %>%
-  dplyr::filter(ID == 'Fajar') %>% 
-  ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
-  geom_line(size = 1.4)+
-  xlab('Frame')+
-  ylab('Airsac Radius [px]')+
-  ggtitle('Fajar')+
-  theme_minimal()+
+  # 04: old plots -----
+  
+  # scatter amplitude - sex
+  
+  scatter_ampl_sex <- comparison_radius_boom %>% 
+    #ggplot(aes(y = ampl_mean, x = radius, fill = sex, color = sex))+
+    ggplot(aes(y = ampl, x = radius, fill = sex, color = sex))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Amplitude')+
+    xlab('Airsac Radius [px]')+
+    #coord_cartesian(xlim = c(0,10))+
+    theme_minimal()+
+    theme(text = element_text(size = 20))+
+    theme(legend.position = 'none')
+  
+  # amplitude mean - ID
+  
+  scatter_ampl_ID <- comparison_radius_boom %>%
+    ggplot(aes(y = ampl, x = radius, fill = ID, color = ID))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Amplitude')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20))+
+    theme(legend.position = 'none',
+          axis.title.x = element_blank())
+  
+  # amplitude - age
+  
+  scatter_ampl_age <- comparison_radius_boom %>%
+    ggplot(aes(y = ampl, x = radius, fill = ageclass, color = ageclass))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Amplitude')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20))+
+    theme(legend.position = 'none',
+          axis.title.x = element_blank())+
+    scale_colour_manual(name = "Age Class",
+                        labels = c("Adult", "Juvenile"),
+                        values = c("darkred", "grey60"))+
+    scale_fill_manual(name = "Age Class",
+                      labels = c("Adult", "Juvenile"),
+                      values = c("darkred", "grey40"))
+  
+  ## pitch (f0) -sex
+  
+  scatter_pitch_sex <- comparison_radius_boom %>%
+    ggplot(aes(y = pitch, x = radius, fill = sex, color = sex))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Pitch')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20))+
+    theme(legend.position = 'none')
+  
+  ## pitch (f0) -ID
+  
+  scatter_pitch_ID <- comparison_radius_boom %>%
+    ggplot(aes(y = pitch, x = radius, fill = ID, color = ID))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Pitch')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20))+
+    theme(axis.title.x = element_blank(),
+          legend.position = 'none')
+  
+  
+  ## pitch (f0) - age
+  
+  scatter_pitch_age <- comparison_radius_boom %>%
+    ggplot(aes(y = pitch, x = radius, fill = ageclass, color = ageclass))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Pitch')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20))+
+    theme(axis.title.x = element_blank(),
+          legend.position = 'none')+
+    scale_colour_manual(name = "Age Class",
+                        labels = c("Adult", "Juvenile"),
+                        values = c("darkred", "grey60"))+
+    scale_fill_manual(name = "Age Class",
+                      labels = c("Adult", "Juvenile"),
+                      values = c("darkred", "grey40"))
+  
+  ## entropy  -sex
+  
+  scatter_entropy_sex <- comparison_radius_boom %>%
+    ggplot(aes(y = entropy, x = radius, fill = sex, color = sex))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Entropy')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20))+
+    theme(legend.position = 'none')
+  
+  ## entropy - ID
+  scatter_entropy_ID <- comparison_radius_boom %>%
+    #ggplot(aes(y = entropy_mean, x = radius, fill = ID, color = ID))+
+    ggplot(aes(y = entropy, x = radius, fill = ID, color = ID))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Entropy')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20))+
+    theme(legend.position = 'none',
+          axis.title.x = element_blank())
+  
+  ## entropy - age
+  scatter_entropy_age <- comparison_radius_boom %>%
+    ggplot(aes(y = entropy, x = radius, fill = ageclass, color = ageclass))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Entropy')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20))+
+    theme(legend.position = 'none',
+          axis.title.x = element_blank())+
+    scale_colour_manual(name = "Age Class",
+                        labels = c("Adult", "Juvenile"),
+                        values = c("darkred", "grey60"))+
+    scale_fill_manual(name = "Age Class",
+                      labels = c("Adult", "Juvenile"),
+                      values = c("darkred", "grey40"))
+  
+  ## spectral Centroid - sex
+  
+  scatter_spec_Centroid_sex <- comparison_radius_boom %>%
+    ggplot(aes(y = specCentroid, x = radius, fill = sex, color = sex))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Spectral Centroid')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20),
+          legend.position = 'none')
+  
+  ## spectral Centroid - ID
+  
+  scatter_spec_Centroid_ID <- comparison_radius_boom %>%
+    ggplot(aes(y = specCentroid, x = radius, fill = ID, color = ID))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Spectral Centroid')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20),
+          axis.title.x = element_blank(),
+          legend.position = 'none')
+  
+  ## spectral Centroid  - age
+  
+  scatter_spec_Centroid_age <- comparison_radius_boom %>%
+    ggplot(aes(y = specCentroid, x = radius, fill = ageclass, color = ageclass))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Spectral Centroid')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20),
+          axis.title.x = element_blank(),
+          legend.position = 'none')+
+    scale_colour_manual(name = "Age Class",
+                        labels = c("Adult", "Juvenile"),
+                        values = c("darkred", "grey60"))+
+    scale_fill_manual(name = "Age Class",
+                      labels = c("Adult", "Juvenile"),
+                      values = c("darkred", "grey40"))
+  
+  ## spectral slope
+  scatter_spec_Slope_ID <- comparison_radius_boom %>%
+    ggplot(aes(y = specSlope, x = radius, fill = ID, color = ID))+
+    geom_point()+
+    geom_smooth(method = 'lm')+
+    ylab('Spectral Slope')+
+    xlab('Airsac Radius [px]')+
+    theme_minimal()+
+    theme(text = element_text(size = 20))
+  
+  # timeseries plots Fajar
+  plot_fajar <- comparison_radius_boom %>%
+    dplyr::filter(ID == 'Fajar') %>% 
+    ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
+    geom_line(size = 1.4)+
+    xlab('Frame')+
+    ylab('Airsac Radius [px]')+
+    ggtitle('Fajar')+
+    theme_minimal()+
+    theme(legend.position = 'none',
+          text = element_text(size = 20))#,
+  #axis.title.y = element_blank())
+  
+  #timeseries plots Pelangi
+  plot_pelangi <- comparison_radius_boom %>%
+    dplyr::filter(ID == 'Pelangi') %>% 
+    ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
+    geom_line(size = 1.4)+
+    xlab('Frame')+
+    ylab('Airsac Radius [px]')+
+    ggtitle('Pelangi')+
+    theme_minimal()+
+    theme(legend.position = 'none',
+          text = element_text(size = 20))#,
+  #axis.title.y = element_blank())
+  
+  #timeseries plots Baju
+  plot_baju <- comparison_radius_boom %>%
+    dplyr::filter(ID == 'Baju') %>% 
+    ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
+    geom_line(size = 1.4)+
+    xlab('Frame')+
+    ylab('Airsac Radius [px]')+
+    ggtitle('Baju')+
+    theme_minimal()#+
   theme(legend.position = 'none',
         text = element_text(size = 20))#,
-#axis.title.y = element_blank())
-
-#timeseries plots Pelangi
-plot_pelangi <- comparison_radius_boom %>%
-  dplyr::filter(ID == 'Pelangi') %>% 
-  ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
-  geom_line(size = 1.4)+
-  xlab('Frame')+
-  ylab('Airsac Radius [px]')+
-  ggtitle('Pelangi')+
-  theme_minimal()+
-  theme(legend.position = 'none',
-        text = element_text(size = 20))#,
-#axis.title.y = element_blank())
-
-#timeseries plots Baju
-plot_baju <- comparison_radius_boom %>%
-  dplyr::filter(ID == 'Baju') %>% 
-  ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
-  geom_line(size = 1.4)+
-  xlab('Frame')+
-  ylab('Airsac Radius [px]')+
-  ggtitle('Baju')+
-  theme_minimal()#+
-  theme(legend.position = 'none',
-        text = element_text(size = 20))#,
-#axis.title.y = element_blank())
-
-#timeseries plots Roger
-plot_roger <- comparison_radius_boom %>%
-  dplyr::filter(ID == 'Roger') %>% 
-  ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
-  geom_line(size = 1.4)+
-  xlab('Time [ms]')+
-  ylab('Airsac Radius [px]')+
-  ggtitle('Roger')+
-  theme_minimal()+
-  theme(legend.position = 'none',
-        text = element_text(size = 20))#,
-#axis.title.y = element_blank())
-
-cowplot::plot_grid(plot_fajar, plot_pelangi, plot_baju, plot_roger,
-                   ncol = 2)
-
-# deflation-inflation example Baju
-
-baju_example <- "_Opp_June_13_Session_1_zoom_syncedboom_7_3_BajuDLC_resnet101_Deep_AirSacTrackingV1Jan1shuffle1_500000.csv"
-
-detail_plot_baju <- comparison_radius_boom %>%
-  dplyr::filter(videofile == baju_example) %>% 
-  ggplot()+
-  geom_line(aes(x = frame, y = radius), color = "black",size = 1.4)+
-  geom_line(aes(x = frame, y = ampl), color = "red", size = 1.4)+
-  geom_line(aes(x = frame, y = pitch), color = "green", size = 1.4)+
-  geom_line(aes(x = frame, y = entropy), color = "yellow", size = 1.4)+
-  xlab('Frame')+
-  ylab('Parameters')+
-  ggtitle('Baju')+
-  theme_minimal()#+
-  theme(legend.position = 'none',
-        text = element_text(size = 20))#,
-#axis.title.y = element_blank())
+  #axis.title.y = element_blank())
+  
+  #timeseries plots Roger
+  plot_roger <- comparison_radius_boom %>%
+    dplyr::filter(ID == 'Roger') %>% 
+    ggplot(aes(x = frame, y = radius, group = videofile, color = videofile))+
+    geom_line(size = 1.4)+
+    xlab('Time [ms]')+
+    ylab('Airsac Radius [px]')+
+    ggtitle('Roger')+
+    theme_minimal()+
+    theme(legend.position = 'none',
+          text = element_text(size = 20))#,
+  #axis.title.y = element_blank())
+  
+  cowplot::plot_grid(plot_fajar, plot_pelangi, plot_baju, plot_roger,
+                     ncol = 2)
+  
+  
+  ##03e: Spectral Centroid over time vs radius over time
+  
+  plot_roger <- comparison_radius_boom %>%
+    dplyr::filter(ID == 'Roger') %>% 
+    ggplot()+
+    geom_line(aes(x = frame, y = radius, group = videofile), size = 1.4, color = "black")+
+    geom_line(aes(x = frame, y = specCentroid, group = videofile), size = 1.4, color = "green")+
+    xlab('Time [ms]')+
+    ylab('Airsac Radius [px]')+
+    ggtitle('Roger')+
+    theme_minimal()+
+    scale_y_log10()+
+    theme(legend.position = 'none',
+          text = element_text(size = 20))#,
+  

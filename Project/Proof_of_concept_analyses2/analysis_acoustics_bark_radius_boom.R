@@ -117,7 +117,8 @@ combined_radius_acoustics_boom_bark_last <- left_join(data_last, acoustic_bark_s
 
 # 02: correlation matrix ----
 
-acoustic_correlation_max <- combined_radius_acoustics_boom_bark_max %>% 
+acoustic_correlation_max <- combined_radius_acoustics_boom_bark_max %>%
+  dplyr::filter(radius < 350) %>% 
   select(radius, ampl_mean, pitch_mean, entropy_mean, specCentroid_mean, f1_freq_mean, f2_freq_mean,
          peakFreq_mean,
          ampl_max, pitch_max, entropy_max, specCentroid_max, f1_freq_max, f2_freq_max,
@@ -128,7 +129,7 @@ acoustic_correlation_max <- combined_radius_acoustics_boom_bark_max %>%
          peakFreq_median)
 
 
-acoustic_correlation_last <- combined_radius_acoustics_boom_bark_last %>% 
+acoustic_correlation_last <- combined_radius_acoustics_boom_bark_last %>%
   select(radius, ampl_mean, pitch_mean, entropy_mean, specCentroid_mean, f1_freq_mean, f2_freq_mean,
          peakFreq_mean,
          ampl_max, pitch_max, entropy_max, specCentroid_max, f1_freq_max, f2_freq_max,
@@ -142,14 +143,16 @@ acoustic_correlation_last <- combined_radius_acoustics_boom_bark_last %>%
 cor_all_proof_max <- cor(acoustic_correlation_max)
 cor_all_proof_max_2 <-rcorr(as.matrix(acoustic_correlation_max))
 
+cor_all_proof_last <- cor(acoustic_correlation_last)
+cor_all_proof_last_2 <-rcorr(as.matrix(acoustic_correlation_last))
 
 #correlation plot, show all
-corrplot(cor_all_proof_max_2$r[1,2:29, drop = FALSE], type="upper", 
+corrplot(cor_all_proof_last_2$r[1,2:29, drop = FALSE], type="upper", 
          tl.col = "black")
 
 #correlation plot, only show significant correlations
-corrplot(cor_all_proof_max_2$r[1,2:29, drop = FALSE], type="upper", 
-         p.mat = cor_all_proof_max_2$P[1,2:29, drop = FALSE], sig.level = 0.05,
+corrplot(cor_all_proof_last_2$r[1,2:29, drop = FALSE], type="upper", 
+         p.mat = cor_all_proof_last_2$P[1,2:29, drop = FALSE], sig.level = 0.05,
          tl.col = "black",
          insig = "blank")
 
@@ -157,6 +160,51 @@ corrplot(cor_all_proof_max_2$r[1,2:29, drop = FALSE], type="upper",
 # 03: data visualization ----
 
 
+## 03a: visualization with last radius
+
+# significant: spec_Centroid_mean, f2_freq_min, spec_Centroid_median
+
+#spec_Centroid mean & median
+
+p_spec_Centroid <- combined_radius_acoustics_boom_bark_last %>%
+  #dplyr::filter(radius>80) %>% 
+  ggplot()+
+  geom_point(aes(x= radius, y = specCentroid_mean), color = "blue")+
+  geom_smooth(aes(x= radius, y = specCentroid_mean), method = 'lm', color = "blue", se = FALSE)+
+  geom_point(aes(x= radius, y = specCentroid_median), color = "red")+
+  geom_smooth(aes(x= radius, y = specCentroid_median), method = 'lm', color = "red", se = FALSE)+
+  geom_point(aes(x= radius, y = specCentroid_min), color = "green")+
+  geom_smooth(aes(x= radius, y = specCentroid_min), method = 'lm', color = "green", se = FALSE)+
+  geom_point(aes(x= radius, y = specCentroid_max), color = "purple")+
+  geom_smooth(aes(x= radius, y = specCentroid_max), method = 'lm', color = "purple", se = FALSE)+
+  ylab('Spectral Centroid bark [Hz]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Last Radius [px]')+
+  #coord_cartesian(xlim = c(0,10))+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none',)
+#axis.title.x = element_blank())
+
+p_f2_freq <- combined_radius_acoustics_boom_bark_last %>%
+  #dplyr::filter(radius>80) %>% 
+  ggplot()+
+  geom_point(aes(x= radius, y = f2_freq_min), color = "green")+
+  geom_smooth(aes(x= radius, y = f2_freq_min), method = 'lm', color = "green", se = FALSE)+
+  geom_point(aes(x= radius, y = f2_freq_median), color = "red")+
+  geom_smooth(aes(x= radius, y = f2_freq_median), method = 'lm', color = "red", se = FALSE)+
+  geom_point(aes(x= radius, y = f2_freq_mean), color = "blue")+
+  geom_smooth(aes(x= radius, y = f2_freq_mean), method = 'lm', color = "blue", se = FALSE)+
+  #geom_point(aes(x= radius, y = f2_freq_max), color = "purple")+
+  #geom_smooth(aes(x= radius, y = f2_freq_max), method = 'lm', color = "purple", se = FALSE)+
+  ylab('Min f2 bark [Hz]')+
+  #xlab('Max Radius previous Boom [px]')+
+  xlab('Last Radius [px]')+
+  #coord_cartesian(xlim = c(0,10))+
+  theme_minimal()+
+  theme(text = element_text(size = 20))+
+  theme(legend.position = 'none',)
+#axis.title.x = element_blank())
 
 # amplitude plots 
 
