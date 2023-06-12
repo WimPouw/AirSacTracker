@@ -17,7 +17,6 @@ if (!require(install.load)) {
 library(install.load)
 
 install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach", "Hmisc", "cowplot", "corrplot")
-#library("foreach")
 
 # 01: data ----
 ## 01a: load data ----
@@ -36,7 +35,6 @@ radius_boom_bark_sequences$match <- filename[,1]
 
 ### radius data preparation: we only want to compare the last radius of each boom with the averaged amplitude or max amplitude of the following bark
 ### last available radius of each boom video is saved in data_max (one row per video)
-
 
 radius_boom_bark_sequences_last <- radius_boom_bark_sequences %>% 
   group_split(videofile)
@@ -60,7 +58,6 @@ for(z in 1:length(radius_boom_bark_sequences_last)){
     data_last <- rbind(data_last, last_data)
   }
 }
-
 
 radius_boom_bark_sequences_max <- radius_boom_bark_sequences %>% 
   group_split(videofile)
@@ -99,7 +96,7 @@ acoustic_bark_summary <- acoustics_bark %>%
   summarise(across(c("ampl", "specCentroid", "dom", "entropy", "entropySh", "f1_freq", "f2_freq", "specSlope", "pitch", "harmEnergy",
                      "peakFreq", "HNR"),
                    list(mean = mean, min = min, max = max, median = median), na.rm = TRUE))
-                   
+
 ### audio match name
 
 filename <- strsplit(acoustic_bark_summary$audiofile, split  = "bark")
@@ -114,7 +111,6 @@ acoustic_bark_summary$match <- filename[,2]
 combined_radius_acoustics_boom_bark_max <- left_join(data_max, acoustic_bark_summary)
 combined_radius_acoustics_boom_bark_last <- left_join(data_last, acoustic_bark_summary)
 
-
 # 02: correlation matrix ----
 
 acoustic_correlation_max <- combined_radius_acoustics_boom_bark_max %>%
@@ -128,7 +124,6 @@ acoustic_correlation_max <- combined_radius_acoustics_boom_bark_max %>%
          ampl_median, pitch_median, entropy_median, specCentroid_median, f1_freq_median, f2_freq_median,
          peakFreq_median)
 
-
 acoustic_correlation_last <- combined_radius_acoustics_boom_bark_last %>%
   select(radius, ampl_mean, pitch_mean, entropy_mean, specCentroid_mean, f1_freq_mean, f2_freq_mean,
          peakFreq_mean,
@@ -138,7 +133,6 @@ acoustic_correlation_last <- combined_radius_acoustics_boom_bark_last %>%
          peakFreq_min,
          ampl_median, pitch_median, entropy_median, specCentroid_median, f1_freq_median, f2_freq_median,
          peakFreq_median)
-
 
 cor_all_proof_max <- cor(acoustic_correlation_max)
 cor_all_proof_max_2 <-rcorr(as.matrix(acoustic_correlation_max))
@@ -153,58 +147,52 @@ corrplot(cor_all_proof_last_2$r[1,2:29, drop = FALSE], type="upper",
 #correlation plot, only show significant correlations
 corrplot(cor_all_proof_last_2$r[1,2:29, drop = FALSE], type="upper", 
          p.mat = cor_all_proof_last_2$P[1,2:29, drop = FALSE], sig.level = 0.05,
-         tl.col = "black",
+         tl.col = "black",addCoef.col = 'black',
          insig = "blank")
 
-
 # 03: data visualization ----
-
 
 ## 03a: visualization with last radius
 
 # significant: spec_Centroid_mean, f2_freq_min, spec_Centroid_median
+# we plot spectral Centroid mean and amplitude, to show that there is no clear relation to amplitude
+# as this speaks against the glottal shock theory
 
-#spec_Centroid mean & median
+#spec_Centroid mean 
 
 p_spec_Centroid <- combined_radius_acoustics_boom_bark_last %>%
   #dplyr::filter(radius>80) %>% 
   ggplot()+
-  geom_point(aes(x= radius, y = specCentroid_mean), color = "blue")+
-  geom_smooth(aes(x= radius, y = specCentroid_mean), method = 'lm', color = "blue", se = FALSE)+
-  geom_point(aes(x= radius, y = specCentroid_median), color = "red")+
-  geom_smooth(aes(x= radius, y = specCentroid_median), method = 'lm', color = "red", se = FALSE)+
-  geom_point(aes(x= radius, y = specCentroid_min), color = "green")+
-  geom_smooth(aes(x= radius, y = specCentroid_min), method = 'lm', color = "green", se = FALSE)+
-  geom_point(aes(x= radius, y = specCentroid_max), color = "purple")+
-  geom_smooth(aes(x= radius, y = specCentroid_max), method = 'lm', color = "purple", se = FALSE)+
-  ylab('Spectral Centroid bark [Hz]')+
-  #xlab('Max Radius previous Boom [px]')+
+  geom_point(aes(x= radius, y = specCentroid_mean), color = "#CC6677")+
+  geom_smooth(aes(x= radius, y = specCentroid_mean), method = 'lm', color = "#CC6677")+
+  scale_x_continuous(expand = c(0, 2),
+                     limits= c(110, 180))+
   xlab('Last Radius [px]')+
-  #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
-  theme(text = element_text(size = 20))+
-  theme(legend.position = 'none',)
-#axis.title.x = element_blank())
+  theme(text = element_text(size = 20),
+        axis.title.x = element_blank())+
+  theme(legend.position = 'none',)+
+  annotate("text", x=120, y= 3000, label= " R² = -0.45")
+  
 
-p_f2_freq <- combined_radius_acoustics_boom_bark_last %>%
+p_ampl <- combined_radius_acoustics_boom_bark_last %>%
   #dplyr::filter(radius>80) %>% 
   ggplot()+
-  geom_point(aes(x= radius, y = f2_freq_min), color = "green")+
-  geom_smooth(aes(x= radius, y = f2_freq_min), method = 'lm', color = "green", se = FALSE)+
-  geom_point(aes(x= radius, y = f2_freq_median), color = "red")+
-  geom_smooth(aes(x= radius, y = f2_freq_median), method = 'lm', color = "red", se = FALSE)+
-  geom_point(aes(x= radius, y = f2_freq_mean), color = "blue")+
-  geom_smooth(aes(x= radius, y = f2_freq_mean), method = 'lm', color = "blue", se = FALSE)+
-  #geom_point(aes(x= radius, y = f2_freq_max), color = "purple")+
-  #geom_smooth(aes(x= radius, y = f2_freq_max), method = 'lm', color = "purple", se = FALSE)+
-  ylab('Min f2 bark [Hz]')+
-  #xlab('Max Radius previous Boom [px]')+
+  geom_point(aes(x= radius, y = ampl_mean), color = "#CC6677")+
+  geom_smooth(aes(x= radius, y = ampl_mean), method = 'lm', color = "#CC6677")+
+  scale_x_continuous(expand = c(0, 2),
+                     limits= c(110, 180))+
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.001))+
+  ylab('Mean Amplitude bark [Hz]')+
   xlab('Last Radius [px]')+
-  #coord_cartesian(xlim = c(0,10))+
   theme_minimal()+
   theme(text = element_text(size = 20))+
-  theme(legend.position = 'none',)
-#axis.title.x = element_blank())
+  theme(legend.position = 'none',)+
+  annotate("text", x=120, y=0.4, label= " R² = -0.04")
+
+cowplot::plot_grid(p_spec_Centroid, p_ampl, nrow = 2, align = "h")
+
+# 04: old plots ----
 
 # amplitude plots 
 
