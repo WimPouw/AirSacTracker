@@ -1,0 +1,9 @@
+Origins of snapshots in workflow figure
+
+Pelangi Snapshot from video:
+AirSacTracker\Project\Proof_of_concept_analyses2\snippets\short_sequences\video\_Opp_August_19_Session_1_zoom_syncedboom_6_4_bark.mxf
+
+
+Roger Snapshot from video:
+
+\AirSacTracker\Project\Video\example8.mp4 

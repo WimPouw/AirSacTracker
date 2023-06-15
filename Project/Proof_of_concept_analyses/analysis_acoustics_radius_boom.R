@@ -15,7 +15,7 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit","corrplot", "scales", "spiro",
+install_load("tidyverse","conicfit","ggcorrplot", "scales", "spiro",
              "signal", "foreach", "Hmisc", "ggplotify", "cowplot")
 
 # 01: data ----
@@ -207,6 +207,8 @@ comparison_radius_boom_numeric_adult <- comparison_radius_boom %>%
 cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
 
 #correlation plot, only show significant correlations
+# rewrite: 
+#corrplots with ggcorrplot: http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2
 
  corrplot(cor_all_2$r[1,1:11, drop=FALSE], 
          p.mat = cor_all_2$P[1,1:11, drop=FALSE],
@@ -234,7 +236,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
           sig.level = 0.05, insig = "blank", diag = FALSE,
           tl.col = "black", #tl.srt = 90,
           addCoef.col = 'black',
-          cl.pos = 'r') #, col = COL2('BrBG'))
+          cl.pos = 'r' , col = COL2("BuRd"))
  
 # correlation_plot <-recordPlot()
  

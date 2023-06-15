@@ -167,10 +167,12 @@ p_spec_Centroid <- combined_radius_acoustics_boom_bark_last %>%
   geom_smooth(aes(x= radius, y = specCentroid_mean), method = 'lm', color = "#CC6677")+
   scale_x_continuous(expand = c(0, 2),
                      limits= c(110, 180))+
+  scale_y_continuous(limits= c(1500, 3250),
+                     breaks = c(1500, 2000, 2500, 3000, 3500))+
   xlab('Last Radius [px]')+
+  ylab("Mean Spectral Centoid [Hz]")+
   theme_minimal()+
-  theme(text = element_text(size = 20),
-        axis.title.x = element_blank())+
+  theme(text = element_text(size = 20))+
   theme(legend.position = 'none',)+
   annotate("text", x=120, y= 3000, label= " R² = -0.45")
   
@@ -182,15 +184,17 @@ p_ampl <- combined_radius_acoustics_boom_bark_last %>%
   geom_smooth(aes(x= radius, y = ampl_mean), method = 'lm', color = "#CC6677")+
   scale_x_continuous(expand = c(0, 2),
                      limits= c(110, 180))+
-  scale_y_continuous(labels = scales::number_format(accuracy = 0.001))+
+  scale_y_continuous(limits= c(0.1, 0.45),
+                     breaks = c(0.1,0.2,0.3,0.4,0.5))+
+  #scale_y_continuous(labels = scales::number_format(accuracy = 0.001))+
   ylab('Mean Amplitude bark [Hz]')+
   xlab('Last Radius [px]')+
   theme_minimal()+
   theme(text = element_text(size = 20))+
   theme(legend.position = 'none',)+
-  annotate("text", x=120, y=0.4, label= " R² = -0.04")
+  annotate("text", x=120, y=0.40, label= " R² = -0.04")
 
-cowplot::plot_grid(p_spec_Centroid, p_ampl, nrow = 2, align = "h")
+cowplot::plot_grid(p_ampl, p_spec_Centroid, ncol = 2)
 
 # 04: old plots ----
 
