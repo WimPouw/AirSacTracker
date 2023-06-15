@@ -253,7 +253,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    dplyr::filter(ageclass == "Adult") %>% 
    ggplot(aes(y = ampl, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm')+
+   geom_smooth(method = 'lm', color = "grey15")+
    ylab('Amplitude')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
@@ -271,7 +271,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    dplyr::filter(ageclass == "Adult") %>% 
    ggplot(aes(y = pitch, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm')+
+   geom_smooth(method = 'lm', color = "grey15")+
    ylab('Pitch [Hz]')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
@@ -289,7 +289,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    dplyr::filter(ageclass == "Adult") %>% 
    ggplot(aes(y = entropy, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm')+
+   geom_smooth(method = 'lm', color = "grey15")+
    ylab('Entropy')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
@@ -307,7 +307,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    dplyr::filter(ageclass == "Adult") %>% 
    ggplot(aes(y = specCentroid, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm')+
+   geom_smooth(method = 'lm', color = "grey15")+
    ylab('Spectral Centroid [Hz]')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
@@ -431,7 +431,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    dplyr::filter(ageclass == "non-Adult") %>% 
    ggplot(aes(y = ampl, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm')+
+   geom_smooth(method = 'lm', , color = "grey15")+
    ylab('Amplitude')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
@@ -449,7 +449,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    dplyr::filter(ageclass == "non-Adult") %>% 
    ggplot(aes(y = pitch, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm')+
+   geom_smooth(method = 'lm', , color = "grey15")+
    ylab('Pitch [Hz]')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
@@ -467,7 +467,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    dplyr::filter(ageclass == "non-Adult") %>% 
    ggplot(aes(y = entropy, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm')+
+   geom_smooth(method = 'lm', color = "grey15")+
    ylab('Entropy')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
@@ -485,7 +485,7 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    dplyr::filter(ageclass == "non-Adult") %>% 
    ggplot(aes(y = specCentroid, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm')+
+   geom_smooth(method = 'lm', color = "grey15")+
    ylab('Spectral Centroid [Hz]')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+

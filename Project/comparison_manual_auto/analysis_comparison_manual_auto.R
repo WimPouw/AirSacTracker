@@ -175,36 +175,51 @@ dlc_correlations
 
 # 04: visualization both approaches ----
 
+safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", 
+                             "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
+
 # plotting radius comprison
 
 # visualization DLC
 dlc <- joined_radii_dlc %>% 
   ggplot(aes(x= radius_man, y = radius))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
-  geom_smooth(method = 'lm')+
-  ylab('Automatically tracked Radius [px], DLC')+
-  xlab('Manually labeled Radius [px]')+
+  geom_smooth(method = 'lm', color = "grey15")+
+  scale_color_manual(values = safe_colorblind_palette)+
+  ylab('Automatically Tracked Radius [px], DLC')+
+  xlab('Manually Labeled Radius [px]')+
+  scale_y_continuous(limits = c(50, 270),
+                     breaks = c(50, 100, 150, 200, 250))+
+  scale_x_continuous(limits = c(120, 270),
+                     breaks = c( 120, 160, 200, 240))+
   theme_minimal()+
   theme(text = element_text(size = 20),
-        legend.position = "none")
+        legend.position = "none")+
+  annotate("text", x=140, y= 250, label= " R² = 0.86", size = 5)
 
 # visualization hough
 hough <- joined_radii_all %>%
   dplyr::filter(radius_man >= 100) %>% 
   ggplot(aes(x= radius_man, y = smoothed_hough_radius_kolmogorov))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
-  geom_smooth(method = 'lm')+
-  ylab('Automatically tracked Radius [px], Hough')+
-  xlab('Manually labeled Radius [px]')+
+  geom_smooth(method = 'lm', color = "grey15")+
+  scale_color_manual(values = safe_colorblind_palette)+
+  ylab('Automatically Tracked Radius [px], Hough')+
+  xlab('Manually Labeled Radius [px]')+
+  scale_y_continuous(limits = c(50, 270),
+                     breaks = c(50, 100, 150, 200, 250))+
+  scale_x_continuous(limits = c(120, 270),
+                     breaks = c( 120, 160, 200, 240))+
   theme_minimal()+
   theme(text = element_text(size = 20),
-        legend.position="bottom")+
+        legend.position="none")+
   guides(fill = FALSE)+
-  scale_color_discrete(name = "Video", labels = c("Video 1", "Video 2", "Video 3", "Video 4",
-                                                  "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"))
+  annotate("text", x=140, y= 250, label= " R² = 0.19", size = 5)#+
+  #scale_color_discrete(name = "Video", labels = c("Video 1", "Video 2", "Video 3", "Video 4",
+  #                                                "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"))
         
 
 # labels legend ändern! can we put legend on the bottom of plot 2? 
-cowplot::plot_grid(dlc, hough, rel_heights = c(0.45, 0.55), ncol = 1, labels = c("A", "B"), label_size = 16)
+cowplot::plot_grid(dlc, hough, ncol = 2, labels = c("A", "B"), label_size = 16)
 
 ggsave("comparison_dlc_hough_manual_row.jpg", dpi = 300, width= 8, height = 14)
