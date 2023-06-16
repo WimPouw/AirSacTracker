@@ -1,12 +1,12 @@
 # comparison of automatically tracked radii from different approaches
-# to manually tracked radii, via correlation it can be decided if tracking success
+# to manually tracked radii, via correlation so it can be decided if tracking success
 # is sufficient and which approach works best
 
 # Manuscript: A toolkit for the dynamic study of spherical biological objects
 # author: Dr. Lara S. Burchardt
 # start point: radii values from Hough Transform or DLC trackings and subsequent 
 # circle estimation & datasubset of manually tracked radii
-# end point: correlation between manual and automaticlly tracked radii 
+# end point: correlation between manual and automaticlly tracked radii + visualization
 
 ############
 
@@ -21,7 +21,6 @@ library(install.load)
 install_load("tidyverse", "effsize", "psych", "signal", "foreach", "kza", "plyr")
 
 # 01a: functions ----
-
 
 
 # 01b: load data ----
@@ -106,7 +105,6 @@ df_full<- rbind(df_exp1, df_exp2, df_exp3, df_exp4, df_exp5)
 saveRDS(df_full, file = "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.rds")
 write.table(df_full, "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.csv", sep = ",")
 
-
 ## 02b: correlations Hough -----
 # combine correlation grouped by parameter combination and grouped by video for statistics to report in manuscript
 
@@ -127,7 +125,6 @@ correlation_per_setting <- df_full %>%
             mean_cor = mean(cor_radius, na.rm = TRUE ), median_cor = median(cor_radius, na.rm = TRUE),
             min_cor = min(cor_radius, na.rm = TRUE), max_cor = max(cor_radius, na.rm = TRUE)) 
 # numbers from example 4 are reported in the manuscript, because of best mean correlation 
-
 
 # 03: DLC ----
 
@@ -210,11 +207,8 @@ dlc <- joined_radii_dlc %>%
         legend.position = "none")+
   annotate("text", x=75, y= 250, label= " R² = 0.86", size = 5)
 
- 
 
 # visualization hough
-
-color_subset <- c("#44AA99","#882255")
 
 hough <- joined_radii_all %>%
   dplyr::filter(radius_man >= 100) %>% 
@@ -240,12 +234,6 @@ hough <- joined_radii_all %>%
   annotate("text", x=75, y= 225, label= " R² = 0.80", size = 5, color = "#44AA99")+
   annotate("text", x=75, y= 200, label= " R² = 0.53", size = 5, color = "#882255")
 
-#+
-  #scale_color_discrete(name = "Video", labels = c("Video 1", "Video 2", "Video 3", "Video 4",
-  #                                                "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"))
-        
-
-# labels legend ändern! can we put legend on the bottom of plot 2? 
 cowplot::plot_grid(dlc, hough, ncol = 2, labels = c("A", "B"), label_size = 16)
 
 ggsave("comparison_dlc_hough_manual_new.svg", dpi = 300, width= 10, height = 8)
