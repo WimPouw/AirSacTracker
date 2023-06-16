@@ -178,6 +178,17 @@ dlc_correlations
 safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", 
                              "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
 
+best_two_videos_hough <- df_full %>% 
+  dplyr::filter(videoname == "June16_20" | videoname == "June16_02")
+
+June16_20_hough_exp4 <- joined_radii_all %>% 
+  dplyr::filter(examplenr == "exp4") %>% 
+  dplyr::filter(videoname == "June16_20")
+
+June16_02_hough_exp4 <- joined_radii_all %>% 
+  dplyr::filter(examplenr == "exp4") %>% 
+  dplyr::filter(videoname == "June16_02") 
+
 # plotting radius comprison
 
 # visualization DLC
@@ -190,31 +201,46 @@ dlc <- joined_radii_dlc %>%
   xlab('Manually Labeled Radius [px]')+
   scale_y_continuous(limits = c(50, 270),
                      breaks = c(50, 100, 150, 200, 250))+
-  scale_x_continuous(limits = c(120, 270),
-                     breaks = c( 120, 160, 200, 240))+
+  scale_x_continuous(limits = c(50, 270),
+                     breaks = c(50, 100, 150, 200, 250))+
+  #scale_x_continuous(limits = c(120, 270),
+  #                   breaks = c( 120, 160, 200, 240))+
   theme_minimal()+
   theme(text = element_text(size = 20),
         legend.position = "none")+
-  annotate("text", x=140, y= 250, label= " R² = 0.86", size = 5)
+  annotate("text", x=75, y= 250, label= " R² = 0.86", size = 5)
+
+ 
 
 # visualization hough
+
+color_subset <- c("#44AA99","#882255")
+
 hough <- joined_radii_all %>%
   dplyr::filter(radius_man >= 100) %>% 
   ggplot(aes(x= radius_man, y = smoothed_hough_radius_kolmogorov))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
   geom_smooth(method = 'lm', color = "grey15")+
+  geom_smooth(data = June16_02_hough_exp4, method = "lm", color = "#44AA99")+
+  geom_smooth(data = June16_20_hough_exp4, method = "lm", color = "#882255")+
   scale_color_manual(values = safe_colorblind_palette)+
   ylab('Automatically Tracked Radius [px], Hough')+
   xlab('Manually Labeled Radius [px]')+
   scale_y_continuous(limits = c(50, 270),
                      breaks = c(50, 100, 150, 200, 250))+
-  scale_x_continuous(limits = c(120, 270),
-                     breaks = c( 120, 160, 200, 240))+
+  scale_x_continuous(limits = c(50, 270),
+                     breaks = c(50, 100, 150, 200, 250))+
+  #scale_x_continuous(limits = c(120, 270),
+  #                   breaks = c( 120, 160, 200, 240))+
   theme_minimal()+
   theme(text = element_text(size = 20),
         legend.position="none")+
-  guides(fill = FALSE)+
-  annotate("text", x=140, y= 250, label= " R² = 0.19", size = 5)#+
+  #guides(fill = FALSE)+
+  annotate("text", x=75, y= 250, label= " R² = 0.19", size = 5)+
+  annotate("text", x=75, y= 225, label= " R² = 0.80", size = 5, color = "#44AA99")+
+  annotate("text", x=75, y= 200, label= " R² = 0.53", size = 5, color = "#882255")
+
+#+
   #scale_color_discrete(name = "Video", labels = c("Video 1", "Video 2", "Video 3", "Video 4",
   #                                                "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"))
         
