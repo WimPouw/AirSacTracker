@@ -230,10 +230,10 @@ hough <- joined_radii_all %>%
   theme(text = element_text(size = 20),
         legend.position="none")+
   #guides(fill = FALSE)+
-  annotate("text", x=75, y= 250, label= " R² = 0.19", size = 5)+
+  annotate("text", x=75, y= 250, label= " R² = 0.23", size = 5)+
   annotate("text", x=75, y= 225, label= " R² = 0.80", size = 5, color = "#44AA99")+
   annotate("text", x=75, y= 200, label= " R² = 0.53", size = 5, color = "#882255")
 
 cowplot::plot_grid(dlc, hough, ncol = 2, labels = c("A", "B"), label_size = 16)
 
-ggsave("comparison_dlc_hough_manual_new.svg", dpi = 300, width= 10, height = 8)
+ggsave("comparison_dlc_hough_manual_new.jpg", dpi = 300, width= 10, height = 8)
