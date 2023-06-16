@@ -248,4 +248,4 @@ hough <- joined_radii_all %>%
 # labels legend ändern! can we put legend on the bottom of plot 2? 
 cowplot::plot_grid(dlc, hough, ncol = 2, labels = c("A", "B"), label_size = 16)
 
-ggsave("comparison_dlc_hough_manual_row.jpg", dpi = 300, width= 8, height = 14)
+ggsave("comparison_dlc_hough_manual_new.svg", dpi = 300, width= 10, height = 8)
