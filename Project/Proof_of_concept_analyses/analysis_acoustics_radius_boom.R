@@ -206,6 +206,8 @@ comparison_radius_boom_numeric_adult <- comparison_radius_boom %>%
   
 cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
 
+p.mat <- cor_pmat(comparison_radius_boom_numeric_adult)
+
 #correlation plot, only show significant correlations
 # rewrite: 
 #corrplots with ggcorrplot: http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2
@@ -217,6 +219,22 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
          addCoef.col = 'black',
          cl.pos = 'r') #, col = COL2('BrBG'))
  
+corr <- as.data.frame(round(cor(comparison_radius_boom_numeric_adult, use = "pairwise.complete.obs", method = "pearson"),1))
+
+corr_sub <- corr %>% 
+  dplyr::filter(radius != 1) %>% # to filter out radius v radius, as we can't do that in the ggcorrplot function
+  select("radius") 
+
+row.names(corr_sub) <- c("Amplitude", "F0", "Entropy", "Spectral Centroid", 
+                         "F1", "F2", "harmonic Energy", "peak Frequency", "fm Purity",
+                         "HNR")
+colnames(corr_sub) <- c("Radius")
+
+p.mat <- cor_pmat(corr)
+
+corrplot_adults <- ggcorrplot(corr_sub, method = "circle", lab = TRUE, p.mat = p.mat[1,2:11], insig = "blank") 
+
+ggsave("corrplot_adults.jpg", dpi = 300, width = 10, height = 3) 
 # correlation_plot <-recordPlot()
  
  ## 02b-2: non-adults ----
