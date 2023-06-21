@@ -130,9 +130,30 @@ acoustic_correlation_last <- combined_radius_acoustics_boom_bark_last %>%
          ampl_max, pitch_max, entropy_max, specCentroid_max, f1_freq_max, f2_freq_max,
          peakFreq_max,
          ampl_min, pitch_min, entropy_min, specCentroid_min, f1_freq_min, f2_freq_min,
-         peakFreq_min,
-         ampl_median, pitch_median, entropy_median, specCentroid_median, f1_freq_median, f2_freq_median,
-         peakFreq_median)
+         peakFreq_min)#,
+         #ampl_median, pitch_median, entropy_median, specCentroid_median, f1_freq_median, f2_freq_median,
+         #peakFreq_median)
+
+# #corrplots with ggcorrplot: http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2
+corr_last <- as.data.frame(round(cor(acoustic_correlation_last, use = "pairwise.complete.obs", method = "pearson"),1))
+
+corr_last_sub <- corr_last %>% 
+  dplyr::filter(radius != 1) %>% # to filter out radius v radius, as we can't do that in the ggcorrplot function
+  select("radius") 
+
+row.names(corr_last_sub) <- c("Amplitude mean", "F0 mean", "Entropy mean", "Spectral Centroid mean", 
+                            "F1 mean", "F2 mean", "Peak Frequency mean", "Amplitude max", "F0 max",
+                            "Entropy max", "Spectral Centroid max", 
+                            "F1 max", "F2 max", "peak Frequency max ","Amplitude min", "F0 min", "Entropy min", "Spectral Centroid min", 
+                            "F1 min", "F2 min", "peak Frequency min")
+colnames(corr_last_sub) <- c("Radius")
+
+p.mat_last <- cor_pmat(corr_last)
+
+corrplot_boom_bark <- ggcorrplot(corr_last_sub, method = "circle", lab = TRUE, p.mat = p.mat_last[1,2:22], insig = "blank") 
+
+ggsave("corrplot_boom_bark.svg", dpi = 300, width = 10, height = 3) 
+
 
 cor_all_proof_max <- cor(acoustic_correlation_max)
 cor_all_proof_max_2 <-rcorr(as.matrix(acoustic_correlation_max))

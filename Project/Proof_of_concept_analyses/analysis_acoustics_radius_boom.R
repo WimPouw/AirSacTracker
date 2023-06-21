@@ -204,20 +204,38 @@ comparison_radius_boom_numeric_adult <- comparison_radius_boom %>%
   select(radius, ampl, pitch, entropy, specCentroid, f1_freq, f2_freq,
          harmEnergy, peakFreq, fmPurity, HNR)
   
-cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
-
-#correlation plot, only show significant correlations
-# rewrite: 
 #corrplots with ggcorrplot: http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2
+corr <- as.data.frame(round(cor(comparison_radius_boom_numeric_adult, use = "pairwise.complete.obs", method = "pearson"),1))
 
- corrplot(cor_all_2$r[1,1:11, drop=FALSE], 
-         p.mat = cor_all_2$P[1,1:11, drop=FALSE],
-         sig.level = 0.01, insig = "blank", diag = FALSE,
-         tl.col = "black", #tl.srt = 90,
-         addCoef.col = 'black',
-         cl.pos = 'r') #, col = COL2('BrBG'))
+corr_sub <- corr %>% 
+  dplyr::filter(radius != 1) %>% # to filter out radius v radius, as we can't do that in the ggcorrplot function
+  select("radius") 
+
+row.names(corr_sub) <- c("Amplitude", "F0", "Entropy", "Spectral Centroid", 
+                         "F1", "F2", "harmonic Energy", "peak Frequency", "fm Purity",
+                         "HNR")
+colnames(corr_sub) <- c("Radius")
+
+p.mat <- cor_pmat(corr)
+
+corrplot_adults <- ggcorrplot(corr_sub, method = "circle", lab = TRUE, p.mat = p.mat[1,2:11], insig = "blank") 
+
+ggsave("corrplot_adults.jpg", dpi = 300, width = 10, height = 3) 
+
+
+# old version with corrplot
+
+#cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
+
+# corrplot(cor_all_2$r[1,1:11, drop=FALSE], 
+#         p.mat = cor_all_2$P[1,1:11, drop=FALSE],
+#         sig.level = 0.01, insig = "blank", diag = FALSE,
+#         tl.col = "black", #tl.srt = 90,
+#         addCoef.col = 'black',
+#         cl.pos = 'r') #, col = COL2('BrBG'))
  
-# correlation_plot <-recordPlot()
+
+
  
  ## 02b-2: non-adults ----
  
@@ -226,7 +244,28 @@ cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
    dplyr::filter(ageclass == "non-Adult") %>% 
    select(radius, ampl, pitch, entropy, specCentroid, f1_freq, f2_freq,
           harmEnergy, peakFreq, fmPurity, HNR)
+
+
+#corrplots with ggcorrplot: http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2
+corr_na <- as.data.frame(round(cor(comparison_radius_boom_numeric_nonadult, use = "pairwise.complete.obs", method = "pearson"),1))
+
+corr_sub_na <- corr_na %>% 
+  dplyr::filter(radius != 1) %>% # to filter out radius v radius, as we can't do that in the ggcorrplot function
+  select("radius") 
+
+row.names(corr_sub_na) <- c("Amplitude", "F0", "Entropy", "Spectral Centroid", 
+                         "F1", "F2", "harmonic Energy", "peak Frequency", "fm Purity",
+                         "HNR")
+colnames(corr_sub_na) <- c("Radius")
+
+p.mat_na <- cor_pmat(corr_na)
+
+corrplot_nonadults <- ggcorrplot(corr_sub_na, method = "circle", lab = TRUE, p.mat = p.mat_na[1,2:11], insig = "blank") 
+
+ggsave("corrplot_nonadults.svg", dpi = 300, width = 10, height = 3) 
  
+# old version with corrplot
+
  cor_all_2_nonadult <- rcorr(as.matrix(comparison_radius_boom_numeric_nonadult))
  
  #correlation plot, only show significant correlations for non-adults
