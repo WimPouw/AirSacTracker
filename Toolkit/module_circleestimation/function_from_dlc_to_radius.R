@@ -109,7 +109,6 @@ data_prep_radius_estim_DLC <- function(data){
   return(circle_format_data)
 }
 
-
 ## sub function normalization ----
 
 nose_eye_normalization <- function(auto_data, a = a,  min_frames = 2, threshold_normalization = 0.8){  
