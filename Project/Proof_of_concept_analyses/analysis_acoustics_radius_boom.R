@@ -21,8 +21,11 @@ install_load("tidyverse","conicfit","ggcorrplot", "scales", "spiro",
 # 01: data ----
 
 ## 01a: load data ----
+
+# path in Github structure: \AirSacTracker\Project\Proof_of_concept_analyses
 acoustics_boom <- readRDS("acoustic_analysis_boom_multi_checked.rds")
 
+# path in Github structure: \AirSacTracker\Project\Proof_of_concept_analyses
 radius_boom <- readRDS("radius_estimation_boom_proof1.rds")
 
 # https://stackoverflow.com/questions/57153428/r-plot-color-combinations-that-are-colorblind-accessible
@@ -222,20 +225,6 @@ corrplot_adults <- ggcorrplot(corr_sub, method = "circle", lab = TRUE, p.mat = p
 
 ggsave("corrplot_adults.jpg", dpi = 300, width = 10, height = 3) 
 
-
-# old version with corrplot
-
-#cor_all_2 <- rcorr(as.matrix(comparison_radius_boom_numeric_adult))
-
-# corrplot(cor_all_2$r[1,1:11, drop=FALSE], 
-#         p.mat = cor_all_2$P[1,1:11, drop=FALSE],
-#         sig.level = 0.01, insig = "blank", diag = FALSE,
-#         tl.col = "black", #tl.srt = 90,
-#         addCoef.col = 'black',
-#         cl.pos = 'r') #, col = COL2('BrBG'))
- 
-
-
  
  ## 02b-2: non-adults ----
  
@@ -264,20 +253,6 @@ corrplot_nonadults <- ggcorrplot(corr_sub_na, method = "circle", lab = TRUE, p.m
 
 ggsave("corrplot_nonadults.svg", dpi = 300, width = 10, height = 3) 
  
-# old version with corrplot
-
- cor_all_2_nonadult <- rcorr(as.matrix(comparison_radius_boom_numeric_nonadult))
- 
- #correlation plot, only show significant correlations for non-adults
- 
- corrplot(cor_all_2_nonadult$r[1,1:11, drop=FALSE], 
-          p.mat = cor_all_2_nonadult$P[1,1:11, drop=FALSE],
-          sig.level = 0.05, insig = "blank", diag = FALSE,
-          tl.col = "black", #tl.srt = 90,
-          addCoef.col = 'black',
-          cl.pos = 'r' , col = COL2("BuRd"))
- 
-# correlation_plot <-recordPlot()
  
 # 03: visualization -----
 
@@ -470,7 +445,7 @@ ggsave("corrplot_nonadults.svg", dpi = 300, width = 10, height = 3)
    dplyr::filter(ageclass == "non-Adult") %>% 
    ggplot(aes(y = ampl, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm', , color = "grey15")+
+   geom_smooth(method = 'lm', color = "grey15")+
    ylab('Amplitude')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
@@ -488,7 +463,7 @@ ggsave("corrplot_nonadults.svg", dpi = 300, width = 10, height = 3)
    dplyr::filter(ageclass == "non-Adult") %>% 
    ggplot(aes(y = pitch, x = radius))+
    geom_point()+
-   geom_smooth(method = 'lm', , color = "grey15")+
+   geom_smooth(method = 'lm', color = "grey15")+
    ylab('Pitch [Hz]')+
    xlab('Airsac Radius [px]')+
    #coord_cartesian(xlim = c(0,10))+
