@@ -16,7 +16,8 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach", "Hmisc", "cowplot", "corrplot")
+install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach",
+             "Hmisc", "cowplot", "corrplot", "ggcorrplot")
 
 # 01: data ----
 ## 01a: load data ----
@@ -156,22 +157,6 @@ corrplot_boom_bark <- ggcorrplot(corr_last_sub, method = "circle", lab = TRUE, p
 
 ggsave("corrplot_boom_bark.svg", dpi = 300, width = 10, height = 3) 
 
-
-cor_all_proof_max <- cor(acoustic_correlation_max)
-cor_all_proof_max_2 <-rcorr(as.matrix(acoustic_correlation_max))
-
-cor_all_proof_last <- cor(acoustic_correlation_last)
-cor_all_proof_last_2 <-rcorr(as.matrix(acoustic_correlation_last))
-
-#correlation plot, show all
-corrplot(cor_all_proof_last_2$r[1,2:29, drop = FALSE], type="upper", 
-         tl.col = "black")
-
-#correlation plot, only show significant correlations
-corrplot(cor_all_proof_last_2$r[1,2:29, drop = FALSE], type="upper", 
-         p.mat = cor_all_proof_last_2$P[1,2:29, drop = FALSE], sig.level = 0.05,
-         tl.col = "black",addCoef.col = 'black',
-         insig = "blank")
 
 # 03: data visualization ----
 
