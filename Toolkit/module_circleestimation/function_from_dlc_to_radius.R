@@ -22,7 +22,12 @@ install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
 library("foreach")
 # 01a: load data ----
 
-path <- getwd()# choose.dir()
+# path in Github structure depends on dataset
+# For individual boom snippets: \AirSacTracker\Project\Proof_of_concept_analyses\snippets\tracked_dlc
+# For boom - bark - sequences: \AirSacTracker\Project\Proof_of_concept_analyses2\snippets\short_sequences\tracked\boom
+
+path <- choose.dir()
+# path <- getwd() 
 pattern <- "csv"
 list_of_files <- list.files(path = path, pattern = pattern)
 
@@ -155,8 +160,8 @@ nose_eye_normalization <- function(auto_data, a = a,  min_frames = 2, threshold_
 
 from_DLC_to_circle <- function(path, list_of_files){
   
-  radius_all <- data.frame(matrix(ncol = 3, nrow = 0))
-  z <- c("radius", "frame", "videofile")
+  radius_all <- data.frame(matrix(ncol = 5, nrow = 0))
+  z <- c("radius","x","y", "frame", "videofile")
   colnames(radius_all) <- z
   
   normalization_value <- data.frame(matrix(ncol = 2, nrow = length(list_of_files)))
@@ -186,15 +191,15 @@ from_DLC_to_circle <- function(path, list_of_files){
         circles_LAN <- CircleFitByLandau(frame_data[,1:2], ParIni = NA, epsilon = 1e-06, IterMAX = 500)
         
       }else {
-        circles_LAN <- c(NA, NA, NA)
+        circles_LAN <- c(NA, NA, NA, NA, NA)
       }  
-      circles_res <- c(circles_LAN[3],n, list_of_files[a])
+      circles_res <- c(circles_LAN[3],circles_LAN[1], circles_LAN[2], n, list_of_files[a])
       
       radius <- rbind(radius, circles_res)
       colnames(radius) <- z
-      } else {circles_LAN <- c(NA, NA, NA)
+      } else {circles_LAN <- c(NA, NA, NA, NA, NA)
     
-      circles_res <- c(circles_LAN[3],n, list_of_files[a])
+      circles_res <- c(circles_LAN[3],circles_LAN[1], circles_LAN[2], n, list_of_files[a])
       
       radius <- rbind(radius, circles_res)
       colnames(radius) <- z}
@@ -222,8 +227,10 @@ results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
 
 # 03: saving ----
-  #save to csv
-write.csv(results, paste0(path, '/DLCtoRadii.csv'))
+#save to csv
+csv_savename <- "boom_proof_1" 
+
+write.table(results, paste0(path, '/', csv_savename, '_DLCtoRadii.csv'), row.names = FALSE, sep = ",")
 
 savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
 
