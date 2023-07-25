@@ -186,7 +186,7 @@ June16_02_hough_exp4 <- joined_radii_all %>%
   dplyr::filter(examplenr == "exp4") %>% 
   dplyr::filter(videoname == "June16_02") 
 
-# plotting radius comprison
+# plotting radius comparison
 
 # visualization DLC
 dlc <- joined_radii_dlc %>% 
