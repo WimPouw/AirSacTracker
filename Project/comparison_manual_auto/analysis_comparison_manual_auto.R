@@ -45,8 +45,9 @@ joined_radii_all <- data.frame()
 
 # path used for this project (Github folder structure): AirSacTracker\Project\comparison_manual_auto\hough_trackings_for_comparison_to_manual
 
-path <- choose.dir()
-pattern <- "csv"
+path <- getwd()
+path <- paste(path, '/hough_trackings_for_comparison_to_manual/')
+pattern <- "*.csv"
 list_of_files <- list.files(path = path, pattern = pattern)
 
 for (a in 1: length(list_of_files)){
