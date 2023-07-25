@@ -46,7 +46,7 @@ joined_radii_all <- data.frame()
 # path used for this project (Github folder structure): AirSacTracker\Project\comparison_manual_auto\hough_trackings_for_comparison_to_manual
 
 path <- getwd()
-path <- paste(path, '/hough_trackings_for_comparison_to_manual/')
+path <- paste0(path, '/hough_trackings_for_comparison_to_manual/')
 pattern <- "*.csv"
 list_of_files <- list.files(path = path, pattern = pattern)
 
@@ -186,16 +186,16 @@ dlc <- joined_radii_dlc %>%
   scale_color_manual(values = safe_colorblind_palette)+
   ylab('Automatically Tracked Radius [px], DLC')+
   xlab('Manually Labeled Radius [px]')+
-  scale_y_continuous(limits = c(50, 270),
+  scale_y_continuous(limits = c(75, 270),
                      breaks = c(50, 100, 150, 200, 250))+
-  scale_x_continuous(limits = c(50, 270),
-                     breaks = c(50, 100, 150, 200, 250))+
+  scale_x_continuous(limits = c(100, 270),
+                     breaks = c(100, 150, 200, 250))+
   #scale_x_continuous(limits = c(120, 270),
   #                   breaks = c( 120, 160, 200, 240))+
   theme_minimal()+
   theme(text = element_text(size = 20),
         legend.position = "none")+
-  annotate("text", x=75, y= 250, label= " R² = 0.86", size = 5)
+  annotate("text", x=200, y= 75, label= " R² = 0.86", size = 5)
 
 
 # visualization hough
@@ -211,19 +211,19 @@ hough <- joined_radii_all %>%
   scale_color_manual(values = safe_colorblind_palette)+
   ylab('Automatically Tracked Radius [px], Hough')+
   xlab('Manually Labeled Radius [px]')+
-  scale_y_continuous(limits = c(50, 270),
+  scale_y_continuous(limits = c(75, 270),
                      breaks = c(50, 100, 150, 200, 250))+
-  scale_x_continuous(limits = c(50, 270),
-                     breaks = c(50, 100, 150, 200, 250))+
+  scale_x_continuous(limits = c(100, 270),
+                     breaks = c(100, 150, 200, 250))+
   #scale_x_continuous(limits = c(120, 270),
   #                   breaks = c( 120, 160, 200, 240))+
   theme_minimal()+
   theme(text = element_text(size = 20),
         legend.position="none")+
   #guides(fill = FALSE)+
-  annotate("text", x=75, y= 250, label= " R² = 0.23", size = 5)+
-  annotate("text", x=75, y= 225, label= " R² = 0.80", size = 5, color = "#44AA99")+
-  annotate("text", x=75, y= 200, label= " R² = 0.53", size = 5, color = "#882255")
+  annotate("text", x=200, y= 75, label= " R² = 0.23", size = 5)+
+  annotate("text", x=200, y= 85, label= " R² = 0.80", size = 5, color = "#44AA99")+
+  annotate("text", x=200, y= 95, label= " R² = 0.53", size = 5, color = "#882255")
 
 cowplot::plot_grid(dlc, hough, ncol = 2, labels = c("A", "B"), label_size = 16)
 
