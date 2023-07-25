@@ -18,7 +18,7 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse", "effsize", "psych", "signal", "foreach", "kza", "plyr")
+install_load("tidyverse", "effsize", "psych", "signal", "foreach", "kza", "plyr", "rstudioapi")
 
 # 01a: functions ----
 
@@ -45,8 +45,11 @@ joined_radii_all <- data.frame()
 
 # path used for this project (Github folder structure): AirSacTracker\Project\comparison_manual_auto\hough_trackings_for_comparison_to_manual
 
-path <- getwd()
-path <- paste0(path, '/hough_trackings_for_comparison_to_manual/')
+# Getting the path of your current open file
+current_path <- rstudioapi::getActiveDocumentContext()$path 
+current_path <- setwd(dirname(current_path ))
+
+path <- paste0(current_path, '/hough_trackings_for_comparison_to_manual/')
 pattern <- "*.csv"
 list_of_files <- list.files(path = path, pattern = pattern)
 
@@ -165,16 +168,14 @@ dlc_correlations
 safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", 
                              "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
 
-best_two_videos_hough <- df %>% 
-  dplyr::filter(videoname == "June16_20" | videoname == "June16_02")
 
 June16_20_hough_exp4 <- joined_radii_all %>% 
   dplyr::filter(examplenr == "exp4") %>% 
-  dplyr::filter(videoname == "June16_20")
+  dplyr::filter(videoname == "June16_20_exp4")
 
 June16_02_hough_exp4 <- joined_radii_all %>% 
   dplyr::filter(examplenr == "exp4") %>% 
-  dplyr::filter(videoname == "June16_02") 
+  dplyr::filter(videoname == "June16_02_exp4") 
 
 # plotting radius comparison
 
