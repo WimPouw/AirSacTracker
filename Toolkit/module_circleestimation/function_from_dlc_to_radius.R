@@ -22,7 +22,7 @@ install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
 library("foreach")
 # 01a: load data ----
 
-path <- choose.dir()
+path <- getwd()# choose.dir()
 pattern <- "csv"
 list_of_files <- list.files(path = path, pattern = pattern)
 
@@ -219,7 +219,12 @@ from_DLC_to_circle <- function(path, list_of_files){
 
 results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
+
+
 # 03: saving ----
+  #save to csv
+write.csv(results, paste0(path, '/DLCtoRadii.csv'))
+
 savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
 
 saveRDS(results, file = savename)
