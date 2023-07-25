@@ -27,14 +27,15 @@ install_load("tidyverse", "effsize", "psych", "signal", "foreach", "kza", "plyr"
 
 # we need: manual trackings combined (we don't need to have the code of how we combined them,just load the data)
 
+# path in Github structure: AirSacTracker\Project\comparison_manual_auto
 manual_radius <- read_delim("manually_tracked_airsac_radii.csv", delim = ',')
 
 # we need the corresponding dlc radii
 
-# where does this come from? result of from dlc to circle?
+# path in Github structure: AirSacTracker\Project\comparison_manual_auto
 dlc_radius <- readRDS("dlc_for_comparison_to_manualtracks.rds")
 
-# hough data is not just a single datafile, which is why it is loaded in a loop later
+# hough tracking data is not just a single datafile, which is why it is loaded in a loop later
 
 # 02: Hough Transform ----
 
