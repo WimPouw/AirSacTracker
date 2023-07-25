@@ -16,8 +16,9 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach",
-             "Hmisc", "cowplot", "corrplot", "ggcorrplot")
+
+install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach", "Hmisc", "cowplot", "corrplot", "rstatix", "ggcorrplot")
+
 
 # 01: data ----
 ## 01a: load data ----

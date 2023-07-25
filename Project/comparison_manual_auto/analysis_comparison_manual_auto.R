@@ -47,7 +47,7 @@ joined_radii_all <- data.frame()
 
 # Getting the path of your current open file
 current_path <- rstudioapi::getActiveDocumentContext()$path 
-current_path <- setwd(dirname(current_path ))
+current_path <- dirname(current_path )
 
 path <- paste0(current_path, '/hough_trackings_for_comparison_to_manual/')
 pattern <- "*.csv"
@@ -181,22 +181,22 @@ June16_02_hough_exp4 <- joined_radii_all %>%
 
 # visualization DLC
 dlc <- joined_radii_dlc %>%
-  ggplot(aes(x= radius_man, y = radius))+
+  ggplot(aes(y= radius_man, x = radius))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
   geom_smooth(method = 'lm', color = "grey15")+
   scale_color_manual(values = safe_colorblind_palette)+
-  ylab('Automatically Tracked Radius [px], DLC')+
-  xlab('Manually Labeled Radius [px]')+
-  scale_y_continuous(limits = c(75, 270),
+  xlab('Automatically Tracked Radius [px], DLC')+
+  ylab('Manually Labeled Radius [px]')+
+  scale_x_continuous(limits = c(75, 270),
                      breaks = c(50, 100, 150, 200, 250))+
-  scale_x_continuous(limits = c(100, 270),
+  scale_y_continuous(limits = c(100, 270),
                      breaks = c(100, 150, 200, 250))+
   #scale_x_continuous(limits = c(120, 270),
   #                   breaks = c( 120, 160, 200, 240))+
   theme_minimal()+
   theme(text = element_text(size = 20),
         legend.position = "none")+
-  annotate("text", x=200, y= 75, label= " R² = 0.86", size = 5)
+  annotate("text", y=200, x= 75, label= " R² = 0.86", size = 5)
 
 
 # visualization hough
@@ -204,17 +204,17 @@ dlc <- joined_radii_dlc %>%
 hough <- joined_radii_all %>%
   dplyr::filter(examplenr == "exp4") %>% 
   dplyr::filter(radius_man >= 100) %>% 
-  ggplot(aes(x= radius_man, y = smoothed_hough_radius_kolmogorov))+
+  ggplot(aes(y= radius_man, x = smoothed_hough_radius_kolmogorov))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
   geom_smooth(method = 'lm', color = "grey15")+
   geom_smooth(data = June16_02_hough_exp4, method = "lm", color = "#44AA99")+
   geom_smooth(data = June16_20_hough_exp4, method = "lm", color = "#882255")+
   scale_color_manual(values = safe_colorblind_palette)+
-  ylab('Automatically Tracked Radius [px], Hough')+
-  xlab('Manually Labeled Radius [px]')+
-  scale_y_continuous(limits = c(75, 270),
+  xlab('Automatically Tracked Radius [px], Hough')+
+  ylab('Manually Labeled Radius [px]')+
+  scale_x_continuous(limits = c(75, 270),
                      breaks = c(50, 100, 150, 200, 250))+
-  scale_x_continuous(limits = c(100, 270),
+  scale_y_continuous(limits = c(100, 270),
                      breaks = c(100, 150, 200, 250))+
   #scale_x_continuous(limits = c(120, 270),
   #                   breaks = c( 120, 160, 200, 240))+
@@ -222,9 +222,9 @@ hough <- joined_radii_all %>%
   theme(text = element_text(size = 20),
         legend.position="none")+
   #guides(fill = FALSE)+
-  annotate("text", x=200, y= 75, label= " R² = 0.23", size = 5)+
-  annotate("text", x=200, y= 85, label= " R² = 0.80", size = 5, color = "#44AA99")+
-  annotate("text", x=200, y= 95, label= " R² = 0.53", size = 5, color = "#882255")
+  annotate("text", y=200, x= 75, label= " R² = 0.23", size = 5)+
+  annotate("text", y=200, x= 85, label= " R² = 0.80", size = 5, color = "#44AA99")+
+  annotate("text", y=200, x= 95, label= " R² = 0.53", size = 5, color = "#882255")
 
 cowplot::plot_grid(dlc, hough, ncol = 2, labels = c("A", "B"), label_size = 16)
 
