@@ -38,12 +38,11 @@ dlc_radius <- readRDS("dlc_for_comparison_to_manualtracks.rds")
 
 # 02: Hough Transform ----
 
-# example of what to read in: folder D:\PostDoc\Donders\AirSacTracker_2\Tracker_Backup_8May2023\module_hough\results\example 1
-# in this folder we have the tracked videos and csv files of one parameter combination
-
 ## 02a: preparations Hough ----
 df <- data.frame()
 joined_radii_all <- data.frame()
+
+# path used for this project (Github folder structure): AirSacTracker\Project\comparison_manual_auto\hough_trackings_for_comparison_to_manual
 
 path <- choose.dir()
 pattern <- "csv"
@@ -63,18 +62,13 @@ for (a in 1: length(list_of_files)){
   hough_radius <- hough_radius %>%
     drop_na() 
   hough_radius <- hough_radius %>% 
-    mutate(smoothed_hough_radius_butter = butter.it(hough_radius$r,
-                                             samplingrate =  25,
-                                             order = 2,
-                                             lowpasscutoff = 10),
-           smoothed_hough_radius_kolmogorov = kza(hough_radius$r, k = 4,m = 3)$kza )
+    mutate(smoothed_hough_radius_kolmogorov = kza(hough_radius$r, k = 4,m = 3)$kza)
   
   joined_radii <- plyr::join(hough_radius, manual_radius, by= c("name"), type="left", match="first")
   joined_radii <- joined_radii %>% 
     mutate(videoname = videoname)
   
   cor_r <- corr.test(joined_radii$r, joined_radii$radius_man)
-  cor_r_sm_butter <- corr.test(joined_radii$smoothed_hough_radius_butter, joined_radii$radius_man)
   cor_r_sm_kol <- corr.test(joined_radii$smoothed_hough_radius_kolmogorov, joined_radii$radius_man)
   cor_x <- corr.test(joined_radii$x, joined_radii$X)
   cor_y <- corr.test(joined_radii$y, joined_radii$Y)
@@ -86,31 +80,25 @@ for (a in 1: length(list_of_files)){
   df[a,3] <- cor_r_sm_kol$r
   df[a,4] <- cor_x$r
   df[a,5] <- cor_y$r
-  df[a,6] <- cor_r_sm_butter$r
-  df[a,7] <- joined_radii$examplenr[1]
+  df[a,6] <- joined_radii$examplenr[1]
 
   joined_radii_all <- rbind(joined_radii_all, joined_radii)
   
 }
 
-colnames(df) <- c("videoname", "cor_radius","cor_radius_smoothed_kol", "cor_x",  "cor_y","cor_radius_smoothed_butter", "example_nr")#, 
+colnames(df) <- c("videoname", "cor_radius","cor_radius_smoothed_kol", "cor_x",  "cor_y", "example_nr")#, 
   #                "alpha","beta","thresh_div1","thresh_div2","dilation",
   #                "medianblur", "nr_frames_used", "nr_frames_in_video")
 
-# saved every of the 5 best examples in a seperate dataframe df_exp1, df_exp2 and so on by renaming the resulting df
-# of former step by df_exp1 etc. corresponidng to data
-
-df_full<- rbind(df_exp1, df_exp2, df_exp3, df_exp4, df_exp5)
-
-saveRDS(df_full, file = "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.rds")
-write.table(df_full, "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.csv", sep = ",")
+saveRDS(df, file = "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.rds")
+write.table(df, "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.csv", sep = ",")
 
 ## 02b: correlations Hough -----
 # combine correlation grouped by parameter combination and grouped by video for statistics to report in manuscript
 
 detach(package:plyr) # needs to be detached, otherwise grouping does not work in function below
 
-correlation_per_video <- df_full %>%
+correlation_per_video <- df %>%
   dplyr::group_by(videoname) %>%                            
   summarise(mean_cor_sm = mean(cor_radius_smoothed_kol), median_cor_sm = median(cor_radius_smoothed_kol),
             min_cor_sm = min(cor_radius_smoothed_kol), max_cor_sm = max(cor_radius_smoothed_kol),
@@ -118,7 +106,7 @@ correlation_per_video <- df_full %>%
             min_cor = min(cor_radius, na.rm = TRUE), max_cor = max(cor_radius, na.rm = TRUE)) 
 
 # per example 
-correlation_per_setting <- df_full %>% 
+correlation_per_setting <- df %>% 
   group_by(example_nr) %>%                            
   summarise(mean_cor_sm = mean(cor_radius_smoothed_kol), median_cor_sm = median(cor_radius_smoothed_kol),
             min_cor_sm = min(cor_radius_smoothed_kol), max_cor_sm = max(cor_radius_smoothed_kol),
@@ -175,7 +163,7 @@ dlc_correlations
 safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", 
                              "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
 
-best_two_videos_hough <- df_full %>% 
+best_two_videos_hough <- df %>% 
   dplyr::filter(videoname == "June16_20" | videoname == "June16_02")
 
 June16_20_hough_exp4 <- joined_radii_all %>% 
@@ -189,7 +177,7 @@ June16_02_hough_exp4 <- joined_radii_all %>%
 # plotting radius comparison
 
 # visualization DLC
-dlc <- joined_radii_dlc %>% 
+dlc <- joined_radii_dlc %>%
   ggplot(aes(x= radius_man, y = radius))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
   geom_smooth(method = 'lm', color = "grey15")+
@@ -211,6 +199,7 @@ dlc <- joined_radii_dlc %>%
 # visualization hough
 
 hough <- joined_radii_all %>%
+  dplyr::filter(examplenr == "exp4") %>% 
   dplyr::filter(radius_man >= 100) %>% 
   ggplot(aes(x= radius_man, y = smoothed_hough_radius_kolmogorov))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
