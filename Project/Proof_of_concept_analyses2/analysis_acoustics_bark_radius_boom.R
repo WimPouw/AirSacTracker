@@ -138,6 +138,8 @@ acoustic_correlation_last <- combined_radius_acoustics_boom_bark_last %>%
          #ampl_median, pitch_median, entropy_median, specCentroid_median, f1_freq_median, f2_freq_median,
          #peakFreq_median)
 
+
+
 # #corrplots with ggcorrplot: http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2
 corr_last <- as.data.frame(round(cor(acoustic_correlation_last, use = "pairwise.complete.obs", method = "pearson"),1))
 
