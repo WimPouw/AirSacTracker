@@ -22,13 +22,14 @@ install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
 library("foreach")
 # 01a: load data ----
 
-# path in Github structure depends on dataset
-# For individual boom snippets: \AirSacTracker\Project\Proof_of_concept_analyses\snippets\tracked_dlc
-# For boom - bark - sequences: \AirSacTracker\Project\Proof_of_concept_analyses2\snippets\short_sequences\tracked\boom
+# if you want an individul savename added to the output file, change HERE:
 
+savename <- ""
 
-path <- choose.dir()
-# path <- getwd() 
+#path <- choose.dir()
+
+path <- "Toolkit/module_circleestimation/data"
+path_output <- "Toolkit/module_circleestimation/results"
 pattern <- "csv"
 list_of_files <- list.files(path = path, pattern = pattern)
 
@@ -228,11 +229,10 @@ results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
 
 # 03: saving ----
-#save to csv
-csv_savename <- readline(prompt = "Enter a savename for the dataset for the csv file without any quote signs, the phrase 'DLCtoRadii' will be added at the end:")
+#save to csv and rds
 
-write.table(results, paste0(path, '/', csv_savename, '_DLCtoRadii.csv'), row.names = FALSE, sep = ",")
+# <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
 
-savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
+write.table(results, paste0(path_output, '/', savename, '_DLCtoRadii.csv'), row.names = FALSE, sep = ",")
 
-saveRDS(results, file = savename)
+saveRDS(results, file = paste0(path_output, "/", savename, "_DLCtoRadii.rds"))
