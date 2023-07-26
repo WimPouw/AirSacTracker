@@ -227,12 +227,11 @@ from_DLC_to_circle <- function(path, list_of_files){
 results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
 
-
 # 03: saving ----
 #save to csv
-csv_savename <- readline(prompt = "Enter a savename for the dataset for the csv file without any quote signs, the phrase 'DLCtoRadii' will be added at the end:")
+#csv_savename <- readline(prompt = "Enter a savename for the dataset for the csv file without any quote signs, the phrase 'DLCtoRadii' will be added at the end:")
 
-write.table(results, paste0(path, '/', csv_savename, '_DLCtoRadii.csv'), row.names = FALSE, sep = ",")
+write.table(results, paste0(dirname(path), '/results/', csv_savename, '_DLCtoRadii.csv'), row.names = FALSE, sep = ",")
 
 #savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
 
