@@ -18,15 +18,13 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
+install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach", "rstudioapi")
 library("foreach")
 # 01a: load data ----
 
 # if you want an individul savename added to the output file, change HERE:
 
 savename <- ""
-
-#path <- choose.dir()
 
 path <- "Toolkit/module_circleestimation/data"
 path_output <- "Toolkit/module_circleestimation/results"
@@ -227,12 +225,11 @@ from_DLC_to_circle <- function(path, list_of_files){
 results <- from_DLC_to_circle(path = path, list_of_files = list_of_files)
 
 
-
 # 03: saving ----
-#save to csv and rds
 
-# <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
+#save to csv and rds
 
 write.table(results, paste0(path_output, '/', savename, '_DLCtoRadii.csv'), row.names = FALSE, sep = ",")
 
 saveRDS(results, file = paste0(path_output, "/", savename, "_DLCtoRadii.rds"))
+
