@@ -18,7 +18,7 @@ if (!require(install.load)) {
 
 library(install.load)
 
-install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach")
+install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach", "rstudioapi")
 library("foreach")
 # 01a: load data ----
 
@@ -27,8 +27,9 @@ library("foreach")
 # For boom - bark - sequences: \AirSacTracker\Project\Proof_of_concept_analyses2\snippets\short_sequences\tracked\boom
 
 
-path <- choose.dir()
-# path <- getwd() 
+#path <- choose.dir()
+path <- paste0(getwd(), '/input/')
+
 pattern <- "csv"
 list_of_files <- list.files(path = path, pattern = pattern)
 
@@ -233,6 +234,6 @@ csv_savename <- readline(prompt = "Enter a savename for the dataset for the csv 
 
 write.table(results, paste0(path, '/', csv_savename, '_DLCtoRadii.csv'), row.names = FALSE, sep = ",")
 
-savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
+#savename <- readline(prompt = "Enter a savename for the dataset, including the fileending .rds but without any quote signs:")
 
-saveRDS(results, file = savename)
+#saveRDS(results, file = savename)
