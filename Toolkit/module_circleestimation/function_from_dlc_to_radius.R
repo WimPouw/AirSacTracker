@@ -26,6 +26,7 @@ library("foreach")
 # For individual boom snippets: \AirSacTracker\Project\Proof_of_concept_analyses\snippets\tracked_dlc
 # For boom - bark - sequences: \AirSacTracker\Project\Proof_of_concept_analyses2\snippets\short_sequences\tracked\boom
 
+
 path <- choose.dir()
 # path <- getwd() 
 pattern <- "csv"
