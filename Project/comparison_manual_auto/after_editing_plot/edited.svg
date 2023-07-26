@@ -52,9 +52,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="481.84277"
-     inkscape:cy="327.28943"
+     inkscape:zoom="0.7"
+     inkscape:cx="412.14286"
+     inkscape:cy="298.57143"
      inkscape:document-units="mm"
      inkscape:current-layer="g841"
      inkscape:document-rotation="0"
@@ -96,7 +96,8 @@
          y="-535.41339"
          transform="scale(1,-1)"
          inkscape:export-xdpi="600"
-         inkscape:export-ydpi="600" />
+         inkscape:export-ydpi="600"
+         inkscape:export-filename="fig_comp_man.png" />
       <g
          id="g843" />
       <g
