@@ -22,7 +22,7 @@ install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach", "rs
 library("foreach")
 # 01a: load data ----
 
-# if you want an individul savename added to the output file, change HERE:
+# if you want an individual savename added to the output file, change HERE:
 
 savename <- ""
 
