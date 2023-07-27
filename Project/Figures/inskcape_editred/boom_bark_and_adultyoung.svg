@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="210mm"
    height="297mm"
    viewBox="0 0 210 297"
    version="1.1"
    id="svg8"
-   inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"
-   sodipodi:docname="boom_bark_and_adultyoung.svg">
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="boom_bark_and_adultyoung.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2">
     <rect
@@ -729,18 +729,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.9899495"
-     inkscape:cx="506.60168"
-     inkscape:cy="629.37248"
+     inkscape:zoom="1.4"
+     inkscape:cx="455.35714"
+     inkscape:cy="215.71428"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1009"
+     inkscape:window-height="1017"
      inkscape:window-x="-8"
      inkscape:window-y="1072"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -792,7 +795,8 @@
        x="32.046131"
        y="11.862812"
        inkscape:export-xdpi="600"
-       inkscape:export-ydpi="600" />
+       inkscape:export-ydpi="600"
+       inkscape:export-filename="boom_bark.png" />
     <g
        id="g1192"
        transform="matrix(0.15169954,0,0,0.15169954,37.525159,58.7375)">
@@ -1730,7 +1734,7 @@
            textLength="52.419998"
            lengthAdjust="spacingAndGlyphs"
            id="text1538"
-           transform="matrix(2.6283161,0,0,2.6283289,-221.32246,-201.15793)">R = -0.04</text>
+           transform="matrix(2.6283161,0,0,2.6283289,-221.32246,-201.15793)">r = -0.04</text>
       </g>
       <g
          clip-path="url(#cpMC4wMHwxNDQwLjAwfDAuMDB8NTc2LjAw)"
@@ -1849,7 +1853,7 @@
         <text
            xml:space="preserve"
            id="text2110"
-           style="font-size:170.011px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect2112);" />
+           style="font-size:170.011px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect2112);display:inline" />
       </g>
       <g
          clip-path="url(#cpNzIwLjAwfDE0NDAuMDB8MC4wMHw1NzYuMDA=)"
@@ -2092,7 +2096,7 @@
            textLength="52.419998"
            lengthAdjust="spacingAndGlyphs"
            id="text1668"
-           transform="matrix(2.623307,0,0,2.623307,-1407.5875,-200.6912)">R = -0.45</text>
+           transform="matrix(2.623307,0,0,2.623307,-1407.5875,-200.6912)">r = -0.45</text>
       </g>
       <g
          clip-path="url(#cpMC4wMHwxNDQwLjAwfDAuMDB8NTc2LjAw)"
