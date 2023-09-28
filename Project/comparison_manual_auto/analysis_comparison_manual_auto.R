@@ -25,15 +25,18 @@ install_load("tidyverse", "effsize", "psych", "signal", "foreach", "kza", "plyr"
 
 # 01b: load data ----
 
-# we need: manual trackings combined (we don't need to have the code of how we combined them,just load the data)
+# Getting the path of your current open file
+current_path <- rstudioapi::getActiveDocumentContext()$path 
+current_path <- dirname(current_path )
 
 # path in Github structure: AirSacTracker\Project\comparison_manual_auto
-manual_radius <- read_delim("manually_tracked_airsac_radii.csv", delim = ',')
+manual_radius <- read_delim(paste0(current_path, "/manually_tracked_airsac_radii.csv"), delim = ',')
 
 # we need the corresponding dlc radii
 
 # path in Github structure: AirSacTracker\Project\comparison_manual_auto
-dlc_radius <- readRDS("dlc_for_comparison_to_manualtracks.rds")
+
+dlc_radius <- readRDS(paste0(current_path, "/dlc_for_comparison_to_manualtracks.rds"))
 
 # hough tracking data is not just a single datafile, which is why it is loaded in a loop later
 
@@ -44,10 +47,6 @@ df <- data.frame()
 joined_radii_all <- data.frame()
 
 # path used for this project (Github folder structure): AirSacTracker\Project\comparison_manual_auto\hough_trackings_for_comparison_to_manual
-
-# Getting the path of your current open file
-current_path <- rstudioapi::getActiveDocumentContext()$path 
-current_path <- dirname(current_path )
 
 path <- paste0(current_path, '/hough_trackings_for_comparison_to_manual/')
 pattern <- "*.csv"
@@ -91,12 +90,10 @@ for (a in 1: length(list_of_files)){
   
 }
 
-colnames(df) <- c("videoname", "cor_radius","cor_radius_smoothed_kol", "cor_x",  "cor_y", "example_nr")#, 
-  #                "alpha","beta","thresh_div1","thresh_div2","dilation",
-  #                "medianblur", "nr_frames_used", "nr_frames_in_video")
+colnames(df) <- c("videoname", "cor_radius","cor_radius_smoothed_kol", "cor_x",  "cor_y", "example_nr")
 
-saveRDS(df, file = "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.rds")
-write.table(df, "hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.csv", sep = ",")
+saveRDS(df, file = paste0(current_path,"/hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.rds"))
+write.table(df, paste0(current_path,"/hough_vs_manuallytracked_radii_correlation_all_parameter_combinations_5examples.csv"), sep = ",")
 
 ## 02b: correlations Hough -----
 # combine correlation grouped by parameter combination and grouped by video for statistics to report in manuscript
@@ -181,11 +178,11 @@ June16_02_hough_exp4 <- joined_radii_all %>%
 
 # visualization DLC
 dlc <- joined_radii_dlc %>%
-  ggplot(aes(y= radius_man, x = radius))+
+  ggplot(aes(y = radius_man, x = radius))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
   geom_smooth(method = 'lm', color = "grey15")+
   scale_color_manual(values = safe_colorblind_palette)+
-  xlab('Automatically Tracked Radius [px], DLC')+
+  xlab('DLC+ [px]')+
   ylab('Manually Labeled Radius [px]')+
   scale_x_continuous(limits = c(75, 270),
                      breaks = c(50, 100, 150, 200, 250))+
@@ -196,7 +193,7 @@ dlc <- joined_radii_dlc %>%
   theme_minimal()+
   theme(text = element_text(size = 20),
         legend.position = "none")+
-  annotate("text", y=200, x= 75, label= " R² = 0.86", size = 5)
+  annotate("text", y = 250, x = 100, label= " r = 0.86", size = 5)
 
 
 # visualization hough
@@ -204,13 +201,13 @@ dlc <- joined_radii_dlc %>%
 hough <- joined_radii_all %>%
   dplyr::filter(examplenr == "exp4") %>% 
   dplyr::filter(radius_man >= 100) %>% 
-  ggplot(aes(y= radius_man, x = smoothed_hough_radius_kolmogorov))+
+  ggplot(aes(y = radius_man, x = smoothed_hough_radius_kolmogorov))+
   geom_point(aes( fill = videoname, color = videoname), size = 2, alpha = 0.6)+
   geom_smooth(method = 'lm', color = "grey15")+
   geom_smooth(data = June16_02_hough_exp4, method = "lm", color = "#44AA99")+
   geom_smooth(data = June16_20_hough_exp4, method = "lm", color = "#882255")+
   scale_color_manual(values = safe_colorblind_palette)+
-  xlab('Automatically Tracked Radius [px], Hough')+
+  xlab('Hough [px]')+
   ylab('Manually Labeled Radius [px]')+
   scale_x_continuous(limits = c(75, 270),
                      breaks = c(50, 100, 150, 200, 250))+
@@ -222,10 +219,10 @@ hough <- joined_radii_all %>%
   theme(text = element_text(size = 20),
         legend.position="none")+
   #guides(fill = FALSE)+
-  annotate("text", y=200, x= 75, label= " R² = 0.23", size = 5)+
-  annotate("text", y=200, x= 85, label= " R² = 0.80", size = 5, color = "#44AA99")+
-  annotate("text", y=200, x= 95, label= " R² = 0.53", size = 5, color = "#882255")
+  annotate("text", y = 200, x = 100, label= " r = 0.23", size = 5)+
+  annotate("text", y = 225, x = 100, label= " r = 0.53", size = 5, color = "#44AA99")+
+  annotate("text", y = 250, x = 100, label= " r = 0.80", size = 5, color = "#882255")
 
 cowplot::plot_grid(dlc, hough, ncol = 2, labels = c("A", "B"), label_size = 16)
 
-ggsave("comparison_dlc_hough_manual_new.jpg", dpi = 300, width= 10, height = 8)
+ggsave(paste0(current_path,"/comparison_dlc_hough_manual_new.jpg"), dpi = 300, width= 10, height = 8)

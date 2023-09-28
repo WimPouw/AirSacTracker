@@ -23,10 +23,8 @@ install_load("tidyverse","conicfit", "scales", "spiro", "signal", "foreach", "Hm
 # 01: data ----
 ## 01a: load data ----
 
-# path in Github structure: \AirSacTracker\Project\Proof_of_concept_analyses2
 acoustics_bark <- readRDS("Project/Proof_of_concept_analyses2/acoustics_bark_multi_checked_proof_2.rds")
 
-# path in Github structure: \AirSacTracker\Project\Proof_of_concept_analyses2
 radius_boom_bark_sequences <- readRDS("Project/Proof_of_concept_analyses2/circle_estimation_boom_DLC_proof2.rds")
 
 ## 01b: data preparation ----
