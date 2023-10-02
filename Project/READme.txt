@@ -5,16 +5,15 @@ It contains necessary codes and data to re-run analyses reported on in the manus
 please see the toolkit folder (AirSacTracker/tk).
 
 ## Table of Contents
-- [Overview](#overview)
-- [Folder Structure](#folder-structure)
-- [Proof of Concept Analyses](#proof-of-concept-analyses)
-- [ToolkitR](#toolkitr)
-- [Hough Example Frog](#hough-example-frog)
-- [DeepLabCut](#deeplabcut)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
+- Overview
+- Folder Structure
+- Proof of Concept Analyses
+- ToolkitR
+- Hough Example Frog
+- DeepLabCut
+- Contributing
+- License
+- Acknowledgments
 
 ## Overview
 
