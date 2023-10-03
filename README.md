@@ -2,10 +2,8 @@
 <h2 align="center" style=font-size:200px>Burchardt (burchardt@leibniz-zas.de), van der Sande, Kehy, Gamba, Ravignani, Pouw (wim.pouw@donders.ru.nl)</h2>
 
 <a name="overview"></a>
-<video width="300" controls>
-  <source src="https://tsg-131-174-75-200.hosting.ru.nl/samples_airsactoolkit/side_by_side.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+
+[![Video]()](https://tsg-131-174-75-200.hosting.ru.nl/samples_airsactoolkit/side_by_side.mp4)
 
 Biological structures are defined by elements like bones and cartilage, and elastic elements like muscles and membranes. Computer vision advances have enabled automatic tracking of animal skeletal poses. However, the elastic and soft-tissues of organisms, like the nose of Elephant seals, or the buccal sac of frogs, have been poorly studied as no computer vision methods are optimized for tracking such elastic kinematics. This leaves major gaps in different areas in biology. In the area of primatology, most critically, the function of air sacs is widely debated and many questions exist about their role in communication and human language evolution. Moving towards the dynamic study of soft-tissue elastic structures, we present a toolkit for the automated tracking of semi-circular elastic structures in biological video data. The toolkit contains unsupervised computer vision tools (using Hough transform) and supervised deep learning (by adapting Deeplabcut) methodology to track inflation of laryngeal air sacs or other biological spherical objects (e.g., gular cavities). 
 
