@@ -34,7 +34,7 @@ https://data.donders.ru.nl/collections/mine?3</td>
     </tr>
 </table>
 
-## Pipeline 
+## Manuscript pipeline
 
 <img src = /docs/images/Workflow_figure.png  > (pipeline image) 
 
