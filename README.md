@@ -31,12 +31,13 @@ https://data.donders.ru.nl/collections/mine?3</td>
     </tr>
 </table>
 
-## Installation / requirements ## 
-See requirements.txt for each module.
-
 ### Pipeline ### 
 
-<img src = ...  > (pipeline image) 
+<img src = /docs/images/Workflow_figure.png  > (pipeline image) 
+
+
+## Installation / requirements ## 
+See requirements.txt for each module.
 
 ### file structure ###
 
