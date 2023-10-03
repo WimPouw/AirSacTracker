@@ -10,7 +10,7 @@ Biological structures are defined by elements like bones and cartilage, and elas
 <table>
   <thead>
     <tr>
-      <th>✨</th>
+      <th></th>
       <th>Feature</th>
     </tr>
   </thead>
