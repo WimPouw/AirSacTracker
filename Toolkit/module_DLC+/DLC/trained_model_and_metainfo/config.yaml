@@ -6,7 +6,7 @@ multianimalproject: false
 identity:
 
     # Project path (change when moving around)
-project_path: E:\AirSacTracker\tk\module_DLC+\DLC\trained_model_and_metainfo
+project_path: D:\Research_projects\AirSacTracker\Toolkit\module_DLC+\DLC\trained_model_and_metainfo
 
     # Annotation data set configuration (and individual video cropping parameters)
 video_sets:
@@ -20,6 +20,8 @@ bodyparts:
 - LowestPoint_outline
 - MidLowleft_outline
 - MidLowright_outline
+
+    # Fraction of video to start/stop when extracting frames for labeling/refinement
 
     # Fraction of video to start/stop when extracting frames for labeling/refinement
 

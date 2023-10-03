@@ -1,0 +1,11 @@
+torch
+tqdm
+deeplabcut
+pandas
+numpy
+opencv-python
+protobuf
+flatbuffers
+ffmpeg
+moviepy
+
