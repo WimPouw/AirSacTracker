@@ -29,7 +29,7 @@ https://wimpouw.github.io/AirSacTracker/AirSacTracking_with_Hough.html</td>
 https://wimpouw.github.io/AirSacTracker/DLC+.html</td>
     </tr>
       <td>✅</td>
-      <td>Open dataset on Siamang Air Sacs: 
+      <td>Open dataset on Air Sac- and Articulatory Kinematics in Siamang: 
 https://doi.org/10.34973/6apg-q804
 	</td>
     </tr>
@@ -49,7 +49,7 @@ See requirements.txt for each module. You can install the requirements by enteri
 - Docs -> contains all the github pages
 - Toolkit -> contains the hough and DLC+ code
 	
-## Code contributers
+## Code contributors
 Lara Burchardt, Yana van der Sande, Wim Pouw
 
 ## Reference
