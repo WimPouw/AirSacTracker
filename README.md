@@ -1,4 +1,4 @@
-<h1 align="center" style=font-size:200px>A toolkit for the dynamic study of elastic kinematics.</h1>
+<h1 align="center" style=font-size:200px>A toolkit for the dynamic study of elastic kinematics</h1>
 <h2 align="center" style=font-size:200px>Burchardt (burchardt@leibniz-zas.de), van der Sande, Kehy, Gamba, Ravignani, Pouw (wim.pouw@donders.ru.nl)</h2>
 
 <a name="overview"></a>
