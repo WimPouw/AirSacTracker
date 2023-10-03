@@ -51,7 +51,7 @@ See requirements.txt for each module. You can install the requirements by enteri
 ## Code contributers
 Lara Burchardt, Yana van der Sande, Wim Pouw
 
-##Reference ## 
+## Reference
 TBA
 
 
