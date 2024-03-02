@@ -2,7 +2,7 @@
 
 This is the READme for the github project folder of the manuscript "A toolkit for the dynamic study of elastic kinematics".
 It contains necessary code and data to re-run analyses reported on in the manuscript. If you want to run the tracking procedure described in the manuscript with your own data,
-please see the toolkit folder (AirSacTracker/tk).
+please see the toolkit folder (AirSacTracker/toolkit).
 
 ## Table of Contents
 - Overview
@@ -18,7 +18,7 @@ please see the toolkit folder (AirSacTracker/tk).
 ## Overview
 
 In the project, we automatically tracked the radii of Siamang airsac in two different contexts, to study airsac inflation and its influence on acoustic parameters
-of produced vocalizations. We established the tracking approaches, which are reported in the toolkit (tk) folder of this repository. In this folder, we provide
+of produced vocalizations. We established the tracking approaches, which are reported in the toolkit folder of this repository. In this folder, we provide
 all other relevant code and information to re-run all other analysis, reported on in the manuscript, such as the comparison between manually tracked circles 
 and automatically tracked circles with the newly developed approaches (Hough method and and DLC+ method). 
 
