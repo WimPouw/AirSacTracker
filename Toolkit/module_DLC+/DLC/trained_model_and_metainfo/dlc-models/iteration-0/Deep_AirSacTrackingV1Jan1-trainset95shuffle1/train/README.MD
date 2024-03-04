@@ -1,0 +1,2 @@
+# Info
+This folder contains the trained model at 500K iterations. Dont forget to download the model that is > 100MB by following the link. If you want to use other models trained with less iterations, we also provide a model trained with 280k trained iterations.
