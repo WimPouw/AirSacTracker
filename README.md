@@ -39,7 +39,7 @@ https://doi.org/10.34973/6apg-q804
 
 ## Manuscript pipeline
 
-<img src = /docs/images/Workflow_figure.png  > (pipeline image) 
+<img src = /docs/images/workflow_figure.jpg  > (pipeline image) 
 
 
 ## Installation / requirements ## 
