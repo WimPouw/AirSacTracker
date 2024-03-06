@@ -1,8 +1,8 @@
 # A toolkit for the dynamic study of elastic kinematics
 
 This is the READme for the github project folder of the manuscript "A toolkit for the dynamic study of elastic kinematics".
-It contains necessary codes and data to re-run analyses reported on in the manuscritp. If you want to run the trackings described in the manuscript with your own data,
-please see the toolkit folder (AirSacTracker/tk).
+It contains necessary code and data to re-run analyses reported on in the manuscript. If you want to run the tracking procedure described in the manuscript with your own data,
+please see the toolkit folder (AirSacTracker/toolkit).
 
 ## Table of Contents
 - Overview
@@ -18,9 +18,9 @@ please see the toolkit folder (AirSacTracker/tk).
 ## Overview
 
 In the project, we automatically tracked the radii of Siamang airsac in two different contexts, to study airsac inflation and its influence on acoustic parameters
-of produced vocalizations. We established the tracking approaches, which are reported in the toolkit (tk) folder of this repository. In this folder, we provide
-all other relevant codes and information to re-run all other analysis, reported on in the manuscript, such as the comparison between manually tracked circles 
-and automatically tracked circles with the newly developed approaches. 
+of produced vocalizations. We established the tracking approaches, which are reported in the toolkit folder of this repository. In this folder, we provide
+all other relevant code and information to re-run all other analysis, reported on in the manuscript, such as the comparison between manually tracked circles 
+and automatically tracked circles with the newly developed approaches (Hough method and and DLC+ method). 
 
 ## Folder Structure
 
@@ -28,16 +28,16 @@ The different folders contain information and codes for different parts of the p
 
 - DeepLabCut --> instructions and data of the tracked airsacs for this project
 - Comparison_manual_auto --> data and code for the comparison between manually tracked airsacs and automatically tracked airsacs
-- Proof_of_concept_analyses --> data and codes for the first proof of concept analysis, studying boom calls
-- Proof_of_concept_analyses2 --> data and codes for the second proof of concept analysis, studying the radius of boom calls and the acoustic of subsequent barks
-- ToolkitR --> contains equivalent R code for the key step of DLC+
+- Proof_of_concept_analyses --> data and code for the first proof of concept analysis, studying boom calls
+- Proof_of_concept_analyses2 --> data and code for the second proof of concept analysis, studying the radius of boom calls and the acoustic of subsequent barks
+- ToolkitR --> contains equivalent R code for the key step of DLC+ (which is implemented in python instead in the DLC+ pipeline)
 - Hough_example_frog --> contains a hough tracking example for a different type of airsac, namely of a frog
 - Figures --> figures that were used in the manuscript
 
 ## Proof of Concept Analyses
 
 Data snippets for the kinematic-acoustic analysis were sampled opportunistically from the full dataset and are included in the corresponding folders (see details below).
-The two analyses are supposed to show  how the developed tracking approaches work and can be utilized for interesting analyses.
+The two analyses demonstrate how the developed tracking approaches work and can be utilized for analyses.
 
 ### Proof 1
 
