@@ -41,6 +41,9 @@ https://doi.org/10.34973/6apg-q804
 
 <img src = /docs/images/workflow_figure.jpg  > (pipeline image) 
 
+## Download trained DLC resnet 101 model (> 100mb)
+[500K iterations](https://drive.google.com/file/d/1Kfavyhs5iXGM0S9sgmYYlhFo5qKD_67u) <br>
+[280K iterations](https://drive.google.com/file/d/1TW07BfvMX9NqOmsxGYx6UIhl3nuAqwBy) <br>
 
 ## Installation / requirements ## 
 See requirements.txt for each module. You can install the requirements by entering in your terminal 'pip -r requirements.txt' (after navigating to the folder where the requirements.txt is located)
