@@ -5,7 +5,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg8"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
    sodipodi:docname="boom_bark_and_adultyoung.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -729,9 +729,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6"
-     inkscape:cx="136.51786"
-     inkscape:cy="731.16072"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="513.15749"
+     inkscape:cy="628.81996"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -739,7 +739,7 @@
      inkscape:window-width="1920"
      inkscape:window-height="1017"
      inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-y="1072"
      inkscape:window-maximized="1"
      inkscape:showpageshadow="2"
      inkscape:pagecheckerboard="0"
@@ -761,14 +761,15 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#ffffff;stroke:none;stroke-width:0.419754;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#ffffff;stroke:none;stroke-width:0.429824;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect11819-3-9"
-       width="235.06599"
-       height="135.12766"
+       width="238.00597"
+       height="139.93851"
        x="16.745621"
-       y="118.8013"
+       y="116.39587"
        inkscape:export-xdpi="600"
-       inkscape:export-ydpi="600" />
+       inkscape:export-ydpi="600"
+       inkscape:export-filename="bigfig.png" />
     <rect
        style="fill:#ffffff;stroke:none;stroke-width:0.294485;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect11819-3"
@@ -18450,7 +18451,7 @@
          id="tspan12547-0"
          x="181.80365"
          y="123.79475"
-         style="stroke-width:0.120193">pre-adults</tspan></text>
+         style="stroke-width:0.120193">immatures</tspan></text>
     <rect
        style="fill:#000000;stroke-width:0.102;paint-order:stroke fill markers"
        id="rect1"
