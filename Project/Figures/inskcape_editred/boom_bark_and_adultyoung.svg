@@ -5,7 +5,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg8"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    sodipodi:docname="boom_bark_and_adultyoung.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -729,17 +729,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="559.28571"
-     inkscape:cy="169.28571"
+     inkscape:zoom="5.6"
+     inkscape:cx="136.51786"
+     inkscape:cy="731.16072"
      inkscape:document-units="mm"
-     inkscape:current-layer="g1692"
+     inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
      inkscape:window-x="-8"
-     inkscape:window-y="1079"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:showpageshadow="2"
      inkscape:pagecheckerboard="0"
@@ -779,12 +779,12 @@
        inkscape:export-xdpi="600"
        inkscape:export-ydpi="600" />
     <rect
-       style="fill:#ffffff;stroke:none;stroke-width:0.298994;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#ffffff;stroke:none;stroke-width:0.303675;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect11819"
        width="118.93494"
-       height="135.50565"
+       height="139.78195"
        x="16.83798"
-       y="118.8013"
+       y="114.52499"
        inkscape:export-xdpi="600"
        inkscape:export-ydpi="600" />
     <rect
@@ -1226,7 +1226,7 @@
            style="font-size:12px;font-family:Arial;fill:#4d4d4d"
            textLength="47.360001"
            lengthAdjust="spacingAndGlyphs"
-           id="text994">F0 mean</text>
+           id="text994">f0 mean</text>
         <text
            transform="rotate(-45,166.99757,-112.24266)"
            text-anchor="end"
@@ -1275,7 +1275,7 @@
            style="font-size:12px;font-family:Arial;fill:#4d4d4d"
            textLength="40.02"
            lengthAdjust="spacingAndGlyphs"
-           id="text1008">F0 max</text>
+           id="text1008">f0 max</text>
         <text
            transform="rotate(-45,267.19257,-354.13479)"
            text-anchor="end"
@@ -1324,7 +1324,7 @@
            style="font-size:12px;font-family:Arial;fill:#4d4d4d"
            textLength="36.68"
            lengthAdjust="spacingAndGlyphs"
-           id="text1022">F0 min</text>
+           id="text1022">f0 min</text>
         <text
            transform="rotate(-45,367.39257,-596.03898)"
            text-anchor="end"
@@ -2497,7 +2497,7 @@
            style="font-size:12px;font-family:Arial;fill:#4d4d4d"
            textLength="14"
            lengthAdjust="spacingAndGlyphs"
-           id="text1197">F0</text>
+           id="text1197">f0</text>
         <text
            transform="rotate(-45,243.73205,-193.97712)"
            text-anchor="end"
@@ -4147,12 +4147,12 @@
              lengthAdjust="spacingAndGlyphs"
              id="text7959">Airsac Radius [px]</text>
           <text
-             transform="rotate(-90,287.56,-20.24)"
              text-anchor="middle"
              style="font-size:20px;font-family:Arial"
              textLength="85.589996"
              lengthAdjust="spacingAndGlyphs"
-             id="text7961">Pitch [Hz]</text>
+             id="text7961"
+             transform="rotate(-90,287.56,-20.24)">f0 [Hertz]</text>
         </g>
         <g
            clip-path="url(#cpNTc2LjAwfDg2NC4wMHwwLjAwfDU3Ni4wMA==-9)"
@@ -5937,7 +5937,7 @@
            style="font-size:12px;font-family:Arial;fill:#4d4d4d"
            textLength="14"
            lengthAdjust="spacingAndGlyphs"
-           id="text1426">F0</text>
+           id="text1426">f0</text>
         <text
            transform="rotate(-45,243.73205,-193.97712)"
            text-anchor="end"
@@ -7597,7 +7597,7 @@
            style="font-size:20px;font-family:Arial"
            textLength="85.589996"
            lengthAdjust="spacingAndGlyphs"
-           id="text3816">Pitch [Hz]</text>
+           id="text3816">f0 [Hertz]</text>
       </g>
       <g
          clip-path="url(#cpNzIwLjAwfDEwODAuMDB8MC4wMHw1NzYuMDA=)"
@@ -11384,7 +11384,7 @@
            style="font-size:20px;font-family:Arial"
            textLength="85.589996"
            lengthAdjust="spacingAndGlyphs"
-           id="text5738">Pitch [Hz]</text>
+           id="text5738">f0 [Hertz]</text>
       </g>
       <g
          clip-path="url(#cpNzIwLjAwfDEwODAuMDB8MC4wMHw1NzYuMDA=-4)"
@@ -18366,11 +18366,11 @@
        textLength="81.160004"
        lengthAdjust="spacingAndGlyphs"
        id="text10792"
-       transform="matrix(0.16072357,0,0,0.16072357,-60.619373,150.91243)"
+       transform="matrix(0.16072357,0,0,0.16072357,-53.403096,150.91243)"
        inkscape:export-xdpi="600"
        inkscape:export-ydpi="600">Ageclass</text>
     <rect
-       x="140.41368"
+       x="147.62996"
        y="196.73149"
        width="2.7773035"
        height="2.7773035"
@@ -18379,16 +18379,16 @@
        inkscape:export-xdpi="600"
        inkscape:export-ydpi="600" />
     <line
-       x1="140.69173"
+       x1="147.908"
        y1="198.12018"
-       x2="142.91292"
+       x2="150.1292"
        y2="198.12018"
        style="stroke:#117733;stroke-width:0.34234;stroke-linecap:butt"
        id="line10798"
        inkscape:export-xdpi="600"
        inkscape:export-ydpi="600" />
     <rect
-       x="140.41368"
+       x="147.62996"
        y="199.50879"
        width="2.7773035"
        height="2.7773035"
@@ -18397,9 +18397,9 @@
        inkscape:export-xdpi="600"
        inkscape:export-ydpi="600" />
     <line
-       x1="140.69173"
+       x1="147.908"
        y1="200.89746"
-       x2="142.91292"
+       x2="150.1292"
        y2="200.89746"
        style="stroke:#882255;stroke-width:0.34234;stroke-linecap:butt"
        id="line10804"
@@ -18412,7 +18412,7 @@
        textLength="63.169998"
        lengthAdjust="spacingAndGlyphs"
        id="text10806"
-       transform="matrix(0.16072357,0,0,0.16072357,-60.619373,150.91243)"
+       transform="matrix(0.16072357,0,0,0.16072357,-53.403096,150.91243)"
        inkscape:export-xdpi="600"
        inkscape:export-ydpi="600">Subadult</text>
     <text
@@ -18422,7 +18422,7 @@
        textLength="58.709999"
        lengthAdjust="spacingAndGlyphs"
        id="text10808"
-       transform="matrix(0.16072357,0,0,0.16072357,-60.619373,150.91243)"
+       transform="matrix(0.16072357,0,0,0.16072357,-53.403096,150.91243)"
        inkscape:export-xdpi="600"
        inkscape:export-ydpi="600">Juvenile</text>
     <text
@@ -18451,5 +18451,77 @@
          x="181.80365"
          y="123.79475"
          style="stroke-width:0.120193">pre-adults</tspan></text>
+    <rect
+       style="fill:#000000;stroke-width:0.102;paint-order:stroke fill markers"
+       id="rect1"
+       width="6.9925594"
+       height="6.9925594"
+       x="18.864441"
+       y="117.59251" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.70558px;line-height:1.04;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;text-anchor:middle;fill:#000000;stroke-width:0.251708;paint-order:stroke fill markers"
+       x="22.197029"
+       y="123.44779"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#ffffff;stroke-width:0.251708"
+         x="22.197029"
+         y="123.44779">a</tspan></text>
+    <rect
+       style="fill:#000000;stroke-width:0.102;paint-order:stroke fill markers"
+       id="rect1-9"
+       width="6.9925594"
+       height="6.9925594"
+       x="134.74414"
+       y="117.59272" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.70558px;line-height:1.04;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;text-anchor:middle;fill:#000000;stroke-width:0.251708;paint-order:stroke fill markers"
+       x="138.04042"
+       y="123.40077"
+       id="text1-8"><tspan
+         sodipodi:role="line"
+         id="tspan1-7"
+         style="fill:#ffffff;stroke-width:0.251708"
+         x="138.04042"
+         y="123.40077">c</tspan></text>
+    <rect
+       style="fill:#000000;stroke-width:0.102;paint-order:stroke fill markers"
+       id="rect1-9-9"
+       width="6.9925594"
+       height="6.9925594"
+       x="134.74385"
+       y="190.05478" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.70558px;line-height:1.04;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;text-anchor:middle;fill:#000000;stroke-width:0.251708;paint-order:stroke fill markers"
+       x="138.28484"
+       y="196.64241"
+       id="text1-8-8"><tspan
+         sodipodi:role="line"
+         id="tspan1-7-7"
+         style="fill:#ffffff;stroke-width:0.251708"
+         x="138.28484"
+         y="196.64241">d</tspan></text>
+    <rect
+       style="fill:#000000;stroke-width:0.102;paint-order:stroke fill markers"
+       id="rect1-4"
+       width="6.9925594"
+       height="6.9925594"
+       x="18.864468"
+       y="192.02571" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.70558px;line-height:1.04;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;text-anchor:middle;fill:#000000;stroke-width:0.251708;paint-order:stroke fill markers"
+       x="22.197056"
+       y="198.44797"
+       id="text1-3"><tspan
+         sodipodi:role="line"
+         id="tspan1-1"
+         style="fill:#ffffff;stroke-width:0.251708"
+         x="22.197056"
+         y="198.44797">b</tspan></text>
   </g>
 </svg>
