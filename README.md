@@ -58,7 +58,8 @@ See requirements.txt for each module. You can install the requirements by enteri
 Lara Burchardt, Yana van der Sande, Wim Pouw
 
 ## Reference
-TBA
+Burchardt, L., van de Sande, Kehy, M., Ravignani, A., Pouw, W. (in prep). A toolkit for the dynamic study of air sacs in siamang and other elastic circular structures. Under consideration at Plos Computational Biology.
+
 
 
 
